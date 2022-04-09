@@ -1,0 +1,25 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("./images/background.jpg");
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container{
+  width: 95vw;
+  height: 90vh;
+}
+
+.sidebar{
+  display: flex;
+  flex-direction: column;
+  align-items: center;  
+}
+
+.sidebar-btn{
+  width: 12rem !important;
+  margin-top: 1rem;
+}
