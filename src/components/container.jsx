@@ -12,10 +12,10 @@ export default function Container() {
     }
 
     return (
-        <div className='container bg-white bg-opacity-50 row p-2 '>
+        <div className='container bg-white bg-opacity-50 row p-2 mt-5'>
             <div className="sidebar col-md-2">
-                <button type="button" className="btn btn-primary rounded-pill sidebar-btn" onClick={() => handleClick(0)}>View Flights</button>
-                <button type="button" className="btn btn-primary rounded-pill sidebar-btn" onClick={() => handleClick(1)}>Add Flights </button>
+                <button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" onClick={() => handleClick(0)}>View Flights</button>
+                <button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" onClick={() => handleClick(1)}>Add Flights </button>
             </div>
             <div className="col-md-10 bg-secondary bg-opacity-25" id='content'>
                 {state === 0 && <ViewFlights />}
