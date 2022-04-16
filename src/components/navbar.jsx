@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import '../css/navbar.css';
+import SubmitButton from './SubmitButton';
 
-function Navbar() {
+function Navbar(props) {
     const [active, setActive] = useState("nav_menu");
     const [toggleIcon, setToggleIcon] = useState("nav_toggler");
 
@@ -60,8 +61,15 @@ function Navbar() {
                 </li>
 
                 <li className='nav_items'>
-                    <a href="#" className='nav_links'>
-                        Sign In
+                    <a href="" className='nav_links'>
+                    <SubmitButton 
+                        className='nav_links'
+                        text = 'Log out' 
+                        disabled = {false} 
+                        onClick = {()=> {
+                            props.onClick();
+                        }}
+                    />
                     </a>
                 </li>
 
