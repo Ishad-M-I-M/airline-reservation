@@ -21,7 +21,7 @@ export default function Container() {
                 <button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" onClick={() => handleClick(1)}>View Aircrafts</button>
                 <button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" onClick={() => handleClick(2)}>View Airports</button>
             </div>
-            <div className="col-md-10 bg-secondary bg-opacity-25" id='content'>
+            <div className="col-md-10 bg-secondary bg-opacity-25 overflow-auto" id='content' style={{'max-height': '88vh' }}>
                 {state === 0 && <ViewRoutes />}
                 {state === 1 && <ViewAircrafts/>}
                 {state ===2 && <ViewAirports/>}
