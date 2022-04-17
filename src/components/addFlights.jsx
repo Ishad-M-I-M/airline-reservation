@@ -55,7 +55,7 @@ export default function AddFlights() {
               <label htmlFor='airplane-id' className='form-label'> Airplane ID</label>
               <select defaultValue={-1} id = 'airplane-id' className='form-control'>
                 <option value={-1} disabled selected> --select-- </option>
-                {model != -1 && airplaneIDs[model].map((e) => <option key={e}>{e}</option>) }
+                {model !== -1 && airplaneIDs[model].map((e) => <option key={e}>{e}</option>) }
               </select>
             </div>
           </div>
