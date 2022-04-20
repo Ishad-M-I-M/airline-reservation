@@ -66,6 +66,7 @@ class LoginForm extends React.Component {
             console.log('SUCCESSFULLY RECEIVED THE RESULT');
             UserStore.isLoggedIn = true;
             UserStore.email = result.email;
+            UserStore.role = result.role;
           }else if(result && result.success === false) {
             console.log('NOT SUCCESSFULLY RECEIVED THE RESULT');
             this.resetForm();

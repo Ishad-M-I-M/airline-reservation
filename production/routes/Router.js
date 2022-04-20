@@ -6,6 +6,8 @@ class Router {
         this.login(app, db);
         this.logout(app, db);
         this.isLoggedIn(app, db);
+        this.fetchFlightRoute(app, db);
+        this.fetchAircraft(app, db);
     }
 
     login(app , db) {
@@ -42,7 +44,8 @@ class Router {
                             req.session.userID = data[0].user_id;
                             res.json({
                                 success:true,
-                                email: data[0].email
+                                email: data[0].email,
+                                role: data[0].role
                             })
                             console.log(`Successfully sending back ${data[0].email}`);
                             return;
@@ -96,6 +99,7 @@ class Router {
                         res.json({
                             success: true,
                             email: data[0].email,
+                            role: data[0].role,
                         });
 
                         return true;
@@ -109,6 +113,45 @@ class Router {
                 res.json({
                     success: false
                 })
+            }
+        });
+    }
+
+    fetchFlightRoute(app, db) {
+
+        app.post('/flightroute', (req, res) => {
+            if(req.session.userID) {
+                console.log("Reached Server");
+                db.query('SELECT route_id, a1.code AS origin, a2.code AS destination FROM route LEFT JOIN airport a1 ON route.origin = a1.airport_id LEFT JOIN airport a2 ON route.destination=a2.airport_id',(err, data, fields) => {
+                    res.json({
+                        success: true,
+                        details: data,
+                    });
+                })
+            }else {
+                res.json({
+                    success: false,
+                    msg: 'Login to the system'
+                });
+            }
+        });
+
+    }
+
+    fetchAircraft(app, db) {
+        app.post('/aircraft', (req, res) => {
+            if(req.session.userID) {
+                db.query('SELECT aircraft_id, model from aircraft', (err, data, fields)=>{
+                    res.json({
+                        success: true,
+                        details: data,
+                    });
+                });
+            }else {
+                res.json({
+                    success: false,
+                    msg: 'Login to the system'
+                });
             }
         });
     }

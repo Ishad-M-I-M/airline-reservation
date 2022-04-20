@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 
 import './App.css';
-import Container from './components/container';
+import ClerkContainer from './components/clerkContainer';
 import Navbar from './components/navbar';
 import UserStore from './stores/UserStore';
 import LoginForm from './components/LoginForm';
@@ -34,10 +34,12 @@ class App extends React.Component {
         UserStore.loading = false;
         UserStore.isLoggedIn = true;
         UserStore.email = result.email;
+        UserStore.role = result.role;
       }else {
         UserStore.loading = false;
         UserStore.isLoggedIn = false;
         UserStore.email ='';
+        UserStore.role = '';
       }
     }catch(err) {
       UserStore.loading = false;
@@ -63,6 +65,7 @@ class App extends React.Component {
       if(result && result.success) {
         UserStore.isLoggedIn = false;
         UserStore.email = '';
+        UserStore.role = '';
       }
       
     } catch (error) {
@@ -81,15 +84,25 @@ class App extends React.Component {
         </div>
       );
     }else if(UserStore.isLoggedIn) {
+      if(UserStore.role=='moderator') {
         return (
-        <div className="App bg-black">
-          <Navbar onClick={() =>{this.doLogout()}}/>
-          <Container/>
-        </div>
-        );
+          <div className="App bg-black">
+            <Navbar onClick={() =>{this.doLogout()}}/>
+            <ClerkContainer/>
+          </div>
+          );
+      } else if (UserStore.role=='clerk') {
+
+      }else {
+
+      }
     }
     return (
-      <LoginForm />
+      // <LoginForm />
+      <div className="App bg-black">
+          <Navbar onClick={() =>{this.doLogout()}}/>
+          <ClerkContainer/>
+      </div>
     );
 
   }

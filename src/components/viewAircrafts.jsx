@@ -16,11 +16,11 @@ export default function ViewAircrafts() {
           {[... new Set(aircrafts.map(({model})=> model))].map((x)=> <option key={x}>{x}</option>)}
         </datalist>
       </form>
-      {aircrafts.map(({id,model, tailNumber})=>{
+      {/* {aircrafts.map(({id,model, tailNumber})=>{
         <div className='row'>
           <div></div>
         </div>
-      })}
+      })} */}
     </div>
   )
 }

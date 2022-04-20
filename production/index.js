@@ -5,16 +5,17 @@ const mysql = require('mysql')
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const Router = require('./routes/Router');
+require('dotenv').config();
 
-app.use(express.static(path.join(__dirname, 'build')));
+// app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
 //Database
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Kv@25031999',
-    database: 'bairways',
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASS,
+    database: process.env.DATABASE_NAME,
 });
 
 db.connect(function(err) {
@@ -43,9 +44,9 @@ app.use(session({
 
 new Router(app, db);
 
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'))
-});
+// app.get('/', function(req, res) {
+//     res.sendFile(path.join(__dirname, 'build', 'index.html'))
+// });
 
 app.listen(3001);
 

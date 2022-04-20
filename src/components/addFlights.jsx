@@ -1,86 +1,180 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export default function AddFlights() {
-  const [model, setModel] = useState(-1);
+class AddFlights extends React.Component {
 
-  const origins = [{id: 0, code : "CMB"}, {id: 1, code : "NYK"}, {id: 2, code : "LND"}]; // to be loaded from database
-  const destinations = [{id: 0, code : "CMB"}, {id: 1, code : "NYK"}, {id: 2, code : "LND"}, {id: 3, code: "SNG"}]; // to be loaded from database according to origin selection
-
-  const airplaneIDs = {
-    0:['Boeing 737 - I', 'Boeing 737 - II', 'Boeing 737 - III'],
-    1:['Boeing 757 - I', 'Boeing 757 - II', 'Boeing 757 - III', 'Boeing 757 - IV' ],
-    2:['Airbus A380 - I']
-  } // to be loaded from database
-
-  const loadAirplaneIDs = e => {
-    console.log(e.target.value);
-    setModel(e.target.value);
+  constructor(props) {
+    super(props);
+    this.state = {
+      takeoff_date : '',
+      takeoff_time : '',
+      landing_date : '',
+      landing_time : '',
+      route_id:0,
+      routes:[],
+      aircrafts:[],
+      aircraft_id:0,
+      button_disabled:true,
+    };
+    // setInterval(() => {
+    //   console.log(`Takeoff Time: ${this.state.takeoff_date} ` + `${this.state.takeoff_time}\nLanding Time: ${this.state.landing_date} ` + `${this.state.landing_time}`);
+    // }, 5000);
   }
-  return (
-    <div>
-      <h2 className='text-center mt-1'>Add a Flight</h2>
-      <form>
-        <div className='mb-3'>
-          <div className='row'>
-            <div className='col-md-6'>
-              <label htmlFor="origin" className='form-label'>Origin</label>
-              <select defaultValue={-1} id = 'origin' className='form-control'>
-                <option value={-1} disabled selected> --select-- </option>
-                {origins.map(({id,code}) => <option key={id}>{code}</option>)}
-              </select>
+
+  async loadAircrafts() {
+    if(this.state.aircrafts.length == 0) {
+      try {
+
+        let res = await fetch('/aircraft',{
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+
+        let result = await res.json();
+        if(result && result.success) {
+          var temp_craft = [];
+          result.details.forEach(element => {
+            // console.log(element);
+            var output = element.model;
+            temp_craft[element.aircraft_id] = output;
+          });
+          this.setState({aircrafts: temp_craft});
+        }else {
+          console.error(result);
+        }
+      }catch(error) {}
+    }
+  }
+
+  async loadRoutes() {
+    if(this.state.routes.length == 0) {
+      try {
+
+        let res = await fetch('/flightroute',{
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+
+        let result = await res.json();
+        if(result && result.success) {
+          var temp_route = [];
+          result.details.forEach(element => {
+            // console.log(element);
+            var output = element.origin + '->' + element.destination;
+            temp_route[element.route_id] = output;
+          });
+          this.setState({routes: temp_route});
+        }else {
+          console.log(this.state.routes);
+          console.error(result);
+        }
+      }catch(error) {}
+    }
+  }
+
+  getButton() {
+    if(this.state.route_id>0 && this.state.aircraft_id>0 && this.state.landing_date != '' && this.state.landing_time !='' && this.state.takeoff_date != '' && this.state.takeoff_time != '') {
+      this.setState({button:false});
+      return(<button className='btn btn-primary' onClick={()=>{this.addFlight()}}>Add Flight</button>);
+    }else {
+      this.setState({button:true})
+      return(<button className='btn btn-primary' onClick={()=>{this.addFlight()}} disabled>Add Flight</button>);
+    }
+  }
+
+  render() {
+    
+    return (
+        <div>
+          <h2 className='text-center mt-1'>Add a Flight</h2>
+          <form>
+            <div className='mb-3'>
+              <div className='row'>
+                <div className='col-md-6'>
+                  <label htmlFor="aircraft" className='form-label'>Aircraft</label>
+                  <select defaultValue={-1} id = 'aircraft' className='form-control' onClick={()=>this.loadAircrafts()} onChange={(e)=> this.setState({
+                    aircraft: e.target.value
+                  })}>
+                    <option value={-1} disabled selected> --select-- </option>
+                    {
+                      this.state.aircrafts.map((model, i) => <option key={i} value={i}>{model}</option>)
+                    }
+                  </select>
+                </div>
+    
+                <div className='col-md-6'>
+                  <label htmlFor='route' className='form-label'>Route</label>
+                  <select defaultValue={-1} id = 'route' className='form-control' onClick={()=> this.loadRoutes()} onChange={(e)=> this.setState({
+                    route_id: e.target.value
+                    })}
+                  >
+                    <option value={-1} disabled selected> --select-- </option>
+                    {
+                      this.state.routes.map((route, i) => <option key={i} value={i}>{route}</option>)
+                    }
+                  </select>
+                </div>
+              </div>
+            </div>
+    
+            <div className='mb-3'>
+              <div className='row'>
+                <div className='col-md-6'>
+                  <label htmlFor='date' className='form-label'>Takeoff Date</label>
+                  <input id='date' className='form-control me-2' type='date' onChange={(e)=>{
+                    this.setState({
+                      takeoff_date : e.target.value
+                    });
+                    }} />
+                </div>
+    
+                <div className='col-md-6'>
+                  <label htmlFor='time' className='form-label'>Takeoff Time</label>
+                  <input id='time' className='form-control me-2' type='time' onChange={(e)=>{
+                    this.setState({
+                      takeoff_time : e.target.value + ':00',
+                    })
+                    }} />
+                </div>
+              </div>
+            </div>
+    
+            <div className='mb-3'>
+              <div className='row'>
+                <div className='col-md-6'>
+                  <label htmlFor='date' className='form-label'>Landing Date</label>
+                  <input id='date' className='form-control me-2' type='date' onChange={(e)=>{
+                    this.setState({
+                      landing_date : e.target.value
+                    });
+                    }} 
+                    />
+                </div>
+    
+                <div className='col-md-6'>
+                  <label htmlFor='time' className='form-label'>Landing Time</label>
+                  <input id='time' className='form-control me-2' type='time' onChange={(e)=>{
+                    this.setState({
+                      landing_time : e.target.value + ':00',
+                    });
+                    }}/>
+                </div>
+              </div>
+            </div>
+            
+            <div className='mt-5 text-center'>
+              {this.getButton()}
             </div>
 
-            <div className='col-md-6'>
-              <label htmlFor='destination' className='form-label'>Destination</label>
-              <select defaultValue={-1} id = 'destination' className='form-control'>
-                <option value={-1} disabled selected> --select-- </option>
-                {destinations.map(({id,code}) => <option key={id}>{code}</option>)}
-              </select>
-            </div>
-          </div>
+          </form>
         </div>
-
-        <div className='mb-3'>
-          <div className='row'>
-            <div className='col-md-6'>
-              <label htmlFor='airplane-model' className='form-label'>Select Airplane Model</label>
-              <select defaultValue={-1} id = 'airplane-model' className='form-control' onChange={(e)=>loadAirplaneIDs(e)}>
-                <option value={-1} disabled selected> --select-- </option>
-                <option value= {0}>Boeing 737</option>
-                <option value= {1}>Boeing 757</option>
-                <option value= {2}>Airbus A380</option>
-              </select>
-            </div>
-            <div className='col-md-6'>
-              <label htmlFor='airplane-id' className='form-label'> Airplane ID</label>
-              <select defaultValue={-1} id = 'airplane-id' className='form-control'>
-                <option value={-1} disabled selected> --select-- </option>
-                {model !== -1 && airplaneIDs[model].map((e) => <option key={e}>{e}</option>) }
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className='mb-3'>
-          <div className='row'>
-            <div className='col-md-6'>
-              <label htmlFor='date' className='form-label'>Date</label>
-              <input id='date' className='form-control me-2' type='date' />
-            </div>
-
-            <div className='col-md-6'>
-              <label htmlFor='time' className='form-label'>Time</label>
-              <input id='time' className='form-control me-2' type='time' />
-            </div>
-          </div>
-        </div>
-
-        <div className='mb-3'>
-          <label htmlFor='remarks' className='form-label'>Remarks</label>
-          <input id='remarks' className='form-control me-2' type='text' />
-        </div>
-
-      </form>
-    </div>
-  )
+    );
+  }
 }
+
+export default AddFlights;
