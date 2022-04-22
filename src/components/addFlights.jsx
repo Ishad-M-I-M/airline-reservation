@@ -13,7 +13,6 @@ class AddFlights extends React.Component {
       routes:[],
       aircrafts:[],
       aircraft_id:0,
-      button_disabled:true,
     };
     // setInterval(() => {
     //   console.log(`Takeoff Time: ${this.state.takeoff_date} ` + `${this.state.takeoff_time}\nLanding Time: ${this.state.landing_date} ` + `${this.state.landing_time}`);
@@ -21,7 +20,7 @@ class AddFlights extends React.Component {
   }
 
   async loadAircrafts() {
-    if(this.state.aircrafts.length == 0) {
+    if(this.state.aircrafts.length === 0) {
       try {
 
         let res = await fetch('/aircraft',{
@@ -49,7 +48,7 @@ class AddFlights extends React.Component {
   }
 
   async loadRoutes() {
-    if(this.state.routes.length == 0) {
+    if(this.state.routes.length === 0) {
       try {
 
         let res = await fetch('/flightroute',{
@@ -77,13 +76,37 @@ class AddFlights extends React.Component {
     }
   }
 
-  getButton() {
-    if(this.state.route_id>0 && this.state.aircraft_id>0 && this.state.landing_date != '' && this.state.landing_time !='' && this.state.takeoff_date != '' && this.state.takeoff_time != '') {
-      this.setState({button:false});
-      return(<button className='btn btn-primary' onClick={()=>{this.addFlight()}}>Add Flight</button>);
+  async addFlight() {
+    
+    if(this.state.aircraft_id<=0 || this.state.route_id<=0 || this.state.takeoff_date === '' || this.state.takeoff_time === '' || this.state.landing_date === '' || this.state.landing_time==='') {
+      alert("Fill all Columns");
     }else {
-      this.setState({button:true})
-      return(<button className='btn btn-primary' onClick={()=>{this.addFlight()}} disabled>Add Flight</button>);
+      try {
+        let res = await fetch('/addFlight',{
+          method:'post',
+          headers: {
+            'Accept' : 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            aircraft_id: this.state.aircraft_id,
+            route_id: this.state.route_id,
+            takeoff_time: `${this.state.takeoff_date} ${this.state.takeoff_time}`,
+            landing_time: `${this.state.landing_date} ${this.state.landing_time}`,
+          }),
+          credentials : 'include',
+        });
+
+        let result = await res.json();
+        console.log(result);
+        if(result && result.success) {
+          console.log('Data Successfully entered to database')
+        }else {
+          console.log(result.msg);
+        }
+      }catch(error){
+
+      }
     }
   }
 
@@ -98,11 +121,11 @@ class AddFlights extends React.Component {
                 <div className='col-md-6'>
                   <label htmlFor="aircraft" className='form-label'>Aircraft</label>
                   <select defaultValue={-1} id = 'aircraft' className='form-control' onClick={()=>this.loadAircrafts()} onChange={(e)=> this.setState({
-                    aircraft: e.target.value
+                    aircraft_id: e.target.value
                   })}>
                     <option value={-1} disabled selected> --select-- </option>
                     {
-                      this.state.aircrafts.map((model, i) => <option key={i} value={i}>{model}</option>)
+                      this.state.aircrafts.map((model, i) => <option key={i} value={i}>{model+' - ' + i}</option>)
                     }
                   </select>
                 </div>
@@ -166,12 +189,10 @@ class AddFlights extends React.Component {
                 </div>
               </div>
             </div>
-            
-            <div className='mt-5 text-center'>
-              {this.getButton()}
-            </div>
-
           </form>
+          <div className='mt-5 text-center'>
+              <button className='btn btn-primary' onClick={()=>{this.addFlight()}}>Add Flight</button>
+            </div>
         </div>
     );
   }

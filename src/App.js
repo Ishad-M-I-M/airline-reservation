@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 
 import './App.css';
 import ClerkContainer from './components/clerkContainer';
+import Container from './components/container';
 import Navbar from './components/navbar';
 import UserStore from './stores/UserStore';
 import LoginForm from './components/LoginForm';
@@ -28,8 +29,6 @@ class App extends React.Component {
 
       let result = await res.json();
 
-      console.log(`Checking is logged in`);
-      console.log(result);
       if(result && result.success) {
         UserStore.loading = false;
         UserStore.isLoggedIn = true;
@@ -74,7 +73,6 @@ class App extends React.Component {
   }
 
   render() {
-    console.log(UserStore);
     if(UserStore.loading) {
       return (
         <div className='App bg-black'>
@@ -84,25 +82,28 @@ class App extends React.Component {
         </div>
       );
     }else if(UserStore.isLoggedIn) {
-      if(UserStore.role=='moderator') {
+      if(UserStore.role==='moderator') {
+        return (
+          <div className="App bg-black">
+            <Navbar onClick={() =>{this.doLogout()}}/>
+            <Container/>
+          </div>
+          );
+      } else if (UserStore.role==='clerk') {
         return (
           <div className="App bg-black">
             <Navbar onClick={() =>{this.doLogout()}}/>
             <ClerkContainer/>
           </div>
           );
-      } else if (UserStore.role=='clerk') {
-
-      }else {
-
+      }else if(UserStore.role==='user'){
+        return(
+          <div>INSERT USER COMPONENTS HERE</div>
+        );
       }
     }
     return (
-      // <LoginForm />
-      <div className="App bg-black">
-          <Navbar onClick={() =>{this.doLogout()}}/>
-          <ClerkContainer/>
-      </div>
+      <LoginForm />
     );
 
   }
