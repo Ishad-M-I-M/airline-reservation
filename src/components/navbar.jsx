@@ -60,8 +60,7 @@ function Navbar(props) {
                     </a>
                 </li>
 
-                <li className='nav_items'>
-                    <a href="" className='nav_links'>
+                <li className='nav_items'>                    
                     <SubmitButton 
                         className='nav_links'
                         text = 'Log out' 
@@ -70,7 +69,6 @@ function Navbar(props) {
                             props.onClick();
                         }}
                     />
-                    </a>
                 </li>
 
             </ul>
