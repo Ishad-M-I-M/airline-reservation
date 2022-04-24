@@ -1,15 +1,36 @@
 import { Button } from "bootstrap";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function ViewRoutes() {
 
   //fetched from backend: GET /routes
-    const [routes, setRoutes] = useState(
-      [{'id': 1, 'origin' : 'CMB', 'destination': 'JFK'},
-        {'id': 2,'origin' : 'JFK', 'destination': 'CMB'},
-        {'id': 3,'origin' : 'CMB', 'destination': 'MCW'},
-        {'id': 4,'origin' : 'CMB', 'destination': 'JED'}]
-    );
+  const [routes, setRoutes] = useState(
+    [{'id': 1, 'origin' : 'CMB', 'destination': 'JFK'},
+      {'id': 2,'origin' : 'JFK', 'destination': 'CMB'},
+      {'id': 3,'origin' : 'CMB', 'destination': 'MCW'},
+      {'id': 4,'origin' : 'CMB', 'destination': 'JED'}]
+  );
+
+    useEffect(()=>{
+      fetch('/route',{
+        method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+      })
+      .then((res)=>{
+        res.json()
+        .then((result)=> setRoutes(result.data) )
+        .catch((e)=> console.error(e));
+      })
+      .catch((e)=>{
+        console.error(e);
+      })
+    });
+
+
+    
 
 
     const locations = [];
@@ -28,7 +49,25 @@ export default function ViewRoutes() {
 
     let handleDelete =(id_) => {
       // rest API request to delete.: DELETE /routes/:id
-      setRoutes(routes.filter(({id}) => id != id_ ));
+      fetch(`/route/${id_}`,{
+        method: 'DELETE',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            }
+      })
+      .then((res)=>{
+        res.json()
+        .then((result)=> {
+          alert("Route sucessfully deleted");
+          window.location.reload();
+        } )
+        .catch((e)=> console.error(e));
+      })
+      .catch((e)=>{
+        console.error(e);
+      })
+      
     }
 
   return (

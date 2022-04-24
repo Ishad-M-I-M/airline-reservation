@@ -12,6 +12,8 @@ class Router {
         this.getAirportCode(app, db);
         this.fetchClerkFlightDetails(app, db);
         this.fetchBookFlightDetails(app, db);
+        this.fetchRouteDetails(app,db);
+        this.deleteRoute(app, db);
     }
 
     login(app , db) {
@@ -235,6 +237,56 @@ class Router {
                         res.json({
                             success:true,
                             data: data,
+                        });
+                    }
+                });
+            }else {
+                req.json({
+                    success:false,
+                });
+            }
+        });
+    }
+
+    fetchRouteDetails(app, db){
+        app.get('/route', (req, res)=>{
+            if(req.session.userID) {
+                db.query(`select route_id as id, origin, destination
+                            from (select route_id,location as origin from route inner join port_location on origin=id) as origin 
+                            natural join 
+                                (select route_id,location as destination from route inner join port_location on destination=id) as destination; `
+                , (err, data, fields)=>{
+                    if(err) {
+                        res.json({
+                            success:false,
+                        });
+                    }else {
+                        res.json({
+                            success:true,
+                            data: data,
+                        });
+                    }
+                });
+            }else {
+                req.json({
+                    success:false,
+                });
+            }
+        });
+    }
+
+    deleteRoute(app, db){
+        app.delete('/route/:id', (req, res)=>{
+            if(req.session.userID) {
+                db.query(`DELETE FROM route WHERE route_id=? `,[req.params.id]
+                , (err)=>{
+                    if(err) {
+                        res.json({
+                            success:false,
+                        });
+                    }else {
+                        res.json({
+                            success:true,
                         });
                     }
                 });
