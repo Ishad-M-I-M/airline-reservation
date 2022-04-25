@@ -14,6 +14,8 @@ class Router {
         this.fetchBookFlightDetails(app, db);
         this.fetchRouteDetails(app,db);
         this.deleteRoute(app, db);
+        this.fetchAirportDetails(app, db);
+        this.deleteAirport(app, db);
     }
 
     login(app , db) {
@@ -279,6 +281,53 @@ class Router {
         app.delete('/route/:id', (req, res)=>{
             if(req.session.userID) {
                 db.query(`DELETE FROM route WHERE route_id=? `,[req.params.id]
+                , (err)=>{
+                    if(err) {
+                        res.json({
+                            success:false,
+                        });
+                    }else {
+                        res.json({
+                            success:true,
+                        });
+                    }
+                });
+            }else {
+                req.json({
+                    success:false,
+                });
+            }
+        });
+    }
+
+    fetchAirportDetails(app, db){
+        app.get('/airport', (req, res)=>{
+            if(req.session.userID) {
+                db.query(`select * from airport_locations`
+                , (err, data, fields)=>{
+                    if(err) {
+                        res.json({
+                            success:false,
+                        });
+                    }else {
+                        res.json({
+                            success:true,
+                            data: data,
+                        });
+                    }
+                });
+            }else {
+                req.json({
+                    success:false,
+                });
+            }
+        });
+    }
+
+    deleteAirport(app, db){
+        app.delete('/airport/:id', (req, res)=>{
+            if(req.session.userID) {
+                db.query(`DELETE FROM airport WHERE airport_id=? `,[req.params.id]
                 , (err)=>{
                     if(err) {
                         res.json({
