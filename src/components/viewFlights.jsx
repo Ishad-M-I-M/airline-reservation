@@ -7,10 +7,10 @@ class ViewFlights extends React.Component {
     this.state = {
       codes:[],
       aircrafts:[],
-      flight_id:0,
+      flight_id:'',
       origin:'',
       destination:'',
-      aircraft_id:0,
+      aircraft_id:'',
       past:false,
       future:false,
     }
@@ -118,16 +118,23 @@ class ViewFlights extends React.Component {
     return (
       <div>
         <h2 className='text-center mt-1'>View Flight Details</h2>
-        <form>
+        <div>
           <div className='mb-3'>
             <div className='row'>
               <div className='col-md-6'>
                 <label htmlFor="flightid" className='form-label'>Flight ID</label>
-                <input id='flightid' type="text" className='form-control' onChange={(e)=>{
-                  this.setState({
-                    flight_id: parseInt(e.target.value),
-                  });
-                }}/>
+                {
+                (this.state.origin !== '' || this.state.destination !== '' || this.state.aircraft_id !== '') && 
+                <input id='flightid' type='text' className='form-control' disabled/>
+                }
+                {
+                  ((this.state.origin === '' && this.state.destination === '') && this.state.aircraft_id==='') &&
+                  <input id='flightid' type="text" className='form-control' onChange={(e)=>{
+                    this.setState({
+                      flight_id: e.target.value,
+                    });
+                  }} />
+                }
               </div>
               <div className='text-center mt-3'>OR</div>
             </div>
@@ -135,30 +142,49 @@ class ViewFlights extends React.Component {
   
           <div className='mb-3'>
             <div className='row'>
+
               <div className='col-md-6'>
                 <label htmlFor='origin' className='form-label'>Origin</label>
-                <select defaultValue={'select'} className='form-control' id='origin' onChange={(e)=>{this.setState({
-                  origin: e.target.value
-                })}}>
-                  <option>--Select--</option>
-                  {
-                    this.state.codes.map((code, i)=>
-                    <option key={i} value={code}>{code}</option>)
-                  }
-                </select>
+                {
+                  (this.state.flight_id !== '' || this.state.aircraft_id !== '')&& 
+                  <select className='form-control' disabled>
+                    <option>--Select--</option>
+                  </select>
+                }
+                {
+                  (this.state.flight_id === '' && this.state.aircraft_id === '' )&&
+                  <select className='form-control' id='origin' onChange={(e)=>{this.setState({
+                    origin: e.target.value
+                  })}}>
+                    <option value={''}>--Select--</option>
+                    {
+                      this.state.codes.map((code, i)=>
+                      <option key={i} value={code}>{code}</option>)
+                    }
+                  </select>
+                }
               </div>
 
               <div className='col-md-6'>
                 <label htmlFor='destination' className='form-label'>Destination</label>
-                <select defaultValue={'select'} className='form-control' id='destination' onChange={(e)=>{this.setState({
-                  destination: e.target.value
-                })}}>
-                  <option>--Select--</option>
-                  {
-                    this.state.codes.map((code, i)=>
-                    <option key={i} value={code}>{code}</option>)
-                  }
-                </select>
+                {
+                  (this.state.flight_id !== '' || this.state.aircraft_id !== '')&& 
+                  <select defaultValue className='form-control' disabled>
+                    <option>--Select--</option>
+                  </select>
+                }
+                {
+                  (this.state.flight_id === '' && this.state.aircraft_id === '' )&&
+                  <select defaultValue={''} className='form-control' id='destination' onChange={(e)=>{this.setState({
+                    destination: e.target.value
+                  })}}>
+                    <option value={''}>--Select--</option>
+                    {
+                      this.state.codes.map((code, i)=>
+                      <option key={i} value={code}>{code}</option>)
+                    }
+                  </select>
+                }
               </div>
               <div className='text-center mt-3'>OR</div>
             </div>
@@ -168,15 +194,24 @@ class ViewFlights extends React.Component {
             <div className='row'>
               <div className='col-md-6'>
                 <label htmlFor='aircraft' className='form-label'>Aircraft Model</label>
-                <select defaultValue={'select'} className='form-control' id='aircraft' onChange={(e)=>{this.setState({
-                  aircraft_id: e.target.value
-                })}}>
-                  <option selected >--Select--</option>
-                  {
-                    this.state.aircrafts.map((craft, i)=>
-                    <option key={i} value={craft.split("-")[1].trim()}>{craft}</option>)
-                  }
-                </select>
+                {
+                  (this.state.flight_id !== '' || this.state.origin !== '' || this.state.destination !== '') &&
+                  <select className='form-control' id='aircraft' disabled>
+                    <option value={''}>--Select--</option>
+                  </select>
+                }
+                {
+                  (this.state.flight_id === '' && this.state.origin === '' && this.state.destination === '') && 
+                  <select className='form-control' id='aircraft' onChange={(e)=>{this.setState({
+                    aircraft_id: e.target.value
+                  })}}>
+                    <option value={''} >--Select--</option>
+                    {
+                      this.state.aircrafts.map((craft, i)=>
+                      <option key={i} value={craft.split("-")[1].trim()}>{craft}</option>)
+                    }
+                  </select>
+                }
               </div>
             </div>
           </div>
@@ -185,7 +220,7 @@ class ViewFlights extends React.Component {
 
           </div>
 
-        </form>
+        </div>
 
         <div className="form-check">
           <ul>

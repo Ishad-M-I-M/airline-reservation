@@ -16,6 +16,7 @@ class Router {
         this.deleteRoute(app, db);
         this.fetchAirportDetails(app, db);
         this.deleteAirport(app, db);
+        this.fetchSeatNumber(app, db);
     }
 
     login(app , db) {
@@ -189,7 +190,7 @@ class Router {
                     msg:'Login to the System'
                 });
             }
-        })
+        });
     }
 
     getAirportCode(app, db) {
@@ -218,11 +219,103 @@ class Router {
     fetchClerkFlightDetails(app, db) {
         app.post('/fetchFlight/clerk', (req, res)=>{
             if(req.session.userID) {
-                console.log(req.body);
+                if(req.body.flight_id !== '' && (req.body.aircraft_id === '' && req.body.origin === '' && req.body.destination === '')) {
+                    if(req.body.past === true) {
+                        if(req.body.future === true) {
+                            db.query('select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where flight_id=?',[req.body.flight_id],(err, data, fields) => {
+                                if(err){
+                                    res.json({
+                                        success: false,
+                                    });
+                                    return false;
+                                }else{
+                                    res.json({
+                                        success: true,
+                                        data: data,
+                                    });
+                                    return true;
+                                }
+                            });
+                        }else {
+                            db.query('select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where takeoff_time < now() and flight_id =?',[req.body.flight_id],(err, data, fields)=>{
+                                if(err) {
+                                    res.json({
+                                        success: false,
+                                    });
+                                    return false;
+                                }else {
+                                    res.json({
+                                        success: true,
+                                        data:data,
+                                    });
+                                    return true;
+                                }
+                            });
+                        }
+                    }else {
+                        if(req.body.future === true) {
+                            db.query('select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where takeoff_time > now() and flight_id =?',[req.body.flight_id],(err, data, fields) => {
+                                if(err){
+                                    res.json({
+                                        success: false,
+                                    });
+                                    return false;
+                                }else {
+                                    res.json({
+                                        success: true,
+                                        data:data,
+                                    });
+                                    return true;
+                                }
+                            });
+                        }else {
+                            res.json({
+                                success: false,
+                            });
+                            return false;
+                        }
+                    }
+                }
             }else {
-                res.json({
-                    success:false,
-                })
+                if(req.body.aircraft_id !== '' && (req.body.flight_id === '' && req.body.origin === '' && req.body.destination === '')){
+                    if(req.body.past === true){
+                        if(req.body.future === true) {
+                            db.query('select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where aircraft_id =?',[req.body.aircraft_id],(err, data, fields)=>{
+                                if(err) {
+                                    res.json({
+                                        success: false,
+                                    });
+                                    return false;
+                                }else {
+                                    res.json({
+                                        success: true,
+                                        data: data,
+                                    });
+                                    return true;
+                                }
+                            });
+                        }else {
+                            db.query('select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where aircraft_id =? and takeoff_time < now()'[req.body.aircraft_id],(err, data, fields) => {
+                                if(err) {
+                                    res.json({
+                                        success: false,
+                                    });
+                                    return false;
+                                }else {
+                                    res.json({
+                                        success: true,
+                                        data: data,
+                                    });
+                                    return true;
+                                }
+                            });
+                        }
+                    }else {
+                        if(req.body.future === true) {
+                            db.query('',[],(err, data, fields)=>{})
+                        }
+                    }
+                } 
             }
         })
     }
@@ -342,6 +435,37 @@ class Router {
             }else {
                 req.json({
                     success:false,
+                });
+            }
+        });
+    }
+
+    fetchSeatNumber(app, db) {
+        app.post('/loadSeatnumber', (req, res) => {
+            if(req.session.userID) {
+                let flight_id = parseInt(req.body.flight_id);
+                let seat_inclass = req.body.class;
+                let stmt = '';
+                if(seat_inclass=='Economy'){
+                    stmt = 'SELECT get_Economy_seats(?)';
+                }else if(seat_inclass=='Business'){
+                    stmt = 'SELECT get_Business_seats(?)';
+                }else{
+                    stmt = 'SELECT get_Platinum_seats(?)';
+                }
+
+                db.query(stmt, [flight_id], (err, data, fields) => {
+                    if(err) {
+                        console.log(err);
+                        res.json({
+                            success: false,
+                        });
+                    }else {
+                        res.json({
+                            success: true,
+                            seat_number: data[0],
+                        });
+                    }
                 });
             }
         });
