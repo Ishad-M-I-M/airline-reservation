@@ -17,6 +17,7 @@ class Router {
         this.fetchAirportDetails(app, db);
         this.deleteAirport(app, db);
         this.fetchSeatNumber(app, db);
+        this.fetchSeatNumber(app, db);
     }
 
     login(app , db) {
@@ -435,6 +436,37 @@ class Router {
             }else {
                 req.json({
                     success:false,
+                });
+            }
+        });
+    }
+
+    fetchSeatNumber(app, db) {
+        app.post('/loadSeatnumber', (req, res) => {
+            if(req.session.userID) {
+                let flight_id = parseInt(req.body.flight_id);
+                let seat_inclass = req.body.class;
+                let stmt = '';
+                if(seat_inclass=='Economy'){
+                    stmt = 'SELECT get_Economy_seats(?)';
+                }else if(seat_inclass=='Business'){
+                    stmt = 'SELECT get_Business_seats(?)';
+                }else{
+                    stmt = 'SELECT get_Platinum_seats(?)';
+                }
+
+                db.query(stmt, [flight_id], (err, data, fields) => {
+                    if(err) {
+                        console.log(err);
+                        res.json({
+                            success: false,
+                        });
+                    }else {
+                        res.json({
+                            success: true,
+                            seat_number: data[0],
+                        });
+                    }
                 });
             }
         });
