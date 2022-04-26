@@ -7,7 +7,7 @@ import ViewFlights from './viewFlights';
 import AddBooking from './AddBooking';
 
 export default function Container() {
-    let [state, setState] = useState(2);
+    let [state, setState] = useState(1);
     const handleClick = (arg) => {
         setState(arg);
     }
