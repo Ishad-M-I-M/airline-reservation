@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import FlightResultOverlay from './FlightResultOverlay';
 
 class ViewFlights extends React.Component {
 
@@ -13,6 +14,8 @@ class ViewFlights extends React.Component {
       aircraft_id:'',
       past:false,
       future:false,
+      resultVisibility:false,
+      FlightOutput: [],
     }
   }
 
@@ -101,11 +104,14 @@ class ViewFlights extends React.Component {
       });
 
       let result = await res.json();
-
+      console.log(result);
       if(result && result.success) {
-
+        this.setState({
+          FlightOutput: result.data,
+          resultVisibility: true,
+        });
       }else if(result) {
-
+        alert("Request Failed... Fetch Again...");
       }
     }catch(error){
 
@@ -119,6 +125,7 @@ class ViewFlights extends React.Component {
       <div>
         <h2 className='text-center mt-1'>View Flight Details</h2>
         <div>
+          {this.state.resultVisibility && <FlightResultOverlay visibility={this.state.resultVisibility} information={this.state.FlightOutput} onClick={()=>this.setState({resultVisibility:false})}/>}
           <div className='mb-3'>
             <div className='row'>
               <div className='col-md-6'>
@@ -153,9 +160,11 @@ class ViewFlights extends React.Component {
                 }
                 {
                   (this.state.flight_id === '' && this.state.aircraft_id === '' )&&
-                  <select className='form-control' id='origin' onChange={(e)=>{this.setState({
+                  <select className='form-control' id='origin' onChange={(e)=>{
+                    this.setState({
                     origin: e.target.value
-                  })}}>
+                    });
+                  }}>
                     <option value={''}>--Select--</option>
                     {
                       this.state.codes.map((code, i)=>

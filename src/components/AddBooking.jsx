@@ -1,7 +1,6 @@
 import React from 'react';
 
 class AddBooking extends React.Component {
-
   constructor(props) {
     super(props);
     this.state={
@@ -70,7 +69,7 @@ class AddBooking extends React.Component {
           let temp_flights = []
           result.data.forEach((element, i) => {
             var data = {
-              flight:`${element.origin} -> ${element.destination} : ${element.takeoff_time}`,
+              flight:`${element.origin} -> ${element.destination} : ${(new Date(element.takeoff_time)).toLocaleString()}`,
               flight_id: element.flight_id
             };
             temp_flights.push(data);
@@ -86,37 +85,51 @@ class AddBooking extends React.Component {
   }
 
   async handleSubmit() {
-
+    let date_ob = new Date();
+      let date = date_ob.getFullYear()+'-'+date_ob.getMonth()+'-'+date_ob.getDate()+" "+date_ob.getHours()+":"+date_ob.getMinutes()+":"+date_ob.getSeconds();
     if(this.state.name === '' || this.state.address === '' || this.state.dob === ''|| this.state.id === '' || this.state.flight_id === 0 || this.state.class === '' || this.state.seat_number === 0) {
       alert("Fill all the columns");
     }else {
       try{
-        let date_ob = new Date();
-        let date = date_ob.getFullYear()+'-'+date_ob.getMonth()+'-'+date_ob.getDate()+" "+date_ob.getHours()+":"+date_ob.getMinutes()+":"+date_ob.getSeconds();
         let res = await fetch('/bookTicket',{
           method:'POST',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
-          body:{
+          body: JSON.stringify({
+            passenger_name: this.state.name,
+            passenger_address: this.state.address,
             passenger_id: this.state.id,
+            dob: this.state.dob,
             flight_id: this.state.flight_id,
             seat_number: this.state.seat_number,
-            dob: this.state.dob,
             date:date,
             class: this.state.class,
-            
-          }
+          })
         });
-      }catch(err){}
+
+        let result = await res.json();
+
+        if(result && result.success) {
+          window.location.href = "/paymentportal";
+        }else {
+          if(result) {
+            alert(result.msg);
+          }else{  
+            alert("Booking Failed!!! Try Again");
+          }
+        }
+      }catch(err){
+        console.log(err);
+        alert("Booking Failed by Unknown server error!!! Try Again");
+      }
     }
   }
 
   render() {
-    
     return (
-        <div>
+          <div>
           <h2 className='text-center mt-1'>Book Flight</h2>
           <form>
             <div className='mb-3 row'>
@@ -217,7 +230,6 @@ class AddBooking extends React.Component {
                 }
                 
               </div>
-
             </div>
           </form>
           <div className='mt-5 text-center'>
