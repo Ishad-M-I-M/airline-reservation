@@ -713,7 +713,6 @@ class Router {
                                 reject("Failed to execute");
                             }
                             let insertId = await data.insertId;
-                            console.log("Id of inseted: ",insertId);
                             resolve(insertId);
                         });
                     });

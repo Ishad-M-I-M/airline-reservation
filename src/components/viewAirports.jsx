@@ -1,10 +1,12 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 export default function ViewAirports() {
 
   //fetch from database and load: GET /ariports
   const [airports, setAirports] = useState([]);
+  let airportList = useRef([]);
+
   let handleDelete = (id_) =>{
     // request to delete : DELETE /apirports/:id
     axios.delete(`/airport/${id_}`).then(()=>{
@@ -19,15 +21,21 @@ export default function ViewAirports() {
   useEffect(()=>{
     axios.get('/airport')
     .then((res)=>{
+      airportList.current = res.data.airports;
       setAirports(res.data.airports);
     })
   },[]);
+
+  let handleChange = (e) =>{
+    if(e.target.value === '') setAirports(airportList.current);
+    else setAirports(airportList.current.filter(({name}) => name.toLowerCase().includes(e.target.value.toLowerCase())));
+  }
   
   return (
     <div className='m-3'>
       <form>
         <label className='form-label' htmlFor='airport'>Search For Airport</label>
-        <input id='airport' type="text" list='airports' className='form-control'/>
+        <input id='airport' type="text" list='airports' className='form-control' onChange={(e)=>handleChange(e)}/>
         <datalist id="airports">
           {airports.map(({id, name}) => <option key={id}>{name}</option>)}
         </datalist>

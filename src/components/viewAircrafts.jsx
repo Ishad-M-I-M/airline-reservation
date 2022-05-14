@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 export default function ViewAircrafts() {
   const [aircrafts, setAircrafts] = useState([
@@ -8,10 +8,11 @@ export default function ViewAircrafts() {
     {'id': 3,'model': 'Airbus 330' , 'tail_number': 'UA-3060'},
     {'id': 4,'model': 'Airbus 330' , 'tail_number': 'UA-3080'},
   ]);
+  const aircraftList = useRef([]);
 
   useEffect(()=>{
     axios.get('/aircraft').then((res)=>{
-      console.log(res.data);
+      aircraftList.current = res.data.aircrafts;
       setAircrafts(res.data.aircrafts);
     })
   }, []);
@@ -26,11 +27,16 @@ export default function ViewAircrafts() {
     })
   }
 
+  let handleChange = (e) => {
+    if(e.target.value === '') setAircrafts(aircraftList.current);
+    else setAircrafts(aircraftList.current.filter(({model})=> model.includes(e.target.value)));
+  }
+
   return (
     <div className='m-3'>
       <form>
         <label htmlFor='search' className='form-label'>Filter by Model</label>
-        <input id="search" type="text" list="airplanes" className='form-control'/>
+        <input id="search" type="text" list="airplanes" className='form-control' onChange={(e)=> handleChange(e)}/>
         <datalist id="airplanes">
           {[... new Set(aircrafts.map(({model})=> model))].map((x)=> <option key={x}>{x}</option>)}
         </datalist>

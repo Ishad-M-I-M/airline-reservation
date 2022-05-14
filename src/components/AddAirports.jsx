@@ -16,7 +16,6 @@ export default function AddAirports() {
     let handleChange = (e) => {
         let data = {... inputs};
         data[e.target.name] = e.target.value;
-        console.log(data);
         setInputs(data);
     }
 
@@ -81,7 +80,13 @@ export default function AddAirports() {
     }
 
     let handleRemove = (htmlId_) =>{
-        setLocationFields(locationFields.filter(({htmlId}) => htmlId != htmlId_));
+        let newlocationFields = locationFields.filter(({htmlId}) => htmlId != htmlId_);
+        let i = 1;
+        newlocationFields = newlocationFields.map((field)=>{
+            field['htmlId'] = i++;
+            return field;
+        })
+        setLocationFields(newlocationFields);
     }
 
   return (

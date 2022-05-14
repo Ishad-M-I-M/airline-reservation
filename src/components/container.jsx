@@ -3,11 +3,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import '../App.css';
-import AddFlights from './addFlights';
-import ViewFlights from './viewFlights';
-import ViewRoutes from './viewRoutes';
-import ViewAircrafts from './viewAircrafts';
-import ViewAirports from './viewAirports';
+import ViewRoutes from './ViewRoutes';
+import ViewAircrafts from './ViewAircrafts';
+import ViewAirports from './ViewAirports';
 import NotFound from './NotFound';
 import AddAirports from './AddAirports';
 
