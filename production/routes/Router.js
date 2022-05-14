@@ -652,7 +652,7 @@ class Router {
     deleteAircraft(app, db){
         app.delete('/aircraft/:id', (req,res) => {
             if(req.session.userID) {
-                db.query(`DELETE FROM aircraft WHERE id=? `,[req.params.id]
+                db.query(`DELETE FROM aircraft WHERE aircraft_id=? `,[req.params.id]
                 , (err)=>{
                     if(err) {
                         res.status(500);
@@ -712,8 +712,14 @@ class Router {
                             if(err){
                                 reject("Failed to execute");
                             }
-                            let insertId = await data.insertId;
-                            resolve(insertId);
+                            if(data){
+                                let insertId = await data.insertId;
+                                resolve(insertId);
+                            }
+                            else{
+                                reject("Database error");
+                            }
+                            
                         });
                     });
                     

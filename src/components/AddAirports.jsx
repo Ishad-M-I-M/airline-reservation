@@ -69,7 +69,6 @@ export default function AddAirports() {
     }
 
     let handleSubmit = (e) => {
-        e.preventDefault();
         console.log(inputs);
 
         axios.post('/airport',inputs).then(()=>{
