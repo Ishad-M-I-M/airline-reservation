@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const e = require('express');
 
 class Router {
 
@@ -19,6 +20,10 @@ class Router {
         this.fetchSeatNumber(app, db);
         this.fetchSeatNumber(app, db);
         this.bookTicket(app, db);
+        this.getAircrafts(app,db);
+        this.deleteAircraft(app, db);
+        this.getLocations(app, db);
+        this.saveAirport(app, db);
     }
 
     login(app , db) {
@@ -26,7 +31,6 @@ class Router {
             // console.log("Request to login");
             let email = req.body.email;
             let password = req.body.password;
-
             email = email.toLowerCase().trim();
 
             if(email.length > 50 || password.length > 50){
@@ -483,9 +487,10 @@ class Router {
                             success:false,
                         });
                     }else {
+                        console.log(data);
                         res.json({
                             success:true,
-                            data: data,
+                            airports: data,
                         });
                     }
                 });
@@ -568,6 +573,7 @@ class Router {
                 db.query(stmt, [flight_id], (err, data, fields) => {
                     if(err) {
                         console.log(err);
+                        res.status(500);
                         res.json({
                             success: false,
                         });
@@ -588,6 +594,7 @@ class Router {
                 db.query("SELECT cost FROM flight LEFT JOIN flight_cost USING(flight_id) WHERE flight_id=? AND class=?", [req.body.flight_id, req.body.class], (err, data1, fields)=>{
                     if(err) {
                         console.log(err);
+                        res.status(500);
                         res.json({
                             success:false,
                             msg: "Error Fetching the Cost of the Flight",
@@ -596,6 +603,7 @@ class Router {
                     }else{
                         db.query("CALL book_ticket(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",[req.body.passenger_id, req.body.passenger_name, req.body.date, req.body.passenger_address, req.session.userID, req.body.flight_id, req.body.seat_number, req.body.date, req.body.class, data1[0].cost], (err, fields)=>{
                             if(err) {
+                                res.status(500);
                                 res.json({
                                     success: false,
                                     msg: "Error Booking the Ticket",
@@ -614,6 +622,110 @@ class Router {
             }
         });
     }
+
+    getAircrafts(app, db){
+        app.get('/aircraft', (req, res)=>{
+            if(req.session.userID) {
+                db.query('SELECT * from aircraft', (err, data) => {
+                    if(err){
+                        res.status(500);
+                        res.json({
+                            success: false
+                        });
+                    }
+                    else{
+                        res.json({
+                            success: true,
+                            aircrafts: data 
+                        })
+                    }
+                    
+                })
+            }else {
+                req.json({
+                    success:false,
+                });
+            }
+        });
+    }
+
+    deleteAircraft(app, db){
+        app.delete('/aircraft/:id', (req,res) => {
+            if(req.session.userID) {
+                db.query(`DELETE FROM aircraft WHERE id=? `,[req.params.id]
+                , (err)=>{
+                    if(err) {
+                        res.status(500);
+                        res.json({
+                            success:false,
+                        });
+                    }else {
+                        res.json({
+                            success:true,
+                        });
+                    }
+                });
+            }else {
+                req.json({
+                    success:false,
+                });
+            }
+        })
+    }
+
+    getLocations(app, db){
+        app.get('/location', (req, res) => {
+            db.query('SELECT * from port_location', (err, data)=>{
+                if (err) {
+                    res.status(500);
+                    res.json({success: false});
+                }
+                else{
+                    res.json({
+                        success: true,
+                        locations: data
+                    })
+                }
+            });
+        });
+    }
+
+    saveAirport(app, db){
+        app.post('/airport', async (req, res)=>{
+            db.query('INSERT INTO airport(code,name) VALUES (?, ?)', [req.body.code, req.body.name], (err)=>{
+                if(err){
+                    res.status(500);
+                    console.log(err);
+                }
+            });
+            let locations = [{location: req.body.code, exist: false}, ...req.body.location];
+            let parent_id = null;
+
+            while(locations.length > 0){
+                let location = locations.pop();
+                if (location.exist){
+                    parent_id = location.id;
+                }
+                else{
+                    let res = await new Promise((resolve, reject) => {
+                        db.query('INSERT INTO port_location(location, parent_id) VALUES (?, ? )', [location.location, parent_id], async (err, data)=>{
+                            if(err){
+                                reject("Failed to execute");
+                            }
+                            let insertId = await data.insertId;
+                            console.log("Id of inseted: ",insertId);
+                            resolve(insertId);
+                        });
+                    });
+                    
+                    parent_id = res;
+                }
+            }
+
+            res.json({success: true});
+        });
+    }
+
 }
 
 module.exports = Router;

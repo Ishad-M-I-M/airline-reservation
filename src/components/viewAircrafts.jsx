@@ -1,12 +1,31 @@
-import React, { useState } from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 
 export default function ViewAircrafts() {
   const [aircrafts, setAircrafts] = useState([
-    {'id': 1, 'model': 'Boeing 737' , 'tailNumber': 'JA-8089'},
-    {'id': 2, 'model': 'Boeing 734' , 'tailNumber': 'UA-3089'},
-    {'id': 3, 'model': 'Airbus 330' , 'tailNumber': 'UA-3060'},
-    {'id': 4, 'model': 'Airbus 330' , 'tailNumber': 'UA-3080'},
+    {'id': 1,'model': 'Boeing 737' , 'tail_number': 'JA-8089'},
+    {'id': 2,'model': 'Boeing 734' , 'tail_number': 'UA-3089'},
+    {'id': 3,'model': 'Airbus 330' , 'tail_number': 'UA-3060'},
+    {'id': 4,'model': 'Airbus 330' , 'tail_number': 'UA-3080'},
   ]);
+
+  useEffect(()=>{
+    axios.get('/aircraft').then((res)=>{
+      console.log(res.data);
+      setAircrafts(res.data.aircrafts);
+    })
+  }, []);
+
+  let handleDelete = (id_) => {
+    axios.delete(`/aircraft/${id_}`).then(()=>{
+      setAircrafts( [... aircrafts].filter(({id})=> id != id_));
+      alert(`Aircraft deleted sucessfully` );
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
+  }
+
   return (
     <div className='m-3'>
       <form>
@@ -16,11 +35,13 @@ export default function ViewAircrafts() {
           {[... new Set(aircrafts.map(({model})=> model))].map((x)=> <option key={x}>{x}</option>)}
         </datalist>
       </form>
-      {/* {aircrafts.map(({id,model, tailNumber})=>{
-        <div className='row'>
-          <div></div>
+      {aircrafts.map(({id, model, tail_number})=>{
+        return <div className='row bg-white rounded p-1 mt-1' key={id}>
+          <div className='col-3'>{tail_number}</div>
+          <div className='col-6'>{model}</div>
+          <div className='col-3'><button className='btn btn-primary' onClick={()=>handleDelete(id)}>Delete</button></div>
         </div>
-      })} */}
+      })}
     </div>
   )
 }
