@@ -2,9 +2,9 @@ import React from 'react';
 import { observer } from 'mobx-react';
 
 import './App.css';
-import ClerkContainer from './components/clerkContainer';
-import Container from './components/container';
-import Navbar from './components/navbar';
+import ClerkContainer from './components/ClerkContainer';
+import Container from './components/Container';
+import Navbar from './components/Navbar';
 import UserStore from './stores/UserStore';
 import LoginForm from './components/LoginForm';
 

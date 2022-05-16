@@ -1,53 +1,41 @@
-import React, { useEffect, useState } from 'react'
+import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react'
 
 export default function ViewAirports() {
 
   //fetch from database and load: GET /ariports
   const [airports, setAirports] = useState([]);
+  let airportList = useRef([]);
+
   let handleDelete = (id_) =>{
     // request to delete : DELETE /apirports/:id
-    fetch(`/airport/${id_}`,{
-      method: 'DELETE',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
+    axios.delete(`/airport/${id_}`).then(()=>{
+      setAirports( [... airports].filter(({id})=> id != id_));
+      alert(`Airport deleted sucessfully` );
     })
-    .then((res)=>{
-      res.json()
-      .then((result)=> {
-        alert("Airport sucessfully deleted");
-      } )
-      .catch((e)=> console.error(e));
-    })
-    .catch((e)=>{
-      console.error(e);
+    .catch((err)=>{
+      console.log(err);
     })
   }
 
   useEffect(()=>{
-    fetch('/airport',{
-      method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-    })
+    axios.get('/airport')
     .then((res)=>{
-      res.json()
-      .then((result)=> setAirports(result.data) )
-      .catch((e)=> console.error(e));
+      airportList.current = res.data.airports;
+      setAirports(res.data.airports);
     })
-    .catch((e)=>{
-      console.error(e);
-    })
-  })
+  },[]);
+
+  let handleChange = (e) =>{
+    if(e.target.value === '') setAirports(airportList.current);
+    else setAirports(airportList.current.filter(({name}) => name.toLowerCase().includes(e.target.value.toLowerCase())));
+  }
   
   return (
     <div className='m-3'>
       <form>
         <label className='form-label' htmlFor='airport'>Search For Airport</label>
-        <input id='airport' type="text" list='airports' className='form-control'/>
+        <input id='airport' type="text" list='airports' className='form-control' onChange={(e)=>handleChange(e)}/>
         <datalist id="airports">
           {airports.map(({id, name}) => <option key={id}>{name}</option>)}
         </datalist>
