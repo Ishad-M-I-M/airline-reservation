@@ -15,13 +15,15 @@ class AddBooking extends React.Component {
       dob:'',
       flight_id : 0,
       class:'',
-      seat_numbers : [],
+      seat_numbers : ['Loading...'],
       seat_number:0,
     };
   }
 
+
   async seatNumber() {
     if(this.state.flight_id !== 0 && this.state.class !== '') {
+      console.log("Sending seat Request");
       try{
         let res = await fetch('/loadSeatnumber',{
           method:'POST',
@@ -39,11 +41,18 @@ class AddBooking extends React.Component {
         let result = await res.json();
         let seats = [];
         if(result && result.success){
-          seats = (result.seat_number[Object.keys(result.seat_number)[0]]).split('-');
-
-          this.setState({
-            seat_numbers : seats,
-          });  
+          seats = ((result.seat_number[Object.keys(result.seat_number)[0]]).split('-')).map((s) => {return parseInt(s, 10)}).sort((a,b)=>{return a-b});
+          if(seats.join('-')!==this.state.seat_numbers.join('-')) {
+            console.log("Updating Seats");
+            this.setState({
+              seat_numbers : seats,
+            });
+            if(this.state.seat_number !== 0) {
+              alert("Selected seat already booked. Change Seat!");
+            }
+          }else {
+            console.log("Not Updating Seats");
+          }  
         }
       }catch(err){}
     }
@@ -212,7 +221,12 @@ class AddBooking extends React.Component {
                 <label htmlFor='seat' className='form-label'>Seat Number</label>
                 {
                   this.state.flight_id!==0 && this.state.class !=='' && 
-                  <select defaultValue={-1} className='form-control' id='seat' onClick={()=>this.seatNumber()} onChange={(e)=>this.setState({
+                  <select defaultValue={-1} className='form-control' id='seat' onClick={()=>
+                    {
+                      this.seatNumber();
+                      setInterval(()=>this.seatNumber(), 10000);
+                    }}
+                  onChange={(e)=>this.setState({
                     seat_number: e.target.value,
                   })}>
                     <option value={-1} disabled selected>--Select--</option>
