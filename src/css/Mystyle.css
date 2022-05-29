@@ -1,0 +1,102 @@
+body{
+    /* height: 100%; */
+    background-image: url("login.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    /* background-color:rgba(255, 255, 255, 0.774); */
+  }
+  
+.mail{
+
+    text-decoration: none;
+}
+  .para{
+      font-size: 50px;
+  }
+  .list-group-item{
+    border: 1px solid blue;
+    border-radius: 5px;
+    padding: 5px;
+    width:120px;
+    cursor: pointer;
+  
+    /* border-width: 10px; */
+  
+  }
+  .list-group-item:hover{
+    background-color: aqua;
+  }
+  ul.list-group{
+  list-style-type: none;
+  }
+  
+  .list-group-item-active{
+    cursor: pointer;
+  background-color: rgb(25, 156, 25);
+  border: 1px solid blue;
+  border-radius: 5px;
+  padding: 5px;
+  width:120px;
+  color: aliceblue;
+  }
+  .list-group-item-active:hover{
+    background-color: rgb(9, 71, 9);
+    }
+  .navbar {
+      overflow: hidden;
+      /* background-color: #333; */
+      /* position: relative; */
+      position:fixed;
+      top: 0;
+      width: 100%;
+      list-style-type: none;
+      margin: 0px;
+      padding: 2px;
+      background-color: #4c6696;
+      /* border: 1px solid white; */
+      box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+      border-radius: 5px;
+      left: 0;
+      /* right: 2px; */
+    }
+  /* .sign{
+      margin-left: 90%;
+  } */
+  .lists{
+    margin-left: 20px;
+    margin-top: 100px;
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 5px;
+    
+    width:220px;
+  }
+    
+  .lists:hover  {
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+  }
+    .navbar a {
+      float: left;
+      display: block;
+      color: #ffffff;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+      border-radius: 10px;
+      /* border:1px solid none; */
+
+      /* border-left: 1px solid rgb(6, 6, 49); */
+    }
+    
+    .navbar a:hover {
+      background:#264888;
+      color: rgb(248, 233, 233);
+      box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+      border:1px solid aquamarine;
+      cursor: pointer;
+    }
+  
+  

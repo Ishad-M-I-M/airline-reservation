@@ -1,0 +1,31 @@
+.popup{
+    position:static;
+    top: 100px;
+    margin: auto;
+    /* left: 0; */
+    width: 50%;
+    min-height: 600px;
+    border: 1px solid aquamarine;
+    background-color: rgba(255, 255, 255, 0.76);
+    display:flexbox;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+
+    
+}
+
+.btn-danger{
+
+ 
+    margin-left: 85%;
+    margin-top: 10px;
+
+    /* color: white; */
+
+    cursor: pointer;
+    font-weight: bolder;
+
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+
+}
+

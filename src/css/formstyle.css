@@ -1,0 +1,32 @@
+.testform{
+    border: 2px solid aquamarine;
+    padding: 20px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    width: 60%;
+    /* height: 100px; */
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+
+}
+.Discount_btn{
+    margin-left: 70%;
+}
+
+.Discount_form,.Aircraft_form{
+    border: 2px solid aquamarine;
+    padding: 20px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    width: 80%;
+    /* height: 100px; */
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+
+}
