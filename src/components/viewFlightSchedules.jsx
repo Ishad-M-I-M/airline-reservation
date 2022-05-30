@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 export default function ViewFlightSchedules() { 
@@ -6,22 +7,15 @@ export default function ViewFlightSchedules() {
   const [schedules, setSchedules] = useState([]);
 
     useEffect(()=>{
-      fetch('/flightSchedules',{
-        method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
-      })
+      axios.get('/flightSchedules')
       .then((res)=>{
-        res.json()
-        .then((result)=> setSchedules(result.data) )
-        .catch((e)=> console.error(e));
+        console.log(res.data.data);
+        setSchedules(res.data.data);
       })
-      .catch((e)=>{
-        console.error(e);
+      .catch((err) => {
+        console.log(err);
       })
-    });
+    }, []);
 
 
     
