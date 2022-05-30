@@ -24,6 +24,8 @@ class Router {
         this.deleteAircraft(app, db);
         this.getLocations(app, db);
         this.saveAirport(app, db);
+        this.fetchFlightSchedulesDetails(app, db);
+        this.deleteFlightSchedule(app, db);
     }
 
     login(app , db) {
@@ -728,6 +730,53 @@ class Router {
             }
 
             res.json({success: true});
+        });
+    }
+
+    fetchFlightSchedulesDetails(app, db){
+        app.get('/flightSchedules', (req, res)=>{
+            if(req.session.userID) {
+                db.query('SELECT flight.flight_id, tail_number, model, a.code AS origin, b.code AS destination, takeoff_time, departure_time FROM flight INNER JOIN aircraft USING(aircraft_id) INNER JOIN route USING(route_id) INNER JOIN airport AS a ON a.airport_id = route.origin INNER JOIN airport AS b ON b.airport_id = route.destination WHERE flight.is_active = 1 ORDER BY flight_id', (err, data, fields)=>{
+                    //db.query('SELECT tail_number, model, route_id, takeoff_time, departure_time FROM flight INNER JOIN aircraft USING(aircraft_id) ORDER BY flight_id', (err, data, fields)=>{
+                    if(err) {
+                        res.json({
+                            success:false,
+                        });
+                    }else {
+                        res.json({
+                            success:true,
+                            data: data,
+                        });
+                    }
+                });
+            }else {
+                req.json({
+                    success:false,
+                });
+            }
+        });
+    }
+
+    deleteFlightSchedule(app, db){
+        app.delete('/flightSchedule/:id', (req, res)=>{
+            if(req.session.userID) {
+                db.query(`UPDATE flight SET flight.is_active = 0 WHERE flight.flight_id =? `,[req.params.id]
+                , (err)=>{
+                    if(err) {
+                        res.json({
+                            success:false,
+                        });
+                    }else {
+                        res.json({
+                            success:true,
+                        });
+                    }
+                });
+            }else {
+                req.json({
+                    success:false,
+                });
+            }
         });
     }
 
