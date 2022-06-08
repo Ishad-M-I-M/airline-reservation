@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const e = require('express');
 
 class Router {
 
