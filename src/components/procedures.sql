@@ -56,3 +56,14 @@ DELIMITER ;
 
 
 -- CALL add_location("ABD","ABD","Sri Lanka2","CHILD1","CHILD2","child3","CHILD4");
+
+BEGIN
+
+	IF gold >= 0 THEN
+    	UPDATE discount SET discount = gold WHERE type = 'Gold' ;
+    END IF;
+        
+    IF frequent >= 0 THEN
+    	UPDATE discount SET discount = frequent WHERE type = 'Frequent';
+    END IF;
+END
