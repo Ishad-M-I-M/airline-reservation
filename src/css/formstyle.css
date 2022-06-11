@@ -16,7 +16,18 @@
     margin-left: 70%;
 }
 
-.Discount_form,.Aircraft_form{
+.btn-outline-secondary{
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+.btn-outline-secondary:hover{
+ 
+    background-color: #f02035;
+    border-color: #f7162d;
+}
+
+.Discount_form,.Aircraft_form,.Airtportform{
     border: 2px solid aquamarine;
     padding: 20px;
     padding-top: 50px;

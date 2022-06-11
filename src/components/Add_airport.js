@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import '../css/formstyle.css'
+import 'bootstrap/dist/css/bootstrap.css';
 
 
 class Add_airport extends Component {
@@ -11,9 +12,32 @@ class Add_airport extends Component {
          code:"",
          name:"",
          location:"",
-         address : []
+         address : [],
+         parent :"",
+         Country :[]
  
       }
+    }
+
+
+    getCounty = () =>{
+
+      fetch('/getCountries',{
+        method: 'GET',
+        headers:{
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((res)=>{
+        res.json()
+        .then( (result) => { this.setState({
+          Country:result.data
+
+        })
+        }
+        );
+      })
     }
     addAddress(){
       this.setState({
@@ -78,7 +102,8 @@ class Add_airport extends Component {
               body: JSON.stringify({
                 code:this.state.code,
                 address :this.state.address,
-                name : this.state.name
+                name : this.state.name,
+                parent:this.state.parent
                   
               }),
               credentials : 'include',
@@ -103,6 +128,13 @@ class Add_airport extends Component {
         })
 
     }
+    AddCountry = (event) =>{
+      this.setState({
+          parent: event.target.value
+          
+      })
+
+  }
     Addname = (event) =>{
         this.setState({
             name: event.target.value
@@ -119,40 +151,78 @@ class Add_airport extends Component {
     }
 
   render() {
+    this.getCounty();
     return (
-      <div className='testform'>
+      <div className='Airtportform'>
         <form onSubmit={()=>{this.addAirport()}}>
-            
-            <input type="text" value={this.state.code}  
-            onChange={this.Addcode} placeholder="Airport Code" required/>            
-            <br></br>
-            <br></br>
-            <input type="text" value={this.state.name}  
-            onChange={this.Addname} placeholder="Airport Name" required/>            
-            <br></br>
-            <br></br>
-            <input type="text" value={this.state.location}  
-            onChange={this.Addlocation} placeholder="Location" required/>            
-            <br></br>
-            <br></br>
-            <div>
+        <div class="form-floating mb-3">
+
+          <input type="text" className="form-control" id="floatingInput" value={this.state.code} 
+          onChange={this.Addcode} placeholder="Airport Code" required
+          />
+          <label for="floatingInput">Airport Code</label>
+
+          </div>
+          <div class="form-floating mb-3">
+
+          <input type="text" className="form-control" id="floatingInput" value={this.state.name} 
+          onChange={this.Addname} placeholder="Airport Name" required
+          />
+          <label for="floatingInput">Airport Name</label>
+
+          </div>
+
+
+          {/* <div class="form-floating mb-3">
+
+          <input type="text" className="form-control" id="floatingInput" value={this.state.location} 
+          onChange={this.Addlocation} placeholder="Country" required
+          />
+          <label for="floatingInput">Country</label>
+
+          </div> */}
+
+
+
+          <div className="form-floating mb-3">
+          <input className="form-control" list="datalistOptions" id="exampleDataList" placeholder="Add country..."
+          value={this.state.parent} 
+          onChange={this.AddCountry} required
+          />
+          <datalist id="datalistOptions">
+                {
+                  this.state.Country.map((c)=>(
+                    <option  key= {c.id} value={c.location}>{c.location}</option>
+                  ))
+                }
+            </datalist>
+            <label for="floatingInput">Add/Select Country</label>
+          </div>
+
+          {this.state.parent}
+          <div>
 
           {
               this.state.address.map((address,index)=>{
 
              return(
                  <div key = {index}>
-                     <input required placeholder='Address' onChange={(e)=>{this.handleChange(e,index)}} value = {address}/>
-                     <button onClick={() =>{this.handleRemove(index)}}>remove</button>
+                     
+                     <div class="form-floating input-group mb-3">
+                      <input required type="text" className="form-control" id="floatingInput" placeholder="Address" aria-label="Recipient's username" aria-describedby="button-addon2" onChange={(e)=>{this.handleChange(e,index)}} value = {address} />
+                      <label for="floatingInput">Address</label>
+                      <button className="btn btn-outline-secondary" type="button" id="button-addon2" onClick={() =>{this.handleRemove(index)}}>Remove</button>
+                    </div>
                      </div>
              )
               })
 
           }
-          <button onClick={(e) =>{this.addAddress(e)}}>Add</button>
+          <button className="btn btn-primary" onClick={(e) =>{this.addAddress(e)}}>Add</button>
       </div>
-
-            <button type='submit'>Submit</button>
+            <br></br>
+      
+            <button className="btn btn-primary Discount_btn" type='submit'>Submit</button>
         </form>
       </div>
     )

@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import '../css/formstyle.css'
 import 'bootstrap/dist/css/bootstrap.css';
+import Example from './Toaster';
+import AlertMe from './Alert';
 
 class Add_craft extends Component {
 
@@ -12,7 +14,8 @@ class Add_craft extends Component {
          total_seats:null,
          economy:null,
          business:null,
-         platinum:null
+         platinum:null,
+         alert:false
  
       }
     }
@@ -94,12 +97,17 @@ class Add_craft extends Component {
     }
     Addeconomy = (event) =>{
         if(event.target.value > this.state.total_seats- this.state.business - this.state.platinum){
-            alert("invalid input");
+            // alert("invalid input");
+
+       
             event.target.value = null;
             this.setState({
-                economy: null
+                economy: null,
+                alert:true
+
+            
                 
-            })
+            });
         }else{
             this.setState({
                 economy: event.target.value
@@ -115,6 +123,9 @@ class Add_craft extends Component {
         if(event.target.value>this.state.total_seats - this.state.economy - this.state.platinum){
 
             alert("invalid input");
+           
+           
+            
             event.target.value = null;
             this.setState({
                 business: null
@@ -154,6 +165,7 @@ class Add_craft extends Component {
   render() {
     return (
       <div className='Aircraft_form'>
+        <AlertMe shows = {this.state.alert}/>
         <form onSubmit={()=>{this.ADD_FLIGHT()}}>
 
             <div class="form-floating mb-3">
@@ -167,35 +179,59 @@ class Add_craft extends Component {
 
             <div class="form-floating mb-3">
 
-              <input type="text" className="form-control" id="floatingInput" value={this.state.total_seats} 
+              <input type="number" className="form-control" id="floatingInput" value={this.state.total_seats} 
               onChange={this.Addseats} placeholder="Total seats" required
               />
               <label for="floatingInput">Total seats</label>
 
               </div>
+
+              <div class="form-floating mb-3">
+
+                <input type="number" className="form-control" id="floatingInput" value={this.state.economy} 
+                onChange={this.Addeconomy} placeholder="Economy seats" required
+                />
+                <label for="floatingInput">Economy seats</label>
+
+                </div>
+
+
+                <div class="form-floating mb-3">
+
+                <input type="number" className="form-control" id="floatingInput" value={this.state.business} 
+                onChange={this.Addbusiness} placeholder="Business seats" required
+                />
+                <label for="floatingInput">Business seats</label>
+
+                </div>
+
+
+
+                <div class="form-floating mb-3">
+
+                <input type="number" className="form-control" id="floatingInput" value={this.state.platinum} 
+                onChange={this.Addplatinum} placeholder="Platinum seats" required
+                />
+                <label for="floatingInput">Platinum seats</label>
+
+                </div>
             
             {/* <input type="text" value={this.state.model} 
             onChange={this.Addmodel} placeholder="Model" required/>             */}
-            <br></br>
-            <br></br>
+            
 
 
-            <input type="number" value={this.state.total_seats}  
-            onChange={this.Addseats} placeholder="Total seats" required/>            
-            <br></br>
-            <br></br>
-            <input type="text" value={this.state.economy}  
-            onChange={this.Addeconomy} placeholder="Economy seats" required/>            
-            <br></br>
-            <br></br>
-            <input type="text" value={this.state.business}  
-            onChange={this.Addbusiness} placeholder="Business seats" required/>            
-            <br></br>
-            <br></br>
-            <input type="text" value={this.state.platinum}  
-            onChange={this.Addplatinum} placeholder="Platinum seats" required/>            
-            <br></br>
-            <br></br>
+            {/* <input type="number" value={this.state.total_seats}  
+            onChange={this.Addseats} placeholder="Total seats" required/>             */}
+            
+            {/* <input type="text" value={this.state.economy}  
+            onChange={this.Addeconomy} placeholder="Economy seats" required/>             */}
+           
+            {/* <input type="text" value={this.state.business}  
+            onChange={this.Addbusiness} placeholder="Business seats" required/>             */}
+            {/* <input type="text" value={this.state.platinum}  
+            onChange={this.Addplatinum} placeholder="Platinum seats" required/>             */}
+          
             <button className="btn btn-primary" type='submit'>Submit</button>
 
 

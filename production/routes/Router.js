@@ -26,6 +26,8 @@ class Router {
         this.fetchAirport(app, db);
         this.addAirport(app,db);
         this.addRoute(app,db);
+        this.fetchCountryDetails(app, db);
+        // this.testAdder(app, db);
     }
 
     login(app , db) {
@@ -613,7 +615,7 @@ class Router {
                         msg:'Insertion Failed, Try again',
                     });
                 }else {
-                    console.log("Success")
+                    console.log("discounts updated");
                     res.json({
                         success: true,
                         msg:'Insertion Success'
@@ -682,67 +684,119 @@ class Router {
         });
     }
 
+    fetchCountryDetails(app, db){
+        app.get('/getCountries', (req, res)=>{
+                db.query(`select * from port_location where parent_id is null`
+                , (err, data, fields)=>{
+                    if(err) {
+                        res.json({
+                            success:false,
+                        });
+                    }else {
+                        res.json({
+                            success:true,
+                            data: data,
+                        });
+                    }
+                });
+
+        });
+    }
+
+
+    // testAdder(app, db){
+    //     app.get('/addAirports', (req, res)=>{
+    //             db.query(`CALL get_location(?,?)`,["Sri Lanka","out"]
+    //             , (err, data, fields)=>{
+    //                 if(err) {
+    //                     res.json({
+    //                         success:false,
+    //                     });
+    //                 }else {
+    //                     res.json({
+    //                         success:true,
+    //                         data: data,
+    //                     });
+    //                 }
+    //             });
+
+    //     });
+    // }
+
     addAirport(app,db){
         app.post('/addAirport',(req ,res) =>{
             let code = req.body.code;
             let address = req.body.address;
             let name = req.body.name;
-            console.log(address[0]);
+            let parent = req.body.parent
+            // console.log(req.body.parent);
+            let c1 =  address[0] == undefined ? null : address[0];
+            let c2 =  address[1] == undefined ? null : address[1];
+            let c3 =  address[2] == undefined ? null : address[2];
+            let c4 =  address[3] == undefined ? null : address[3];
+            // let c5 =  address[4] == undefined ? "this is empty" : address[4];
+            // console.log(loc);
             console.log(code);
             var count = 0;
-
-            db.query(`select count(*) as total from port_location`
-            , (err, data, fields)=>{
-                if(err) {
-                    console.log("error");
-                }else {
-                    count = data[0].total;
-                    console.log(count);
+            
+            // db.query(`select count(*) as total from port_location`
+            // , (err, data, fields)=>{
+            //     if(err) {
+            //         console.log("error");
+            //     }else {
+            //         count = data[0].total;
+            //         console.log(`count in qurey ${count}`);
                    
-                }
-            });
+            //     }
+            // });
 
-            db.query('insert into port_location(location) values(?)',[address[0]],(err,fields)=>{
+            db.query('CALL add_location(?,?,?,?,?,?,?)',[code,name,parent,c1,c2,c3,c4],(err,fields)=>{
                 if(err) {
                     console.log(err);
-                    console.log("error in parent port");
+                    res.json({
+                        success:false,
+                    });
                 }else {
-                    console.log("Success parent")
+                    console.log("Success location");
+                    res.json({
+                        success:true,
+                    });
+
                 }
 
             });
-            console.log(count);
-            for (let i = 1; i < address.length; i++) {
-                db.query('insert into port_location values(?,?)',[address[i],count+i],(err,fields)=>{
-                    if(err) {
-                        console.log(err);
-                        console.log("error in loop");
-                    }else {
-                        console.log("Success in loop")
-                    }
+            
+            // for (let i = 1; i < address.length; i++) {
+            //     db.query('insert into port_location values(?,?)',[address[i],count+i],(err,fields)=>{
+            //         if(err) {
+            //             console.log(err);
+            //             console.log("error in loop");
+            //         }else {
+            //             console.log("Success in loop")
+            //         }
     
-                });
-              }
+            //     });
+            //   }
 
-              db.query('insert into port_location values(?,?)',[code,count+address.length],(err,fields)=>{
-                if(err) {
-                    console.log(err);
-                    console.log("error in loop");
-                }else {
-                    console.log("Success")
-                }
+            //   db.query('insert into port_location values(?,?)',[code,count+address.length],(err,fields)=>{
+            //     if(err) {
+            //         console.log(err);
+            //         console.log("error in loop");
+            //     }else {
+            //         console.log("Success")
+            //     }
 
-            });
+            // });
 
-            db.query('insert into airport values(?,?)',[code,name],(err,fields)=>{
-                if(err) {
-                    console.log(err);
-                    console.log("airport not added");
-                }else {
-                    console.log("port added");
-                }
+            // db.query('insert into airport values(?,?)',[code,name],(err,fields)=>{
+            //     if(err) {
+            //         console.log(err);
+            //         console.log("airport not added");
+            //     }else {
+            //         console.log("port added");
+            //     }
 
-            });
+            // });
             
 
         })

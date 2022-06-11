@@ -62,8 +62,10 @@ class Add_discount extends Component {
       
             let result = await res.json();
             console.log(result);
-            if(result && result.success) {
-              console.log('Data Successfully entered to database')
+            console.log(result.msg);
+            if(result.success) {
+              alert('Data Successfully entered to database');
+
             }else {
               console.log(result.msg);
             }
