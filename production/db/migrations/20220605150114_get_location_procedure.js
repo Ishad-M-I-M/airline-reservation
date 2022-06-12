@@ -4,7 +4,7 @@
  */
 exports.up = function(knex) {
     let query = `
-    create function get_location(code varchar(5)) 
+    create function get_location(location_id int) 
     returns varchar(1000) deterministic
     begin
         declare loc varchar(1000);
@@ -12,11 +12,12 @@ exports.up = function(knex) {
         declare temp_id1 int;
         declare temp_id2 int;
         
-        select id into temp_id1 from port_location where location = code;
+        create temporary table if not exists port_location_tmp engine=memory select * from port_location left outer join parent_location using(id);
+        set temp_id1 = location_id;
         
         repeat
             select location, parent_id into temp_s, temp_id2 
-                from port_location
+                from port_location_tmp
                 where id = temp_id1;
             set temp_id1 = temp_id2;
             if (isnull(loc)) then
@@ -26,6 +27,7 @@ exports.up = function(knex) {
             end if;
         until isnull(temp_id1)
         end repeat;
+        drop temporary table if exists port_locatiion_tmp;
         return loc;
         
     end;`;

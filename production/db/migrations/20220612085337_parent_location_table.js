@@ -3,11 +3,11 @@
  * @returns { Promise<void> }
  */
 exports.up = function(knex) {
-    let query = `CREATE TABLE port_location (
-        id int NOT NULL auto_increment,
-        location varchar(50) NOT NULL unique,
-        primary key(id)
-      );`;
+    let query = `create table parent_location (
+        id int unique references port_location.id,
+        parent_id int references port_location.id,
+        primary key(id, parent_id)
+    );`;
       return knex.schema.raw(query);
 };
 
@@ -16,5 +16,5 @@ exports.up = function(knex) {
  * @returns { Promise<void> }
  */
 exports.down = function(knex) {
-    return knex.schema.dropTableIfExists("port_location");
+    return knex.schema.dropTableIfExists("parent_location");
 };
