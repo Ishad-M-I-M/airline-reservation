@@ -405,7 +405,6 @@ begin
     declare temp_id1 int;
     declare temp_id2 int;
     
-    select location into loc from port_location where id = location_id;
     set temp_id1 = location_id;
     
     repeat
@@ -413,7 +412,11 @@ begin
 			from port_location_with_parent
 			where id = temp_id1;
 		set temp_id1 = temp_id2;
-		set loc = concat(loc,', ',temp_s);
+        if isnull(loc) then
+			set loc = temp_s;
+		else
+			set loc = concat(loc,', ',temp_s);
+		end if;
 	until isnull(temp_id1)
     end repeat;
 	return loc;
@@ -478,3 +481,5 @@ begin
 
 end$$
 delimiter ;
+
+select get_location(20);

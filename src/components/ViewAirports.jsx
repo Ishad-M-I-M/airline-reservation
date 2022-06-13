@@ -48,7 +48,7 @@ export default function ViewAirports() {
             <div className='card-body row'>
               <div className='col-4'>{name}</div>
               <div className='col-2'>{code}</div>
-              <div className='col-4'>{location.split(",").splice(1).join(', ')}</div>
+              <div className='col-4'>{location}</div>
               <div className='col-2'><button onClick={()=>handleDelete(id)} className="btn btn-primary">Delete</button></div>
             </div>
           </div>
