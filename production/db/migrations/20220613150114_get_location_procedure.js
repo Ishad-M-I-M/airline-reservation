@@ -12,7 +12,7 @@ exports.up = function(knex) {
         declare temp_id1 int;
         declare temp_id2 int;
         
-        create temporary table if not exists port_location_tmp engine=memory select * from port_location left outer join parent_location using(id);
+        select location into loc from port_location where id = location_id;
         set temp_id1 = location_id;
         
         repeat
@@ -27,7 +27,6 @@ exports.up = function(knex) {
             end if;
         until isnull(temp_id1)
         end repeat;
-        drop temporary table if exists port_locatiion_tmp;
         return loc;
         
     end;`;

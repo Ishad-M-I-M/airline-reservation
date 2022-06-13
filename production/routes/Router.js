@@ -432,9 +432,9 @@ class Router {
         app.get('/route', (req, res)=>{
             if(req.session.userID) {
                 db.query(`select route_id as id, origin, destination
-                            from (select route_id,location as origin from route inner join port_location on origin=id) as origin 
+                            from (select route_id,code as origin from route inner join airport on origin=airport_id) as origin 
                             natural join 
-                                (select route_id,location as destination from route inner join port_location on destination=id) as destination; `
+                                (select route_id,code as destination from route inner join airport on destination=airport_id) as destination; `
                 , (err, data, fields)=>{
                     if(err) {
                         res.json({
@@ -557,37 +557,6 @@ class Router {
         });
     }
 
-    fetchSeatNumber(app, db) {
-        app.post('/loadSeatnumber', (req, res) => {
-            if(req.session.userID) {
-                let flight_id = parseInt(req.body.flight_id);
-                let seat_inclass = req.body.class;
-                let stmt = '';
-                if(seat_inclass=='Economy'){
-                    stmt = 'SELECT get_Economy_seats(?)';
-                }else if(seat_inclass=='Business'){
-                    stmt = 'SELECT get_Business_seats(?)';
-                }else{
-                    stmt = 'SELECT get_Platinum_seats(?)';
-                }
-
-                db.query(stmt, [flight_id], (err, data, fields) => {
-                    if(err) {
-                        console.log(err);
-                        res.status(500);
-                        res.json({
-                            success: false,
-                        });
-                    }else {
-                        res.json({
-                            success: true,
-                            seat_number: data[0],
-                        });
-                    }
-                });
-            }
-        });
-    }
 
     bookTicket(app, db) {
         app.post("/bookTicket", (req, res) => {
@@ -676,7 +645,7 @@ class Router {
 
     getLocations(app, db){
         app.get('/location', (req, res) => {
-            db.query('SELECT * from port_location', (err, data)=>{
+            db.query('SELECT * from port_location_with_parent', (err, data)=>{
                 if (err) {
                     res.status(500);
                     res.json({success: false});

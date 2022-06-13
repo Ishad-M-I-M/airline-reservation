@@ -32,7 +32,7 @@ export default function ViewFlightSchedules() {
     const [endStations, setEndStations] = useState({'flight_id': null, 'tail_number': null, 'model': null, 'origin': null, 'destination': null, 'takeoff_time': null, 'departure_time': null});
 
     let handleChange = (endStation, value) =>{
-      let endStations_ = {... endStations};
+      let endStations_ = {...endStations};
       endStations_[endStation] = value? value: null;
       setEndStations(endStations_);
     }
@@ -115,6 +115,7 @@ export default function ViewFlightSchedules() {
                       <div className="col-md-1 text-center align-middle"><button className="btn btn-primary" onClick={()=>handleDelete(flight_id)}>Delete</button></div>
                       </div>
             }
+            else return null;
         }   
         )}
           

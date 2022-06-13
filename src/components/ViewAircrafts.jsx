@@ -19,7 +19,7 @@ export default function ViewAircrafts() {
 
   let handleDelete = (aircraft_id_) => {
     axios.delete(`/aircraft/${aircraft_id_}`).then(()=>{
-      setAircrafts( [... aircrafts].filter(({aircraft_id})=> aircraft_id != aircraft_id_));
+      setAircrafts( [...aircrafts].filter(({aircraft_id})=> aircraft_id != aircraft_id_));
       alert(`Aircraft deleted sucessfully` );
     })
     .catch((err)=>{
@@ -38,7 +38,7 @@ export default function ViewAircrafts() {
         <label htmlFor='search' className='form-label'>Filter by Model</label>
         <input id="search" type="text" list="airplanes" className='form-control' onChange={(e)=> handleChange(e)}/>
         <datalist id="airplanes">
-          {[... new Set(aircrafts.map(({model})=> model))].map((x)=> <option key={x}>{x}</option>)}
+          {[...new Set(aircrafts.map(({model})=> model))].map((x)=> <option key={x}>{x}</option>)}
         </datalist>
       </form>
       {aircrafts.map(({aircraft_id, model, tail_number})=>{

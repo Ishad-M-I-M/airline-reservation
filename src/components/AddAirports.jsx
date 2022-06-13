@@ -14,13 +14,13 @@ export default function AddAirports() {
     
 
     let handleChange = (e) => {
-        let data = {... inputs};
+        let data = {...inputs};
         data[e.target.name] = e.target.value;
         setInputs(data);
     }
 
     let addField = () => {
-        let newLocations = [... locationFields];
+        let newLocations = [...locationFields];
         newLocations.push({location: "", htmlId: locationFields.length + 1, exist: false});
         setLocationFields(newLocations);
         
@@ -28,7 +28,7 @@ export default function AddAirports() {
 
     let handleLocationChange = (e) => {
         let isExist = data.filter(({location})=> location === e.target.value).length > 0;
-        let updated = [... locationFields].map((field)=>{
+        let updated = [...locationFields].map((field)=>{
             if (e.target.id == field.htmlId){
                 let newField = {htmlId: field.htmlId, exist: isExist, location: e.target.value};
                 if(isExist){

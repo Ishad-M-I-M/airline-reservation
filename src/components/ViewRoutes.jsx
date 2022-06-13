@@ -1,4 +1,3 @@
-import { Button } from "bootstrap";
 import React, { useEffect, useState } from "react";
 
 export default function ViewRoutes() {
@@ -27,7 +26,7 @@ export default function ViewRoutes() {
       .catch((e)=>{
         console.error(e);
       })
-    });
+    },[]);
 
 
     
@@ -42,7 +41,7 @@ export default function ViewRoutes() {
     const [endStations, setEndStations] = useState({'origin': null, 'destination': null});
 
     let handleChange = (endStation, value) =>{
-      let endStations_ = {... endStations};
+      let endStations_ = {...endStations};
       endStations_[endStation] = value? value: null;
       setEndStations(endStations_);
     }
@@ -102,6 +101,7 @@ export default function ViewRoutes() {
                       <div className="col-4"><button className="btn btn-primary" onClick={()=>handleDelete(id)}>Delete</button></div>
                       </div>
             }
+            else return null;
         }   
         )}
           

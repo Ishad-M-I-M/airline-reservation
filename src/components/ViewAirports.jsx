@@ -10,7 +10,7 @@ export default function ViewAirports() {
   let handleDelete = (id_) =>{
     // request to delete : DELETE /apirports/:id
     axios.delete(`/airport/${id_}`).then(()=>{
-      setAirports( [... airports].filter(({id})=> id != id_));
+      setAirports( [...airports].filter(({id})=> id != id_));
       alert(`Airport deleted sucessfully` );
     })
     .catch((err)=>{
