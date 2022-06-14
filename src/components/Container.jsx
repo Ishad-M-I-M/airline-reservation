@@ -8,7 +8,6 @@ import ViewAircrafts from './ViewAircrafts';
 import ViewAirports from './ViewAirports';
 import NotFound from './NotFound';
 import AddAirports from './AddAirports';
-import ViewReports from './ViewReports';
 import ViewFlightSchedules from './ViewFlightSchedules';
 
 export default function Container() {
@@ -21,7 +20,6 @@ export default function Container() {
                 <a href='/view-airports'><button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" >View Airports</button></a>
                 <a href='/add-airports'><button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" >Add Airports</button></a>
                 <a href='/view-flightSchedules'><button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" >View Flight Schedules</button></a>
-                <a href='/view-reports'><button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1">View Reports</button></a>
             </div>
             <div className="col-md-10 bg-secondary bg-opacity-25 overflow-auto" id='content' style={{'maxHeight': '88vh' }}>
                 <BrowserRouter>
@@ -32,7 +30,6 @@ export default function Container() {
                         <Route path='/view-airports' element={<ViewAirports/>}></Route>
                         <Route path='/add-airports' element={<AddAirports/>}></Route>
                         <Route path='/view-flightSchedules' element={<ViewFlightSchedules/>}></Route>
-                        <Route path='/view-reports' element={<ViewReports/>}></Route>
                         <Route path='*' element = {<NotFound/>}></Route>
                     </Routes>
                 </BrowserRouter>
