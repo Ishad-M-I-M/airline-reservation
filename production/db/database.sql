@@ -375,9 +375,9 @@ create procedure book_ticket( in user_id int,
                             in date datetime,
                             in class varchar(10),
                             in paid decimal(10,2),
-                            in is_boarded tinyint,
-                            out ticket_id int)
+                            in is_boarded tinyint)
 begin
+	declare ticket_id int;
 	start transaction;
 		insert into ticket( `user_id`, `date`, `class`, `paid`, `is_boarded`) 
 		values (user_id, date, class, paid, is_boarded);
@@ -392,6 +392,10 @@ begin
 	commit;
 end $$
 delimiter ;
+
+call book_ticket(1, 'A0000001', 11, 10, '2022-06-14', 'Economy', '400.00', 0 );
+call book_ticket(1, 'A0000002', 11, 11, '2022-06-14', 'Economy', '400.00', 0 );
+call book_ticket(1, 'A0000003', 11, 12, '2022-06-14', 'Economy', '400.00', 0 );
 
 create view port_location_with_parent as 
 	select * from port_location left outer join parent_location using(id);
@@ -495,5 +499,3 @@ begin
     insert into airport(code, name, location) values (code, name, loc_id);
 end $$
 delimiter ;
-
-call add_airport('JFK', 'John F. Kennedy International Airport', 'Airport Blvd.,Singapore', 2);

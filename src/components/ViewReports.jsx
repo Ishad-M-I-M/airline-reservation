@@ -52,7 +52,7 @@ class ViewReports extends React.Component {
       });
 
       let result = await res.json();
-
+      console.log(result);
       if(result && result.success) {
         this.setState({
           PassengerDetailsOutput: result.data,
