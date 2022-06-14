@@ -3,9 +3,9 @@ import Popup from './Popup';
 import '../css/clerk.css'
 import Form from './Form';
 import { useState } from 'react';
-import Add_discount from './Add_discount';
-import Add_airport from './Add_airport';
-import Add_craft from './Add_craft';
+import AddDiscount from './AddDiscount';
+import AddAirport from './AddAirport';
+import Add_craft from './AddAircraft';
 import 'bootstrap/dist/css/bootstrap.css';
 
 
@@ -52,7 +52,7 @@ function ClerkPage() {
         <h1 style={{textAlign: 'center'}}>
         Add Airport
         </h1>
-       <Add_airport/>
+       <AddAirport/>
 
       </Popup>
         
@@ -63,7 +63,7 @@ function ClerkPage() {
         <h1 style={{textAlign: 'center'}}>
         Add / Update Discount
         </h1>
-        <Add_discount/>
+        <AddDiscount/>
 
       </Popup>
         
@@ -90,4 +90,4 @@ function ClerkPage() {
   )
 }
 
-export default ClerkPage
+export default ClerkPage;

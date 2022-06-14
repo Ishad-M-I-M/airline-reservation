@@ -3,7 +3,7 @@ import '../css/formstyle.css'
 import 'bootstrap/dist/css/bootstrap.css';
 
 
-class Add_airport extends Component {
+class AddAirport extends Component {
 
     constructor(props) {
       super(props)
@@ -229,4 +229,4 @@ class Add_airport extends Component {
   }
 }
 
-export default Add_airport
+export default AddAirport

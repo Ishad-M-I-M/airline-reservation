@@ -10,6 +10,7 @@ import NotFound from './NotFound';
 import AddAirports from './AddAirports';
 import ViewReports from './ViewReports';
 import ViewFlightSchedules from './ViewFlightSchedules';
+import ClerkPage from "./ClerkPage";
 
 export default function Container() {
 
@@ -22,6 +23,7 @@ export default function Container() {
                 <a href='/add-airports'><button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" >Add Airports</button></a>
                 <a href='/view-reports'><button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1">View Reports</button></a>
                 <a href='/view-flight-schedules'><button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" >View Flight Schedules</button></a>
+                <a href='/add'><button type="button" className="btn btn-primary rounded-pill sidebar-btn mb-1" >Adder</button></a>
             </div>
             <div className="col-md-10 bg-secondary bg-opacity-25 overflow-auto" id='content' style={{'maxHeight': '88vh' }}>
                 <BrowserRouter>
@@ -33,6 +35,7 @@ export default function Container() {
                         <Route path='/add-airports' element={<AddAirports/>}></Route>
                         <Route path='/view-reports' element={<ViewReports/>}></Route>
                         <Route path='/view-flight-schedules' element={<ViewFlightSchedules/>}></Route>
+                        <Route path='/add' element={<ClerkPage/>}></Route>
                         <Route path='*' element = {<NotFound/>}></Route>
                     </Routes>
                 </BrowserRouter>

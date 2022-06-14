@@ -957,4 +957,199 @@ app.post("/loadPastFlightDetailsReport", (req, res) => {
   }
 });
 
+
+  app.post('/discount',(req ,res) =>{ 
+      console.log(req.body.gold); 
+      let gold ; 
+      let discount ; 
+
+      if(req.body.gold != null){ 
+          gold = req.body.gold  
+      }else{ 
+          gold = -1; 
+      } 
+      if(req.body.discount != null){ 
+          discount = req.body.discount  
+      }else{ 
+          discount = -1; 
+      } 
+      db.query('CALL UpdateDiscount(?,?)',[gold,discount],(err,fields)=>{ 
+          if(err) { 
+              console.log(err); 
+              res.json({ 
+                  success:false, 
+                  msg:'Insertion Failed, Try again', 
+              }); 
+          }else { 
+              console.log("Success") 
+              res.json({ 
+                  success: true, 
+                  msg:'Insertion Success' 
+              }); 
+          } 
+
+      }) 
+       
+
+  }); 
+
+  app.post('/addAircraft',(req,res)=>{ 
+      let model = req.body.model; 
+      let seats = req.body.seats; 
+      let economy = req.body.economy; 
+      let business = req.body.business; 
+      let platinum = req.body.platinum; 
+      console.log(`${model}`); 
+      db.query('INSERT INTO aircraft (model,total_seats,Economy_seats,Business_seats,Platinum_seats) VALUES(?,?,?,?,?)',[model,seats,economy,business,platinum],(err,fields)=>{ 
+          if(err) { 
+              console.log(err); 
+              res.json({ 
+                  success:false, 
+                  msg:'Insertion Failed, Try again', 
+              }); 
+          }else { 
+              console.log("Success") 
+              res.json({ 
+                  success: true, 
+                  msg:'Insertion Success' 
+              }); 
+          } 
+
+      }) 
+
+
+
+  }) 
+
+  app.get('/discount', (req, res)=>{ 
+      if(req.session.userID) { 
+          db.query(`select * from discount` 
+          , (err, data, fields)=>{ 
+              if(err) { 
+                  res.json({ 
+                      success:false, 
+                  }); 
+              }else { 
+                  res.json({ 
+                      success:true, 
+                      data: data, 
+                  }); 
+              } 
+          }); 
+      }else { 
+          req.json({ 
+              success:false, 
+          }); 
+      } 
+  }); 
+
+  app.post('/addAirport',(req ,res) =>{ 
+      let code = req.body.code; 
+      let address = req.body.address; 
+      let name = req.body.name; 
+      console.log(address[0]); 
+      console.log(code); 
+      var count = 0; 
+
+      db.query(`select count(*) as total from port_location` 
+      , (err, data, fields)=>{ 
+          if(err) { 
+              console.log("error"); 
+          }else { 
+              count = data[0].total; 
+              console.log(count); 
+              
+          } 
+      }); 
+
+      db.query('insert into port_location(location) values(?)',[address[0]],(err,fields)=>{ 
+          if(err) { 
+              console.log(err); 
+              console.log("error in parent port"); 
+          }else { 
+              console.log("Success parent") 
+          } 
+
+      }); 
+      console.log(count); 
+      for (let i = 1; i < address.length; i++) { 
+          db.query('insert into port_location values(?,?)',[address[i],count+i],(err,fields)=>{ 
+              if(err) { 
+                  console.log(err); 
+                  console.log("error in loop"); 
+              }else { 
+                  console.log("Success in loop") 
+              } 
+
+          }); 
+        } 
+
+        db.query('insert into port_location values(?,?)',[code,count+address.length],(err,fields)=>{ 
+          if(err) { 
+              console.log(err); 
+              console.log("error in loop"); 
+          }else { 
+              console.log("Success") 
+          } 
+
+      }); 
+
+      db.query('insert into airport values(?,?)',[code,name],(err,fields)=>{ 
+          if(err) { 
+              console.log(err); 
+              console.log("airport not added"); 
+          }else { 
+              console.log("port added"); 
+          } 
+
+      }); 
+       
+
+  }) 
+
+  app.get('/airportDetails', (req, res)=>{ 
+      if(req.session.userID) { 
+          db.query(`select airport_id,code from airport` 
+          , (err, data, fields)=>{ 
+              if(err) { 
+                  res.json({ 
+                      success:false, 
+                  }); 
+              }else { 
+                  res.json({ 
+                      success:true, 
+                      data: data, 
+                  }); 
+              } 
+          }); 
+      }else { 
+          req.json({ 
+              success:false, 
+          }); 
+      } 
+  }); 
+
+
+  app.post('/addRoute', (req, res) => { 
+          let origin = req.body.Origin; 
+          let destination = req.body.Destination; 
+          console.log(`${origin},${destination}`); 
+          db.query('INSERT INTO route (origin,destination) VALUES(?,?) ',[origin,destination],(err, fields)=>{ 
+              if(err) { 
+                  console.log(err); 
+                  res.json({ 
+                      success:false, 
+                      msg:'Insertion Failed, Try again', 
+                  }); 
+              }else { 
+                  console.log("Success") 
+                  res.json({ 
+                      success: true, 
+                      msg:'Insertion Success' 
+                  }); 
+              } 
+          }); 
+  }) 
+
+
 module.exports = app;

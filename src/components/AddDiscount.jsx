@@ -4,7 +4,7 @@ import '../css/formstyle.css'
 import Example from './Toaster';
 
 
-class Add_discount extends Component {
+class AddDiscount extends Component {
 
 
 
@@ -121,4 +121,4 @@ class Add_discount extends Component {
   }
 }
 
-export default Add_discount
+export default AddDiscount
