@@ -9,6 +9,7 @@ require('dotenv').config();
 // controllers
 const airportController = require('./controllers/airportController');
 const routeController = require('./controllers/routeController');
+const aircraftController = require('./controllers/aircraftController');
 const controller = require('./controllers/controller');
 // app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
@@ -46,7 +47,8 @@ app.use(session({
 }));
 
 app.use('/airport', airportController );
-app.use('/route', routeController )
+app.use('/route', routeController );
+app.use('/aircraft', aircraftController);
 app.use('/', controller);
 
 // app.get('/', function(req, res) {

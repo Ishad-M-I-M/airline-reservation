@@ -547,52 +547,6 @@ app.post("/bookTicket", (req, res) => {
   }
 });
 
-app.get("/aircraft", (req, res) => {
-  if (req.session.userID) {
-    db.query("SELECT * from aircraft", (err, data) => {
-      if (err) {
-        res.status(500);
-        res.json({
-          success: false,
-        });
-      } else {
-        res.json({
-          success: true,
-          aircrafts: data,
-        });
-      }
-    });
-  } else {
-    req.json({
-      success: false,
-    });
-  }
-});
-
-app.delete("/aircraft/:id", (req, res) => {
-  if (req.session.userID) {
-    db.query(
-      `DELETE FROM aircraft WHERE aircraft_id=? `,
-      [req.params.id],
-      (err) => {
-        if (err) {
-          res.status(500);
-          res.json({
-            success: false,
-          });
-        } else {
-          res.json({
-            success: true,
-          });
-        }
-      }
-    );
-  } else {
-    req.json({
-      success: false,
-    });
-  }
-});
 
 app.get("/location", (req, res) => {
   db.query("SELECT * from port_location_with_parent", (err, data) => {

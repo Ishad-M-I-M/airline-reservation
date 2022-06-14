@@ -21,7 +21,7 @@ router.post('/', function (req, res){
         console.log(err);
         return res.status(404).send({success: false});
     })
-})
+});
 
 router.delete('/:id', function (req, res){
     db.raw(`DELETE FROM airport WHERE airport_id=? `,[req.params.id])
@@ -32,6 +32,6 @@ router.delete('/:id', function (req, res){
         return res.status(500).json({success:false});
     });
 
-})
+});
 
 module.exports = router;
