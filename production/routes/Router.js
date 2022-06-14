@@ -711,7 +711,7 @@ class Router {
             if (req.session.userID) {
                 if(req.body.below === true) {
                     if(req.body.above === true) {
-                        db.query('SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM passenger INNER JOIN ticket ON passenger.passenger_id = ticket.passenger_id INNER JOIN flight AS f1 ON ticket.flight_id = f1.flight_id INNER JOIN flight AS f2 INNER JOIN aircraft ON f1.aircraft_id = aircraft.aircraft_id WHERE f1.takeoff_time > NOW() AND f1.takeoff_time < f2.takeoff_time AND aircraft.tail_number = ?',[req.body.flight],(err, data, fields) => {
+                        db.query('SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM passenger INNER JOIN booking ON passenger.passenger_id = booking.passenger_id INNER JOIN ticket ON booking.ticket_id = ticket.ticket_id INNER JOIN seat_reservation ON ticket.ticket_id = seat_reservation.ticket_id LEFT JOIN flight AS f1 ON seat_reservation.flight_id = f1.flight_id LEFT JOIN flight AS f2 ON seat_reservation.flight_id = f2.flight_id INNER JOIN aircraft ON f1.aircraft_id = aircraft.aircraft_id WHERE f1.takeoff_time > NOW() AND NOT (f1.takeoff_time > f2.takeoff_time) AND aircraft.tail_number = ?',[req.body.flight],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -726,7 +726,7 @@ class Router {
                             }
                         });
                     } else {
-                        db.query('SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM passenger INNER JOIN ticket ON passenger.passenger_id = ticket.passenger_id INNER JOIN flight AS f1 ON ticket.flight_id = f1.flight_id INNER JOIN flight AS f2 INNER JOIN aircraft ON f1.aircraft_id = aircraft.aircraft_id WHERE f1.takeoff_time > NOW() AND f1.takeoff_time < f2.takeoff_time AND TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) < 18 AND aircraft.tail_number = ?',[req.body.flight],(err, data, fields) => {
+                        db.query('SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM passenger INNER JOIN booking ON passenger.passenger_id = booking.passenger_id INNER JOIN ticket ON booking.ticket_id = ticket.ticket_id INNER JOIN seat_reservation ON ticket.ticket_id = seat_reservation.ticket_id LEFT JOIN flight AS f1 ON seat_reservation.flight_id = f1.flight_id LEFT JOIN flight AS f2 ON seat_reservation.flight_id = f2.flight_id INNER JOIN aircraft ON f1.aircraft_id = aircraft.aircraft_id WHERE f1.takeoff_time > NOW() AND NOT(f1.takeoff_time > f2.takeoff_time) AND TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) < 18 AND aircraft.tail_number = ?',[req.body.flight],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -743,7 +743,7 @@ class Router {
                     }
                 } else {
                     if(req.body.above === true) {
-                        db.query('SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM passenger INNER JOIN ticket ON passenger.passenger_id = ticket.passenger_id INNER JOIN flight AS f1 ON ticket.flight_id = f1.flight_id INNER JOIN flight AS f2 INNER JOIN aircraft ON f1.aircraft_id = aircraft.aircraft_id WHERE f1.takeoff_time > NOW() AND f1.takeoff_time < f2.takeoff_time AND TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) > 17 AND aircraft.tail_number = ?',[req.body.flight],(err, data, fields) => {
+                        db.query('SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM passenger INNER JOIN booking ON passenger.passenger_id = booking.passenger_id INNER JOIN ticket ON booking.ticket_id = ticket.ticket_id INNER JOIN seat_reservation ON ticket.ticket_id = seat_reservation.ticket_id LEFT JOIN flight AS f1 ON seat_reservation.flight_id = f1.flight_id LEFT JOIN flight AS f2 ON seat_reservation.flight_id = f2.flight_id INNER JOIN aircraft ON f1.aircraft_id = aircraft.aircraft_id WHERE f1.takeoff_time > NOW() AND NOT(f1.takeoff_time > f2.takeoff_time) AND TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) > 17 AND aircraft.tail_number = ?',[req.body.flight],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -772,7 +772,7 @@ class Router {
         app.post('/loadTotalRevenueReport', (req, res) => {
             if (req.session.userID) {
                 if (req.body.aircraft_id === '') {
-                    db.query('SELECT aircraft.model, SUM(ticket.paid) AS Total_Revenue FROM ticket INNER JOIN flight USING(flight_id) INNER JOIN aircraft USING(aircraft_id) WHERE flight.takeoff_time < NOW() AND is_boarded = 1 GROUP BY aircraft.model ORDER BY aircraft.aircraft_id',(err, data, fields) => {
+                    db.query('SELECT aircraft.model, SUM(ticket.paid) AS Total_Revenue FROM ticket INNER JOIN booking USING(ticket_id) INNER JOIN flight USING(flight_id) INNER JOIN aircraft USING(aircraft_id) WHERE flight.takeoff_time < NOW() AND is_boarded = 1 GROUP BY aircraft.model ORDER BY aircraft.aircraft_id;',(err, data, fields) => {
                         if(err){
                             res.json({
                                 success: false,
@@ -787,7 +787,7 @@ class Router {
                         }
                     });
                 } else {
-                    db.query('SELECT aircraft.model, SUM(ticket.paid) as Total_Revenue FROM ticket INNER JOIN flight USING(flight_id) INNER JOIN aircraft USING(aircraft_id) WHERE flight.takeoff_time < NOW() AND is_boarded = 1 AND aircraft.model = ?',[req.body.aircraft_id],(err, data, fields) => {
+                    db.query('SELECT aircraft.model, SUM(ticket.paid) as Total_Revenue FROM ticket INNER JOIN booking USING(ticket_id) INNER JOIN flight USING(flight_id) INNER JOIN aircraft USING(aircraft_id) WHERE flight.takeoff_time < NOW() AND is_boarded = 1 AND aircraft.model = ?',[req.body.aircraft_id],(err, data, fields) => {
                         if(err){
                             res.json({
                                 success: false,
@@ -811,7 +811,7 @@ class Router {
             if (req.session.userID) {
                 if (req.body.Destination === '') {
                     if (req.body.Enddate !== '' && req.body.Startdate !== '') {
-                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM airport INNER JOIN route ON airport.airport_id = route.destination INNER JOIN flight ON route.route_id = flight.route_id INNER JOIN ticket ON ticket.flight_id = flight.flight_id WHERE NOT (flight.takeoff_time > ? OR flight.takeoff_time < ?) AND ticket.is_boarded = 1 GROUP BY airport.code',[req.body.Enddate, req.body.Startdate],(err, data, fields) => {
+                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM airport INNER JOIN route ON airport.airport_id = route.destination INNER JOIN flight ON route.route_id = flight.route_id INNER JOIN booking ON flight.flight_id = booking.flight_id INNER JOIN ticket USING(ticket_id) WHERE NOT (flight.takeoff_time > ? OR flight.takeoff_time < ?) AND ticket.is_boarded = 1 GROUP BY airport.code;',[req.body.Enddate, req.body.Startdate],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -827,7 +827,7 @@ class Router {
                         });
                     
                     } else if (req.body.Enddate == '' && req.body.Startdate !== '') {
-                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM airport INNER JOIN route ON airport.airport_id = route.destination INNER JOIN flight ON route.route_id = flight.route_id INNER JOIN ticket ON ticket.flight_id = flight.flight_id WHERE NOT (flight.takeoff_time < ?) AND ticket.is_boarded = 1 GROUP BY airport.code',[req.body.Startdate],(err, data, fields) => {
+                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM airport INNER JOIN route ON airport.airport_id = route.destination INNER JOIN flight ON route.route_id = flight.route_id INNER JOIN booking ON flight.flight_id = booking.flight_id INNER JOIN ticket USING(ticket_id) WHERE NOT (flight.takeoff_time < ?) AND ticket.is_boarded = 1 GROUP BY airport.code',[req.body.Startdate],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -842,7 +842,7 @@ class Router {
                             }
                         });
                     } else if (req.body.Enddate !== '' && req.body.Startdate == '') {
-                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM airport INNER JOIN route ON airport.airport_id = route.destination INNER JOIN flight ON route.route_id = flight.route_id INNER JOIN ticket ON ticket.flight_id = flight.flight_id WHERE NOT (flight.takeoff_time > ?) AND ticket.is_boarded = 1 GROUP BY airport.code',[req.body.Enddate],(err, data, fields) => {
+                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM airport INNER JOIN route ON airport.airport_id = route.destination INNER JOIN flight ON route.route_id = flight.route_id INNER JOIN booking ON flight.flight_id = booking.flight_id INNER JOIN ticket USING(ticket_id) WHERE NOT (flight.takeoff_time > ?) AND ticket.is_boarded = 1 GROUP BY airport.code',[req.body.Enddate],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -857,7 +857,7 @@ class Router {
                             }
                         });
                     } else {
-                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM airport INNER JOIN route ON airport.airport_id = route.destination INNER JOIN flight ON route.route_id = flight.route_id INNER JOIN ticket ON ticket.flight_id = flight.flight_id WHERE ticket.is_boarded = 1 GROUP BY airport.code',(err, data, fields) => {
+                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM airport INNER JOIN route ON airport.airport_id = route.destination INNER JOIN flight ON route.route_id = flight.route_id INNER JOIN booking ON flight.flight_id = booking.flight_id INNER JOIN ticket USING(ticket_id) WHERE ticket.is_boarded = 1 GROUP BY airport.code',(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -874,7 +874,7 @@ class Router {
                     }
                 } else {
                     if (req.body.Enddate !== '' && req.body.Startdate !== '') {
-                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN flight ON ticket.flight_id = flight.flight_id INNER JOIN route ON flight.route_id = route.route_id INNER JOIN airport ON airport.airport_id = route.destination WHERE NOT (flight.takeoff_time > ? OR flight.takeoff_time < ?) AND airport.code = ? AND ticket.is_boarded = 1',[req.body.Enddate, req.body.Startdate, req.body.Destination],(err, data, fields) => {
+                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN booking USING(ticket_id) INNER JOIN flight USING(flight_id) INNER JOIN route ON flight.route_id = route.route_id INNER JOIN airport ON airport.airport_id = route.destination WHERE NOT (flight.takeoff_time > ? OR flight.takeoff_time < ?) AND airport.code = ? AND ticket.is_boarded = 1',[req.body.Enddate, req.body.Startdate, req.body.Destination],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -890,7 +890,7 @@ class Router {
                         });
                     
                     } else if (req.body.Enddate == '' && req.body.Startdate !== '') {
-                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN flight ON ticket.flight_id = flight.flight_id INNER JOIN route ON flight.route_id = route.route_id INNER JOIN airport ON airport.airport_id = route.destination WHERE NOT (flight.takeoff_time < ?) AND airport.code = ? AND ticket.is_boarded = 1',[req.body.Startdate, req.body.Destination],(err, data, fields) => {
+                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN booking USING(ticket_id) INNER JOIN flight USING(flight_id) INNER JOIN route ON flight.route_id = route.route_id INNER JOIN airport ON airport.airport_id = route.destination WHERE NOT (flight.takeoff_time < ?) AND airport.code = ? AND ticket.is_boarded = 1',[req.body.Startdate, req.body.Destination],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -905,7 +905,7 @@ class Router {
                             }
                         });
                     } else if (req.body.Enddate !== '' && req.body.Startdate == '') {
-                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN flight ON ticket.flight_id = flight.flight_id INNER JOIN route ON flight.route_id = route.route_id INNER JOIN airport ON airport.airport_id = route.destination WHERE NOT (flight.takeoff_time > ?) AND airport.code = ? AND ticket.is_boarded = 1',[req.body.Enddate, req.body.Destination],(err, data, fields) => {
+                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN booking USING(ticket_id) INNER JOIN flight USING(flight_id) INNER JOIN route ON flight.route_id = route.route_id INNER JOIN airport ON airport.airport_id = route.destination WHERE NOT (flight.takeoff_time > ?) AND airport.code = ? AND ticket.is_boarded = 1',[req.body.Enddate, req.body.Destination],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -920,7 +920,7 @@ class Router {
                             }
                         });
                     } else {
-                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN flight ON ticket.flight_id = flight.flight_id INNER JOIN route ON flight.route_id = route.route_id INNER JOIN airport ON airport.airport_id = route.destination WHERE airport.code = ? AND ticket.is_boarded = 1',[req.body.Destination],(err, data, fields) => {
+                        db.query('SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN booking USING(ticket_id) INNER JOIN flight USING(flight_id) INNER JOIN route ON flight.route_id = route.route_id INNER JOIN airport ON airport.airport_id = route.destination WHERE airport.code = ? AND ticket.is_boarded = 1',[req.body.Destination],(err, data, fields) => {
                             if(err){
                                 res.json({
                                     success: false,
@@ -944,7 +944,7 @@ class Router {
         app.post('/loadBookingReport', (req, res) => {
             if (req.session.userID) {
                 if (req.body.Enddate == '' && req.body.Startdate !== '') {
-                    db.query('SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount INNER JOIN user INNER JOIN ticket ON user.user_id = ticket.user_id INNER JOIN flight ON ticket.flight_id = flight.flight_id WHERE NOT (flight.takeoff_time < ?) AND (discount.type = user.discount_type) GROUP BY user.discount_type',[req.body.Startdate],(err, data, fields) => {
+                    db.query('SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount INNER JOIN user INNER JOIN ticket ON user.user_id = ticket.user_id INNER JOIN booking USING(ticket_id) INNER JOIN flight USING(flight_id) WHERE NOT (flight.takeoff_time < ?) AND (discount.type = user.discount_type) GROUP BY user.discount_type',[req.body.Startdate],(err, data, fields) => {
                         if(err){
                             res.json({
                                 success: false,
@@ -962,7 +962,7 @@ class Router {
                     });
                 
                 } else if (req.body.Enddate !== '' && req.body.Startdate == '') {
-                    db.query('SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount INNER JOIN user INNER JOIN ticket ON user.user_id = ticket.user_id INNER JOIN flight ON ticket.flight_id = flight.flight_id WHERE NOT (flight.takeoff_time > ?) AND (discount.type = user.discount_type) GROUP BY user.discount_type',[req.body.Enddate],(err, data, fields) => {
+                    db.query('SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount INNER JOIN user INNER JOIN ticket ON user.user_id = ticket.user_id INNER JOIN booking USING(ticket_id) INNER JOIN flight USING(flight_id) WHERE NOT (flight.takeoff_time > ?) AND (discount.type = user.discount_type) GROUP BY user.discount_type',[req.body.Enddate],(err, data, fields) => {
                         if(err){
                             res.json({
                                 success: false,
@@ -980,7 +980,7 @@ class Router {
                     });
                 
                 } else if (req.body.Enddate !== '' && req.body.Startdate !== '') {
-                    db.query('SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount INNER JOIN user INNER JOIN ticket ON user.user_id = ticket.user_id INNER JOIN flight ON ticket.flight_id = flight.flight_id WHERE NOT (flight.takeoff_time > ? OR flight.takeoff_time < ?) AND (discount.type = user.discount_type) GROUP BY user.discount_type',[req.body.Enddate, req.body.Startdate],(err, data, fields) => {
+                    db.query('SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount INNER JOIN user INNER JOIN ticket ON user.user_id = ticket.user_id INNER JOIN booking USING(ticket_id) INNER JOIN flight USING(flight_id) WHERE NOT (flight.takeoff_time > ? OR flight.takeoff_time < ?) AND (discount.type = user.discount_type) GROUP BY user.discount_type',[req.body.Enddate, req.body.Startdate],(err, data, fields) => {
                         if(err){
                             res.json({
                                 success: false,
@@ -1012,7 +1012,7 @@ class Router {
         app.post('/loadPastFlightDetailsReport', (req, res) => {
             if (req.session.userID) {
                 if (req.body.Origin === '' && req.body.Destination === '') {
-                    db.query('SELECT flight_id, model, p1.location as origin, p2.location as destination, flight.takeoff_time, flight.departure_time, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN flight USING(flight_id) LEFT JOIN aircraft ON flight.aircraft_id=aircraft.aircraft_id LEFT JOIN route ON route.route_id=flight.route_id LEFT JOIN airport AS airport1 ON airport1.airport_id=route.origin LEFT JOIN port_location AS p1 ON p1.id=route.origin LEFT JOIN port_location as p2 ON p2.id=route.destination WHERE ticket.is_boarded = 1 GROUP BY flight_id HAVING takeoff_time < now();',(err, data, fields)=>{
+                    db.query('SELECT flight_id, model, a1.code AS origin_code, a1.name as origin, a2.code AS destination_code, a2.name as destination, flight.takeoff_time, flight.departure_time, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN seat_reservation USING(ticket_id) INNER JOIN flight USING(flight_id) LEFT JOIN aircraft ON flight.aircraft_id=aircraft.aircraft_id LEFT JOIN route ON route.route_id=flight.route_id LEFT JOIN airport AS a1 ON a1.airport_id=route.origin LEFT JOIN airport AS a2 ON a2.airport_id=route.destination WHERE ticket.is_boarded = 1 GROUP BY flight_id HAVING takeoff_time < now();',(err, data, fields)=>{
                         if(err){
                             res.json({
                                 success: false,
@@ -1028,7 +1028,7 @@ class Router {
                     });
 
                 } else if (req.body.Origin === '') {
-                    db.query('SELECT flight_id, model, p1.location as origin, p2.location as destination, flight.takeoff_time, flight.departure_time, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN flight USING(flight_id) LEFT JOIN aircraft ON flight.aircraft_id=aircraft.aircraft_id LEFT JOIN route ON route.route_id=flight.route_id LEFT JOIN airport AS airport1 ON airport1.airport_id=route.origin LEFT JOIN port_location AS p1 ON p1.id=route.origin LEFT JOIN port_location as p2 ON p2.id=route.destination WHERE ticket.is_boarded = 1 GROUP BY flight_id HAVING destination= ? AND takeoff_time < now();',[req.body.Destination.trim()],(err, data, fields)=>{
+                    db.query('SELECT flight_id, model, a1.code AS origin_code, a1.name as origin, a2.code AS destination_code, a2.name as destination, flight.takeoff_time, flight.departure_time, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN seat_reservation USING(ticket_id) INNER JOIN flight USING(flight_id) LEFT JOIN aircraft ON flight.aircraft_id=aircraft.aircraft_id LEFT JOIN route ON route.route_id=flight.route_id LEFT JOIN airport AS a1 ON a1.airport_id=route.origin LEFT JOIN airport AS a2 ON a2.airport_id=route.destination WHERE ticket.is_boarded = 1 GROUP BY flight_id HAVING a2.code= ? AND takeoff_time < now();',[req.body.Destination.trim()],(err, data, fields)=>{
                         if(err){
                             res.json({
                                 success: false,
@@ -1044,7 +1044,7 @@ class Router {
                     });
 
                 } else if (req.body.Destination === '') {
-                    db.query('SELECT flight_id, model, p1.location as origin, p2.location as destination, flight.takeoff_time, flight.departure_time, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN flight USING(flight_id) LEFT JOIN aircraft ON flight.aircraft_id=aircraft.aircraft_id LEFT JOIN route ON route.route_id=flight.route_id LEFT JOIN airport AS airport1 ON airport1.airport_id=route.origin LEFT JOIN port_location AS p1 ON p1.id=route.origin LEFT JOIN port_location as p2 ON p2.id=route.destination WHERE ticket.is_boarded = 1 GROUP BY flight_id HAVING origin= ? AND takeoff_time < now();',[req.body.Origin.trim()],(err, data, fields)=>{
+                    db.query('SELECT flight_id, model, a1.code AS origin_code, a1.name as origin, a2.code AS destination_code, a2.name as destination, flight.takeoff_time, flight.departure_time, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN seat_reservation USING(ticket_id) INNER JOIN flight USING(flight_id) LEFT JOIN aircraft ON flight.aircraft_id=aircraft.aircraft_id LEFT JOIN route ON route.route_id=flight.route_id LEFT JOIN airport AS a1 ON a1.airport_id=route.origin LEFT JOIN airport AS a2 ON a2.airport_id=route.destination WHERE ticket.is_boarded = 1 GROUP BY flight_id HAVING a1.code= ? AND takeoff_time < now();',[req.body.Origin.trim()],(err, data, fields)=>{
                         if(err){
                             res.json({
                                 success: false,
@@ -1060,7 +1060,7 @@ class Router {
                     });
 
                 } else {
-                    db.query('SELECT flight_id, model, p1.location as origin, p2.location as destination, flight.takeoff_time, flight.departure_time, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN flight USING(flight_id) LEFT JOIN aircraft ON flight.aircraft_id=aircraft.aircraft_id LEFT JOIN route ON route.route_id=flight.route_id LEFT JOIN airport AS airport1 ON airport1.airport_id=route.origin LEFT JOIN port_location AS p1 ON p1.id=route.origin LEFT JOIN port_location as p2 ON p2.id=route.destination WHERE ticket.is_boarded = 1 GROUP BY flight_id HAVING origin= ? AND destination= ? AND takeoff_time < now();',[req.body.Origin.trim(), req.body.Destination.trim()],(err, data, fields)=>{
+                    db.query('SELECT flight_id, model, a1.code AS origin_code, a1.name as origin, a2.code AS destination_code, a2.name as destination, flight.takeoff_time, flight.departure_time, COUNT(ticket.is_boarded) AS Passenger_Count FROM ticket INNER JOIN seat_reservation USING(ticket_id) INNER JOIN flight USING(flight_id) LEFT JOIN aircraft ON flight.aircraft_id=aircraft.aircraft_id LEFT JOIN route ON route.route_id=flight.route_id LEFT JOIN airport AS a1 ON a1.airport_id=route.origin LEFT JOIN airport AS a2 ON a2.airport_id=route.destination WHERE ticket.is_boarded = 1 GROUP BY flight_id HAVING a1.code= ? AND a2.code= ? AND takeoff_time < now();',[req.body.Origin.trim(), req.body.Destination.trim()],(err, data, fields)=>{
                         if(err){
                             res.json({
                                 success: false,

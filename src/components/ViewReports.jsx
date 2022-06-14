@@ -215,7 +215,7 @@ class ViewReports extends React.Component {
 
           <div className="row">
             <div className="col-3">
-              <input id = "flight" className="form-control" type="text" placeholder='Eg :- N123SP' onChange={(e)=>{this.setState({ flight: e.target.value })}} />
+              <input id = "flight" className="form-control" type="text" placeholder='Eg :- PK-MGI' onChange={(e)=>{this.setState({ flight: e.target.value })}} />
             </div>
 
             <div className=" col-5 form-check">
