@@ -24,7 +24,7 @@ class AddFlights extends React.Component {
       try {
 
         let res = await fetch('/aircraft',{
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -51,8 +51,8 @@ class AddFlights extends React.Component {
     if(this.state.routes.length === 0) {
       try {
 
-        let res = await fetch('/flightroute',{
-          method: 'POST',
+        let res = await fetch('/route',{
+          method: 'GET',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',

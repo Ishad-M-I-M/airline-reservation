@@ -7,7 +7,7 @@ export default function ViewFlightSchedules() {
   const [schedules, setSchedules] = useState([]);
 
     useEffect(()=>{
-      axios.get('/flightSchedules')
+      axios.get('/flightSchedule')
       .then((res)=>{
         console.log(res.data.data);
         setSchedules(res.data.data);

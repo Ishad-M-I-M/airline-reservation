@@ -121,40 +121,6 @@ app.post("/isLoggedIn", (req, res) => {
   }
 });
 
-app.post("/flightroute", (req, res) => {
-  if (req.session.userID) {
-    db.query(
-      "SELECT route_id, a1.code AS origin, a2.code AS destination FROM route LEFT JOIN airport a1 ON route.origin = a1.airport_id LEFT JOIN airport a2 ON route.destination=a2.airport_id",
-      (err, data, fields) => {
-        res.json({
-          success: true,
-          details: data,
-        });
-      }
-    );
-  } else {
-    res.json({
-      success: false,
-      msg: "Login to the system",
-    });
-  }
-});
-
-app.post("/aircraft", (req, res) => {
-  if (req.session.userID) {
-    db.query("SELECT aircraft_id, model from aircraft", (err, data, fields) => {
-      res.json({
-        success: true,
-        details: data,
-      });
-    });
-  } else {
-    res.json({
-      success: false,
-      msg: "Login to the system",
-    });
-  }
-});
 
 app.post("/addFlight", (req, res) => {
   if (req.session.userID) {
@@ -562,53 +528,5 @@ app.get("/location", (req, res) => {
   });
 });
 
-app.get("/flightSchedules", (req, res) => {
-  if (req.session.userID) {
-    db.query(
-      "SELECT flight.flight_id, tail_number, model, a.code AS origin, b.code AS destination, takeoff_time, departure_time FROM flight INNER JOIN aircraft USING(aircraft_id) INNER JOIN route USING(route_id) INNER JOIN airport AS a ON a.airport_id = route.origin INNER JOIN airport AS b ON b.airport_id = route.destination WHERE flight.is_active = 1 ORDER BY flight_id",
-      (err, data, fields) => {
-        //db.query('SELECT tail_number, model, route_id, takeoff_time, departure_time FROM flight INNER JOIN aircraft USING(aircraft_id) ORDER BY flight_id', (err, data, fields)=>{
-        if (err) {
-          res.json({
-            success: false,
-          });
-        } else {
-          res.json({
-            success: true,
-            data: data,
-          });
-        }
-      }
-    );
-  } else {
-    req.json({
-      success: false,
-    });
-  }
-});
-
-app.delete("/flightSchedule/:id", (req, res) => {
-  if (req.session.userID) {
-    db.query(
-      `UPDATE flight SET flight.is_active = 0 WHERE flight.flight_id =? `,
-      [req.params.id],
-      (err) => {
-        if (err) {
-          res.json({
-            success: false,
-          });
-        } else {
-          res.json({
-            success: true,
-          });
-        }
-      }
-    );
-  } else {
-    req.json({
-      success: false,
-    });
-  }
-});
 
 module.exports = app;
