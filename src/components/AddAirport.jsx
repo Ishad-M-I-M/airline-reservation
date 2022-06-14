@@ -1,232 +1,127 @@
-import React, { Component } from 'react'
-import '../css/formstyle.css'
-import 'bootstrap/dist/css/bootstrap.css';
+import axios from 'axios';
+import React, {  useEffect, useState } from 'react'
+
+export default function AddAirports() {
+    const [inputs, setInputs] = useState({});
+    const [locationFields, setLocationFields] = useState([{location: "", htmlId: 1, exist: false, id : null, parent_id : null}]);
+    const [data, setData] = useState([]);
+
+    useEffect(()=>{
+        axios.get('/location').then((res)=>{
+            setData(res.data.locations);
+        })
+    }, []);
 
 
-class AddAirport extends Component {
-
-    constructor(props) {
-      super(props)
-    
-      this.state = {
-         code:"",
-         name:"",
-         location:"",
-         address : [],
-         parent :"",
-         Country :[]
- 
-      }
+    let handleChange = (e) => {
+        let data = {...inputs};
+        data[e.target.name] = e.target.value;
+        setInputs(data);
     }
 
-
-    getCounty = () =>{
-
-      fetch('/getCountries',{
-        method: 'GET',
-        headers:{
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-      .then((res)=>{
-        res.json()
-        .then( (result) => { this.setState({
-          Country:result.data
-
-        })
-        }
-        );
-      })
-    }
-    addAddress(){
-      this.setState({
-          address :[...this.state.address,""]
-      })
-  }
-  handleChange(e,index){
-      this.state.address[index] = e.target.value;
-      this.setState({
-          address : this.state.address
-      })
-  }
-
-  handleRemove(index){
-      this.state.address.splice(index,1)
-      this.setState({
-          address: this.state.address
-      })
-  }
-
-    handleSubmit = (event)=>{
-        alert(`${this.state.code} , 
-        ${this.state.name} , 
-        ${this.state.location}`)
-        event.preventDefault()
-   
-       }
-
-      addAirport_ = (event) => {
-        fetch('/add_airport',{
-          method: 'POST',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              }
-              
-              ,body:{
-                'code' : this.state.code,
-                'name' : this.state.name,
-                'location': this.state.location
-              }
-        })
-        .then((res)=>{
-          res.json()
-          .then((result)=> console.log(result.data) )
-          .catch((e)=> console.error(e));
-        })
-        .catch((e)=>{
-          console.error(e);
-        })
-
-       }
-
-       async addAirport() {
-        try {
-            let res = await fetch('/addAirport',{
-              method:'post',
-              headers: {
-                'Accept' : 'application/json',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                code:this.state.code,
-                address :this.state.address,
-                name : this.state.name,
-                parent:this.state.parent
-                  
-              }),
-              credentials : 'include',
-            });
-      
-            let result = await res.json();
-            console.log(result);
-            if(result && result.success) {
-              console.log('Data Successfully entered to database')
-            }else {
-              console.log(result.msg);
-            }
-          }catch(error){
-      
-          }
-        }
-
-    Addcode = (event) =>{
-        this.setState({
-            code: event.target.value
-            
-        })
-
-    }
-    AddCountry = (event) =>{
-      this.setState({
-          parent: event.target.value
-          
-      })
-
-  }
-    Addname = (event) =>{
-        this.setState({
-            name: event.target.value
-            
-        })
-
-    }
-    Addlocation = (event) =>{
-        this.setState({
-            location: event.target.value
-            
-        })
+    let addField = () => {
+        let newLocations = [...locationFields];
+        newLocations.push({location: "", htmlId: locationFields.length + 1, exist: false});
+        setLocationFields(newLocations);
 
     }
 
-  render() {
-    this.getCounty();
-    return (
-      <div className='Airtportform'>
-        <form onSubmit={()=>{this.addAirport()}}>
-        <div class="form-floating mb-3">
-
-          <input type="text" className="form-control" id="floatingInput" value={this.state.code} 
-          onChange={this.Addcode} placeholder="Airport Code" required
-          />
-          <label for="floatingInput">Airport Code</label>
-
-          </div>
-          <div class="form-floating mb-3">
-
-          <input type="text" className="form-control" id="floatingInput" value={this.state.name} 
-          onChange={this.Addname} placeholder="Airport Name" required
-          />
-          <label for="floatingInput">Airport Name</label>
-
-          </div>
-
-
-          {/* <div class="form-floating mb-3">
-
-          <input type="text" className="form-control" id="floatingInput" value={this.state.location} 
-          onChange={this.Addlocation} placeholder="Country" required
-          />
-          <label for="floatingInput">Country</label>
-
-          </div> */}
-
-
-
-          <div className="form-floating mb-3">
-          <input className="form-control" list="datalistOptions" id="exampleDataList" placeholder="Add country..."
-          value={this.state.parent} 
-          onChange={this.AddCountry} required
-          />
-          <datalist id="datalistOptions">
-                {
-                  this.state.Country.map((c)=>(
-                    <option  key= {c.id} value={c.location}>{c.location}</option>
-                  ))
+    let handleLocationChange = (e) => {
+        let isExist = data.filter(({location})=> location === e.target.value).length > 0;
+        let updated = [...locationFields].map((field)=>{
+            if (e.target.id == field.htmlId){
+                let newField = {htmlId: field.htmlId, exist: isExist, location: e.target.value};
+                if(isExist){
+                    for (let i =0; i < data.length; i++){
+                        if(data[i].location === e.target.value) {
+                            newField['id'] = data[i].id;
+                            newField['parent_id'] = data[i].parent_id;
+                        };
+                    }
                 }
-            </datalist>
-            <label for="floatingInput">Add/Select Country</label>
-          </div>
+                return newField;
+            }
+            else return field;
+        });
 
-          {this.state.parent}
-          <div>
+        if(isExist){
+            let e = updated.pop();
+            let htmlId = e.htmlId;
+            updated.push(e);
 
-          {
-              this.state.address.map((address,index)=>{
+            let parent = e.parent_id;
+            while (parent != null){
+                e = data.filter(({id})=> parent === id)[0];
+                e['htmlId'] = ++htmlId;
+                e['exist'] = true;
+                updated.push(e);
+                parent = e.parent_id;
+            }
+        }
+        else{
+            updated = updated.filter(({exist})=> exist != true);
+        }
 
-             return(
-                 <div key = {index}>
-                     
-                     <div class="form-floating input-group mb-3">
-                      <input required type="text" className="form-control" id="floatingInput" placeholder="Address" aria-label="Recipient's username" aria-describedby="button-addon2" onChange={(e)=>{this.handleChange(e,index)}} value = {address} />
-                      <label for="floatingInput">Address</label>
-                      <button className="btn btn-outline-secondary" type="button" id="button-addon2" onClick={() =>{this.handleRemove(index)}}>Remove</button>
+        let updatedInputs = {... inputs};
+        updatedInputs['location'] = updated;
+        setInputs(updatedInputs);
+        setLocationFields(updated);
+    }
+
+    let handleSubmit = (e) => {
+        console.log(inputs);
+
+        axios.post('/airport',inputs).then(()=>{
+            alert('Saved airport sucessfully');
+        }).catch((err)=>{
+            console.log(err);
+        });
+    }
+
+    let handleRemove = (htmlId_) =>{
+        let newlocationFields = locationFields.filter(({htmlId}) => htmlId != htmlId_);
+        let i = 1;
+        newlocationFields = newlocationFields.map((field)=>{
+            field['htmlId'] = i++;
+            return field;
+        })
+        setLocationFields(newlocationFields);
+    }
+
+    return (
+        <div className='m-3'>
+            <form onSubmit={handleSubmit}>
+                <div className='mb-3'>
+                    <input name='code' placeholder='Airport code' className='form-control' maxLength={3} type="text" value={inputs.code || ""} onChange={(e) => handleChange(e)}></input>
+                </div>
+                <div className='mb-3'>
+                    <input name='name' placeholder='Airport name' className='form-control' type="text" value={inputs.name || ""} onChange={(e) => handleChange(e)}></input>
+                </div>
+                <div className='mb-3'>
+                    <div className='mb-3'>
+                        <label className='form-label'>Airport Location :</label>
+                        <button type="button" className='btn btn-primary ms-5' onClick={addField}>Add Another Location Field</button>
                     </div>
-                     </div>
-             )
-              })
-
-          }
-          <button className="btn btn-primary" onClick={(e) =>{this.addAddress(e)}}>Add</button>
-      </div>
-            <br></br>
-      
-            <button className="btn btn-primary Discount_btn" type='submit'>Submit</button>
-        </form>
-      </div>
+                    <div>
+                        <datalist id='locations'>
+                            {data.map(({id, location})=>{
+                                return <option key={id} data-value={id}>{location}</option>
+                            })}
+                        </datalist>
+                        {locationFields.map(({htmlId, location})=>{
+                            return <div className='mb-2 row' key={htmlId}>
+                                <div className='col-9'>
+                                    <input type="text" list='locations' className="form-control" id={htmlId} onChange={(e) => handleLocationChange(e)} value={location}></input>
+                                </div>
+                                <div className='col-3'>
+                                    <button className='btn btn-danger' style={{marginTop: 0, marginLeft: 0}} type='button' onClick={()=> handleRemove(htmlId)}>-</button>
+                                </div>
+                            </div>
+                        })}
+                    </div>
+                </div>
+                <button type='submit' className='btn btn-primary'>Submit</button>
+            </form>
+        </div>
     )
-  }
 }
-
-export default AddAirport

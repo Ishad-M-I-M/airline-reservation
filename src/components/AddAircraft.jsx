@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import '../css/formstyle.css'
 import 'bootstrap/dist/css/bootstrap.css';
-import Example from './Toaster';
 import AlertMe from './Alert';
 
-class Add_craft extends Component {
+class AddAircraft extends Component {
 
     constructor(props) {
       super(props)
@@ -242,4 +241,4 @@ class Add_craft extends Component {
   }
 }
 
-export default Add_craft
+export default AddAircraft

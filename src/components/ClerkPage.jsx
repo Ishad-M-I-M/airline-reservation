@@ -5,7 +5,7 @@ import Form from './Form';
 import { useState } from 'react';
 import AddDiscount from './AddDiscount';
 import AddAirport from './AddAirport';
-import Add_craft from './AddAircraft';
+import AddAircraft from './AddAircraft';
 import 'bootstrap/dist/css/bootstrap.css';
 
 
@@ -30,7 +30,7 @@ function ClerkPage() {
         <h1 style={{textAlign: 'center'}}>
         Add Aircraft
         </h1>
-        <Add_craft/>
+        <AddAircraft/>
 
       </Popup>
        
