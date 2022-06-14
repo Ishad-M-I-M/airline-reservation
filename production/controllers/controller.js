@@ -465,52 +465,6 @@ app.post("/bookingFlights", (req, res) => {
   }
 });
 
-app.get("/route", (req, res) => {
-  if (req.session.userID) {
-    db.query(
-      `select route_id as id, origin, destination
-                            from (select route_id,code as origin from route inner join airport on origin=airport_id) as origin 
-                            natural join 
-                                (select route_id,code as destination from route inner join airport on destination=airport_id) as destination; `,
-      (err, data, fields) => {
-        if (err) {
-          res.json({
-            success: false,
-          });
-        } else {
-          res.json({
-            success: true,
-            data: data,
-          });
-        }
-      }
-    );
-  } else {
-    req.json({
-      success: false,
-    });
-  }
-});
-
-app.delete("/route/:id", (req, res) => {
-  if (req.session.userID) {
-    db.query(`DELETE FROM route WHERE route_id=? `, [req.params.id], (err) => {
-      if (err) {
-        res.json({
-          success: false,
-        });
-      } else {
-        res.json({
-          success: true,
-        });
-      }
-    });
-  } else {
-    req.json({
-      success: false,
-    });
-  }
-});
 
 app.post("/loadSeatnumber", (req, res) => {
   if (req.session.userID) {

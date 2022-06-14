@@ -6,7 +6,9 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 require('dotenv').config();
 
+// controllers
 const airportController = require('./controllers/airportController');
+const routeController = require('./controllers/routeController');
 const controller = require('./controllers/controller');
 // app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
@@ -44,6 +46,7 @@ app.use(session({
 }));
 
 app.use('/airport', airportController );
+app.use('/route', routeController )
 app.use('/', controller);
 
 // app.get('/', function(req, res) {
