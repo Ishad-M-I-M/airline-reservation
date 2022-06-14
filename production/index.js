@@ -1,12 +1,13 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const mysql = require('mysql')
+const mysql = require('mysql');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
-const Router = require('./routes/Router');
 require('dotenv').config();
 
+const airportController = require('./controllers/airportController');
+const controller = require('./controllers/controller');
 // app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
@@ -42,7 +43,8 @@ app.use(session({
     }
 }));
 
-new Router(app, db);
+app.use('/airport', airportController );
+app.use('/', controller);
 
 // app.get('/', function(req, res) {
 //     res.sendFile(path.join(__dirname, 'build', 'index.html'))

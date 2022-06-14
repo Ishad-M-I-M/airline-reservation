@@ -162,7 +162,7 @@ CREATE TABLE `flight` (
   `route_id` int NOT NULL references route.route_id,
   `takeoff_time` datetime NOT NULL,
   `departure_time` datetime NOT NULL,
-  is_active tinyint(1) default 1,
+  is_active tinyint default 1,
   primary key(flight_id)
 ) ;
 
@@ -473,7 +473,6 @@ begin
 		select loc_parent into current_id from temp_data where id = i+1;
 		select loc_parent into parent from temp_data where id = i;
 		insert ignore into parent_location ( id, parent_id) values ( current_id, parent);
-        insert into temp_data1 values ( current_id, parent );
         set i = i + 1;
     end while;
     
@@ -482,4 +481,19 @@ begin
 end$$
 delimiter ;
 
-select get_location(20);
+delimiter $$
+
+create procedure add_airport(code char(3), name varchar(50), locations varchar(1000), num int)
+begin
+	declare loc varchar(100);
+    declare loc_id int;
+	call add_port_location(locations, num);
+    
+    select SPLIT_STR(locations, ',', 1) into loc;
+    -- select loc;
+    select id into loc_id from port_location where location = loc;
+    insert into airport(code, name, location) values (code, name, loc_id);
+end $$
+delimiter ;
+
+call add_airport('JFK', 'John F. Kennedy International Airport', 'Airport Blvd.,Singapore', 2);
