@@ -36,7 +36,8 @@ class PastFlightDetailsOverlay extends React.Component {
                 <table className="table table-hover">
                     <thead>
                         <tr>
-                            <th>Aircraft</th>
+                            <th>Tail_Number</th>
+                            <th>Model</th>
                             <th>Origin</th>
                             <th>Destination</th>
                             <th>Takeoff Time</th>
@@ -47,6 +48,7 @@ class PastFlightDetailsOverlay extends React.Component {
                     <tbody>
                         {this.state.data.map(flight => (
                             <tr key={flight.flight_id}>
+                                <td>{flight.tail_number}</td>
                                 <td>{flight.model}</td>
                                 <td>{flight.origin}</td>
                                 <td>{flight.destination}</td>
