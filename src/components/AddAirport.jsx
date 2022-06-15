@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, {  useEffect, useState } from 'react'
 
-export default function AddAirports() {
+export default function AddAirport() {
     const [inputs, setInputs] = useState({});
     const [locationFields, setLocationFields] = useState([{location: "", htmlId: 1, exist: false, id : null, parent_id : null}]);
     const [data, setData] = useState([]);

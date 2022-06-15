@@ -1,7 +1,7 @@
 import React from 'react';
 import Popup from './Popup';
 import '../css/clerk.css'
-import Form from './Form';
+import AddRoute from './AddRoute';
 import { useState } from 'react';
 import AddDiscount from './AddDiscount';
 import AddAirport from './AddAirport';
@@ -41,7 +41,7 @@ function ClerkPage() {
         <h1 style={{textAlign: 'center'}}>
         Add Route
         </h1>
-        <Form/>
+        <AddRoute/>
 
       </Popup>
         

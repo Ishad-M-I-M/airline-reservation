@@ -20,6 +20,18 @@ router.get('/', (req, res)=>{
           
 });
 
+router.post('/', (req, res) =>{
+    console.log(req.body);
+    db.raw(`INSERT INTO route(origin, destination) VALUES (?, ?)`, [req.body.origin, req.body.destination])
+        .then(()=>{
+            return res.json({success: true});
+        })
+        .catch((err)=>{
+            console.error(err);
+            return res.status(500).json({success: false});
+        })
+})
+
 router.delete('/:id', (req, res)=>{
     db.raw(`DELETE FROM route WHERE route_id=? `, [req.params.id])
     .then(()=>{
