@@ -144,17 +144,14 @@ class ViewReports extends React.Component {
 
       let result = await res.json();
 
-      if(result && result.success && result.entry) {
+      if(result && result.success) {
         this.setState({
           BookingReportOutput: result.data,
           resultVisibility4: true,
         });
 
-      } else if(result && !result.success && result.entry) {
-        alert("Request Failed... Fetch Again...");
-      
-      } else if (result && !result.success && !result.entry) {
-        alert("Enter specific Date Range...");
+      } else if(result) {
+        alert("Request Failed... Fetch Again...");    
       }
     }catch(error){
       console.log('Error: ', error);
@@ -215,7 +212,7 @@ class ViewReports extends React.Component {
 
           <div className="row">
             <div className="col-3">
-              <input id = "flight" className="form-control" type="text" placeholder='Eg :- N123SP' onChange={(e)=>{this.setState({ flight: e.target.value })}} />
+              <input id = "flight" className="form-control" type="text" placeholder='Eg :- PK-MGI' onChange={(e)=>{this.setState({ flight: e.target.value })}} />
             </div>
 
             <div className=" col-5 form-check">
