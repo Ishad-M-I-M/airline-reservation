@@ -113,7 +113,7 @@ router.post("/passenger-count", (req, res) => {
             });
 
         } else if (req.body.Enddate !== "" && req.body.Startdate === "") {
-            db.query("SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM flight INNER JOIN route USING(route_id) INNER JOIN airport ON route.destination = airport.airport_id INNER JOIN booking USING(flight_id) INNER JOIN ticket USING(ticket_id) WHERE NOT (flight.takeoff_time > ?) AND airport.code = ? AND ticket.is_boarded = 1;", [req.body.Enddate, req.body.Destination]).then((result) => {
+            db.raw("SELECT airport.code, airport.name, COUNT(ticket.is_boarded) AS Passenger_Count FROM flight INNER JOIN route USING(route_id) INNER JOIN airport ON route.destination = airport.airport_id INNER JOIN booking USING(flight_id) INNER JOIN ticket USING(ticket_id) WHERE NOT (flight.takeoff_time > ?) AND airport.code = ? AND ticket.is_boarded = 1;", [req.body.Enddate, req.body.Destination]).then((result) => {
                 return res.json({success: true, data: result[0]});
             }).catch((err) => {
                 console.error(err);
@@ -150,7 +150,7 @@ router.post("/bookings", (req, res) => {
             });
 
         } else if (req.body.Enddate !== "" && req.body.Startdate !== "") {
-            db.query("SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount LEFT JOIN user ON discount.type = user.discount_type LEFT JOIN ticket USING(user_id) LEFT JOIN booking USING(ticket_id) WHERE NOT (ticket.date > ? OR ticket.date < ?) GROUP BY type;", [req.body.Enddate, req.body.Startdate]).then((result) => {
+            db.raw("SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount LEFT JOIN user ON discount.type = user.discount_type LEFT JOIN ticket USING(user_id) LEFT JOIN booking USING(ticket_id) WHERE NOT (ticket.date > ? OR ticket.date < ?) GROUP BY type;", [req.body.Enddate, req.body.Startdate]).then((result) => {
                 return res.json({success: true, data: result[0]});
             }).catch((err) => {
                 console.error(err);
@@ -158,7 +158,7 @@ router.post("/bookings", (req, res) => {
             });
 
         } else if (req.body.Enddate === "" && req.body.Startdate === "") {
-            db.query("SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount LEFT JOIN user ON discount.type = user.discount_type LEFT JOIN ticket USING(user_id) LEFT JOIN booking USING(ticket_id) GROUP BY type;",).then((result) => {
+            db.raw("SELECT discount.type, COUNT(ticket.user_id) AS Booking_Count FROM discount LEFT JOIN user ON discount.type = user.discount_type LEFT JOIN ticket USING(user_id) LEFT JOIN booking USING(ticket_id) GROUP BY type;",).then((result) => {
                 return res.json({success: true, data: result[0]});
             }).catch((err) => {
                 console.error(err);
