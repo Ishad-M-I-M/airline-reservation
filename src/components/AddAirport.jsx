@@ -91,12 +91,20 @@ export default function AddAirport() {
     return (
         <div className='m-3'>
             <form onSubmit={handleSubmit}>
-                <div className='mb-3'>
-                    <input name='code' placeholder='Airport code' className='form-control' maxLength={3} type="text" value={inputs.code || ""} onChange={(e) => handleChange(e)}></input>
+ 
+                <div className='form-floating mb-3'>
+                    <input name='code' placeholder='Airport code' className='form-control'  id="floatingInput" maxLength={3} type="text" value={inputs.code || ""} onChange={(e) => handleChange(e)}></input>
+                    <label for="floatingInput">Airport code</label>
                 </div>
-                <div className='mb-3'>
-                    <input name='name' placeholder='Airport name' className='form-control' type="text" value={inputs.name || ""} onChange={(e) => handleChange(e)}></input>
+                
+        
+                {/* <div class="form-floating mb-3"> */}
+                <div className='form-floating mb-3'>
+                    <input name='name' placeholder='Airport name' className='form-control' type="text" id="floatingInput" value={inputs.name || ""} onChange={(e) => handleChange(e)}></input>
+                    <label for="floatingInput">Airport name</label>
                 </div>
+                
+
                 <div className='mb-3'>
                     <div className='mb-3'>
                         <label className='form-label'>Airport Location :</label>

@@ -109,7 +109,7 @@ class AddDiscount extends Component {
 
           <div class="form-floating mb-3">
             <input type="number" className="form-control" id="floatingInput" value={this.state.gold} 
-            onChange={this.updateGold} placeholder="Regular Discount" />
+            onChange={this.updateGold} placeholder="Gold Discount" />
             <label for="floatingInput">Gold Discount</label>
             </div>
 
