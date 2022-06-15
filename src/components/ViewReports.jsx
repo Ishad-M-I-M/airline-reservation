@@ -38,7 +38,7 @@ class ViewReports extends React.Component {
 
   async fetchPassengerDetailsReport() {
     try{
-      let res = await fetch('/loadPassengerDetailsReport',{
+      let res = await fetch('/report/passenger-details',{
         method: 'post',
         headers: {
           'Accept':'application/json',
@@ -69,7 +69,7 @@ class ViewReports extends React.Component {
 
   async fetchTotalRevenueReport() {
     try{
-      let res = await fetch('/loadTotalRevenueReport',{
+      let res = await fetch('/report/total-revenue',{
         method: 'post',
         headers: {
           'Accept':'application/json',
@@ -99,7 +99,7 @@ class ViewReports extends React.Component {
 
   async fetchPassengerCountReport() {
     try{
-      let res = await fetch('/loadPassengerCountReport',{
+      let res = await fetch('/report/passenger-count',{
         method: 'post',
         headers: {
           'Accept':'application/json',
@@ -130,7 +130,7 @@ class ViewReports extends React.Component {
 
   async fetchBookingReport() {
     try{
-      let res = await fetch('/loadBookingReport',{
+      let res = await fetch('/report/bookings',{
         method: 'post',
         headers: {
           'Accept':'application/json',
@@ -163,7 +163,7 @@ class ViewReports extends React.Component {
 
   async fetchPastFlightDetailsReport() {
     try{
-      let res = await fetch('/loadPastFlightDetailsReport',{
+      let res = await fetch('/report/past-flight-details',{
         method: 'post',
         headers: {
           'Accept':'application/json',
