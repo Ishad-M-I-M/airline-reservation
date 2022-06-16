@@ -59,9 +59,12 @@ INSERT INTO `discount` (`type`, `discount`) VALUES
 
 CREATE TABLE `route` (
   `route_id` int NOT NULL auto_increment,
-  `origin` int NOT NULL references airport.airport_id,
-  `destination` int NOT NULL references airport.airport_id,
-  primary key(route_id)
+  `origin` int NOT NULL,
+  `destination` int NOT NULL,
+  primary key(route_id),
+  constraint foreign key(origin) references airport(airport_id),
+  constraint foreign key(destination) references airport(airport_id),
+  constraint unique(origin, destination)
 );
 
 INSERT INTO `route` (`origin`, `destination`) VALUES
@@ -158,12 +161,14 @@ INSERT INTO `route` (`origin`, `destination`) VALUES
 
 CREATE TABLE `flight` (
   `flight_id` int NOT NULL auto_increment,
-  `aircraft_id` int NOT NULL references aircraft.aircraft_id,
-  `route_id` int NOT NULL references route.route_id,
+  `aircraft_id` int NOT NULL,
+  `route_id` int NOT NULL,
   `takeoff_time` datetime NOT NULL,
   `departure_time` datetime NOT NULL,
   is_active tinyint default 1,
-  primary key(flight_id)
+  primary key(flight_id),
+  constraint foreign key (aircraft_id) references aircraft(aircraft_id),
+  constraint foreign key (route_id) references route(route_id)
 ) ;
 
 INSERT INTO `flight` (`aircraft_id`, `route_id`, `takeoff_time`, `departure_time`) VALUES
@@ -184,10 +189,11 @@ INSERT INTO `flight` (`aircraft_id`, `route_id`, `takeoff_time`, `departure_time
 
 
 CREATE TABLE `flight_cost` (
-  `flight_id` int NOT NULL references flight.flight_id,
-  `class` varchar(10) NOT NULL CHECK (`class` in ('platinum','business','economy')),
+  `flight_id` int NOT NULL,
+  `class` varchar(10) NOT NULL CHECK (`class` in ('Platinum','Business','Economy')),
   `cost` decimal(10,2) NOT NULL,
-  primary key( flight_id, class)
+  primary key( flight_id, class),
+  constraint foreign key (flight_id ) references flight(flight_id)
 ) ;
 
 INSERT INTO `flight_cost` (`flight_id`, `class`, `cost`) VALUES
@@ -287,10 +293,13 @@ INSERT INTO port_location (location) VALUES
 ('Singapore');
 
 create table parent_location (
-	id int unique references port_location.id,
-    parent_id int references port_location.id,
-    primary key(id, parent_id)
+	id int unique ,
+    parent_id int ,
+    primary key(id, parent_id),
+    constraint foreign key(id) references port_location(id),
+    constraint foreign key(parent_id) references port_location(id)
 );
+-- id set to unique as no location can have multiple parents
 
 INSERT INTO parent_location VALUES
 	(1, 2),
@@ -325,10 +334,11 @@ CREATE TABLE `user` (
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) DEFAULT NULL,
   `role` varchar(30) NOT NULL CHECK (`role` in ('moderator','clerk','user','guest')),
-  `discount_type` varchar(20) DEFAULT NULL references discount.type,
+  `discount_type` varchar(20) DEFAULT NULL ,
   `is_active` tinyint DEFAULT NULL,
   `dob` date NOT NULL,
-  primary key(user_id)
+  primary key(user_id),
+  constraint foreign key(discount_type) references discount(type)
 );
 
 
@@ -464,7 +474,6 @@ end $$
 delimiter ;
 
 -- discount procedure
-DROP PROCEDURE IF EXISTS UpdateDiscount;
 DELIMITER //
 
 create procedure UpdateDiscount(gold float,frequent float)
