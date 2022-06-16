@@ -499,3 +499,20 @@ begin
     insert into airport(code, name, location) values (code, name, loc_id);
 end $$
 delimiter ;
+
+-- discount procedure
+DROP PROCEDURE IF EXISTS UpdateDiscount;
+DELIMITER //
+
+create procedure UpdateDiscount(gold float,frequent float)
+BEGIN
+
+	IF gold >= 0 THEN
+    	UPDATE discount SET discount = gold WHERE type = 'Gold' ;
+    END IF;
+        
+    IF frequent >= 0 THEN
+    	UPDATE discount SET discount = frequent WHERE type = 'Frequent';
+    END IF;
+END//
+DELIMITER ;
