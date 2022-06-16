@@ -562,12 +562,13 @@ app.post('/discount', (req, res) => {
 
 app.post('/addAircraft', (req, res) => {
     let model = req.body.model;
-    let seats = req.body.seats;
+    // let seats = req.body.seats;
     let economy = req.body.economy;
     let business = req.body.business;
     let platinum = req.body.platinum;
+    let tail  = req.body.tail_number;
     console.log(`${model}`);
-    db.query('INSERT INTO aircraft (model,total_seats,Economy_seats,Business_seats,Platinum_seats) VALUES(?,?,?,?,?)', [model, seats, economy, business, platinum], (err, fields) => {
+    db.query('INSERT INTO aircraft (tail_number,model,Economy_seats,Business_seats,Platinum_seats) VALUES(?,?,?,?,?)', [tail_number,model,economy, business, platinum], (err, fields) => {
         if (err) {
             console.log(err);
             res.json({
