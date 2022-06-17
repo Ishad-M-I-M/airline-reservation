@@ -16,7 +16,16 @@ router.get('/', function (req, res){
 });
 
 router.post('/', function (req, res){
+    let {model, economy, business, platinum, tail_number} = req.body;
 
+    console.log(`${model}`);
+    db.raw('INSERT INTO aircraft (tail_number,model,Economy_seats,Business_seats,Platinum_seats) VALUES(?,?,?,?,?)', [tail_number,model,economy, business, platinum]
+    ).then(() => {
+        return res.json({success: true});
+    }).catch((err) => {
+        console.error(err);
+        return res.status(500).json({success: false});
+    })
 });
 
 router.delete('/:id', function (req, res){
