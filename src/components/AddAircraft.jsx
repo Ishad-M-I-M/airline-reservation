@@ -21,10 +21,10 @@ class AddAircraft extends Component {
     }
 
     
-      async ADD_FLIGHT(){
+      async addFlight(){
 
         try {
-            let res = await fetch('/addAircraft',{
+            let res = await fetch('/aircraft',{
               method:'post',
               headers: {
                 'Accept' : 'application/json',
@@ -32,7 +32,6 @@ class AddAircraft extends Component {
               },
               body: JSON.stringify({
                 model : this.state.model,
-                // seats : this.state.total_seats,
                 economy : this.state.economy,
                 business : this.state.business,
                 platinum : this.state.platinum,
@@ -174,7 +173,7 @@ class AddAircraft extends Component {
     return (
       <div className='Aircraft_form'>
         <AlertMe shows = {this.state.alert}/>
-        <form onSubmit={()=>{this.ADD_FLIGHT()}}>
+        <form onSubmit={()=>{this.addFlight()}}>
 
             <div class="form-floating mb-3">
 
