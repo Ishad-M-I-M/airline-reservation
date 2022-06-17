@@ -121,58 +121,6 @@ app.post("/isLoggedIn", (req, res) => {
     }
 });
 
-app.post("/addFlight", (req, res) => {
-    if (req.session.userID) {
-        let aircraft_id = req.body.aircraft_id;
-        let route_id = req.body.route_id;
-        let takeoff_time = req.body.takeoff_time;
-        let landing_time = req.body.landing_time;
-        db.query(
-            "INSERT INTO flight (aircraft_id, route_id, takeoff_time, departure_time) VALUES (?, ?, ?, ?)",
-            [aircraft_id, route_id, takeoff_time, landing_time],
-            (err, fields) => {
-                if (err) {
-                    res.json({
-                        success: false,
-                        msg: "Insertion Failed, Try again",
-                    });
-                } else {
-                    res.json({
-                        success: true,
-                        msg: "Insertion Success",
-                    });
-                }
-            }
-        );
-    } else {
-        res.json({
-            success: false,
-            msg: "Login to the System",
-        });
-    }
-});
-
-app.post("/airportCodes", (req, res) => {
-    if (req.session.userID) {
-        db.query("SELECT code from airport", (err, data, fields) => {
-            if (err) {
-                res.json({
-                    success: false,
-                });
-            } else {
-                res.json({
-                    success: true,
-                    codes: data,
-                });
-            }
-        });
-    } else {
-        res.json({
-            success: false,
-        });
-    }
-});
-
 app.post("/fetchFlight/clerk", (req, res) => {
     if (req.session.userID) {
         if (
@@ -188,6 +136,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                         [req.body.flight_id],
                         (err, data, fields) => {
                             if (err) {
+                                console.error(err);
                                 res.json({
                                     success: false,
                                 });
@@ -207,6 +156,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                         [req.body.flight_id],
                         (err, data, fields) => {
                             if (err) {
+                                console.error(err);
                                 res.json({
                                     success: false,
                                 });
@@ -228,6 +178,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                         [req.body.flight_id],
                         (err, data, fields) => {
                             if (err) {
+                                console.error(err);
                                 res.json({
                                     success: false,
                                 });
@@ -261,6 +212,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                         [req.body.aircraft_id],
                         (err, data, fields) => {
                             if (err) {
+                                console.error(err);
                                 res.json({
                                     success: false,
                                 });
@@ -281,6 +233,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                             ],
                         (err, data, fields) => {
                             if (err) {
+                                console.error(err);
                                 res.json({
                                     success: false,
                                 });
@@ -302,6 +255,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                         [req.body.aircraft_id],
                         (err, data, fields) => {
                             if (err) {
+                                console.error(err);
                                 res.json({
                                     success: false,
                                 });
@@ -337,6 +291,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                             console.log("READ");
 
                             if (err) {
+                                console.error(err);
                                 res.json({
                                     success: false,
                                 });
@@ -356,6 +311,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                         [req.body.origin.trim(), req.body.destination.trim()],
                         (err, data, fields) => {
                             if (err) {
+                                console.error(err);
                                 res.json({
                                     success: false,
                                 });
@@ -377,6 +333,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                         [req.body.origin.trim(), req.body.destination.trim()],
                         (err, data, fields) => {
                             if (err) {
+                                console.error(err);
                                 res.json({
                                     success: false,
                                 });
@@ -409,7 +366,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
 app.post("/bookingFlights", (req, res) => {
     if (req.session.userID) {
         db.query(
-            "select flight_id, takeoff_time, departure_time, model, total_seats, Economy_seats, Business_seats, Platinum_seats, airport1.code as origin, airport2.code as destination from flight inner join aircraft using(aircraft_id) inner join route using (route_id) inner join airport as airport1 on airport1.airport_id=route.origin inner join airport as airport2 on airport2.airport_id=route.destination where takeoff_time > now() order by takeoff_time",
+            "select flight_id, takeoff_time, departure_time, model, Economy_seats, Business_seats, Platinum_seats, airport1.code as origin, airport2.code as destination from flight inner join aircraft using(aircraft_id) inner join route using (route_id) inner join airport as airport1 on airport1.airport_id=route.origin inner join airport as airport2 on airport2.airport_id=route.destination where takeoff_time > now() order by takeoff_time",
             (err, data, fields) => {
                 if (err) {
                     res.json({
