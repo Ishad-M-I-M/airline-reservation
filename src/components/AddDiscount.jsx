@@ -18,6 +18,7 @@ class AddDiscount extends Component {
          SavedGold : null
  
       }
+      this.getDiscounts();
     }
 
     getDiscounts=()=>{
@@ -30,6 +31,7 @@ class AddDiscount extends Component {
         }
       })
       .then((res)=>{
+          console.log(res);
         res.json()
         .then( (result) => {
           this.setState({
@@ -48,7 +50,7 @@ class AddDiscount extends Component {
     async Add_Discount() {
         try {
             let res = await fetch('/discount',{
-              method:'post',
+              method:'PATCH',
               headers: {
                 'Accept' : 'application/json',
                 'Content-Type': 'application/json',
@@ -90,7 +92,6 @@ class AddDiscount extends Component {
   }
 
   render() {
-    this.getDiscounts();
     return (
       <div className='Discount_form'>
 
@@ -100,17 +101,17 @@ class AddDiscount extends Component {
           <Example Frequent={this.state.Frequent} SavedGold={this.state.SavedGold}/>
           <br></br>
           <br></br>
-          <div class="form-floating mb-3">
+          <div className="form-floating mb-3">
           <input type="number" className="form-control" id="floatingInput" value={this.state.discount} 
           onChange={this.updateDiscount} placeholder="Regular Discount"/>
-          <label for="floatingInput">Regular Discount</label>
+          <label htmlFor="floatingInput">Regular Discount</label>
           </div>
 
 
-          <div class="form-floating mb-3">
+          <div className="form-floating mb-3">
             <input type="number" className="form-control" id="floatingInput" value={this.state.gold} 
             onChange={this.updateGold} placeholder="Gold Discount" />
-            <label for="floatingInput">Gold Discount</label>
+            <label htmlFor="floatingInput">Gold Discount</label>
             </div>
 
             <button type='submit' className='btn btn-primary' >Submit</button>
@@ -121,4 +122,4 @@ class AddDiscount extends Component {
   }
 }
 
-export default AddDiscount
+export default AddDiscount;
