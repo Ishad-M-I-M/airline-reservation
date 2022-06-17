@@ -12,6 +12,7 @@ const routeController = require('./controllers/routeController');
 const aircraftController = require('./controllers/aircraftController');
 const flightScheduleController = require('./controllers/flightScheduleController');
 const reportController = require('./controllers/reportController');
+const discountController = require('./controllers/discountController');
 const controller = require('./controllers/controller');
 // app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
@@ -53,6 +54,7 @@ app.use('/route', routeController );
 app.use('/aircraft', aircraftController);
 app.use('/flightSchedule', flightScheduleController);
 app.use('/report', reportController);
+app.use('/discount', discountController);
 app.use('/', controller);
 
 // app.get('/', function(req, res) {

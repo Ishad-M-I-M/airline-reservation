@@ -482,64 +482,7 @@ app.get("/location", (req, res) => {
     });
 });
 
-app.post('/discount', (req, res) => {
-    console.log(req.body.gold);
-    let gold;
-    let discount;
 
-    if (req.body.gold != null) {
-        gold = req.body.gold
-    } else {
-        gold = -1;
-    }
-    if (req.body.discount != null) {
-        discount = req.body.discount
-    } else {
-        discount = -1;
-    }
-    db.query('CALL UpdateDiscount(?,?)', [gold, discount], (err, fields) => {
-        if (err) {
-            console.log(err);
-            res.json({
-                success: false,
-                msg: 'Insertion Failed, Try again',
-            });
-        } else {
-            console.log("Success")
-            res.json({
-                success: true,
-                msg: 'Insertion Success'
-            });
-        }
-
-    })
-
-
-});
-
-
-app.get('/discount', (req, res) => {
-    if (req.session.userID) {
-        db.query(`select *
-                  from discount`
-            , (err, data, fields) => {
-                if (err) {
-                    res.json({
-                        success: false,
-                    });
-                } else {
-                    res.json({
-                        success: true,
-                        data: data,
-                    });
-                }
-            });
-    } else {
-        req.json({
-            success: false,
-        });
-    }
-});
 
 
 module.exports = app;
