@@ -167,8 +167,8 @@ CREATE TABLE `flight` (
   `departure_time` datetime NOT NULL,
   is_active tinyint default 1,
   primary key(flight_id),
-  constraint foreign key (aircraft_id) references aircraft(aircraft_id),
-  constraint foreign key (route_id) references route(route_id)
+  constraint foreign key (aircraft_id) references aircraft(aircraft_id) on delete cascade on update cascade,
+  constraint foreign key (route_id) references route(route_id) on delete cascade on update cascade
 ) ;
 
 INSERT INTO `flight` (`aircraft_id`, `route_id`, `takeoff_time`, `departure_time`) VALUES
@@ -193,7 +193,7 @@ CREATE TABLE `flight_cost` (
   `class` varchar(10) NOT NULL CHECK (`class` in ('Platinum','Business','Economy')),
   `cost` decimal(10,2) NOT NULL,
   primary key( flight_id, class),
-  constraint foreign key (flight_id ) references flight(flight_id)
+  constraint foreign key (flight_id ) references flight(flight_id) on delete cascade on update cascade
 ) ;
 
 INSERT INTO `flight_cost` (`flight_id`, `class`, `cost`) VALUES
@@ -296,8 +296,8 @@ create table parent_location (
 	id int unique ,
     parent_id int ,
     primary key(id, parent_id),
-    constraint foreign key(id) references port_location(id),
-    constraint foreign key(parent_id) references port_location(id)
+    constraint foreign key(id) references port_location(id) on update cascade on delete cascade,
+    constraint foreign key(parent_id) references port_location(id) on update cascade on delete cascade
 );
 -- id set to unique as no location can have multiple parents
 
@@ -338,7 +338,7 @@ CREATE TABLE `user` (
   `is_active` tinyint DEFAULT NULL,
   `dob` date NOT NULL,
   primary key(user_id),
-  constraint foreign key(discount_type) references discount(type)
+  constraint foreign key(discount_type) references discount(type) on update cascade on delete set null
 );
 
 
@@ -359,9 +359,9 @@ CREATE TABLE `ticket` (
       `status` tinyint NOT NULL DEFAULT 1,
       `is_boarded` tinyint DEFAULT NULL,
       primary key(ticket_id),
-      constraint foreign key(user_id) references user(user_id),
-      constraint foreign key(passenger_id) references passenger(passenger_id),
-      constraint foreign key(flight_id,class) references flight_cost(flight_id,class),
+      constraint foreign key(user_id) references user(user_id) on update cascade on delete set null,
+      constraint foreign key(passenger_id) references passenger(passenger_id) on update cascade on delete cascade,
+      constraint foreign key(flight_id,class) references flight_cost(flight_id,class) on update cascade on delete cascade,
       constraint unique(passenger_id, flight_id),
       constraint unique(flight_id, seat_number)
 );
@@ -609,44 +609,3 @@ BEGIN
 END //
 
 delimiter ;
-
-
---
--- Constraints for table `flight`
---
-ALTER TABLE `flight`
-  ADD CONSTRAINT `flight_ibfk_1` FOREIGN KEY (`aircraft_id`) REFERENCES `aircraft` (`aircraft_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `flight_ibfk_2` FOREIGN KEY (`route_id`) REFERENCES `route` (`route_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `flight_cost`
---
-ALTER TABLE `flight_cost`
-  ADD CONSTRAINT `flight_cost_ibfk_1` FOREIGN KEY (`flight_id`) REFERENCES `flight` (`flight_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `parent_location`
---
-ALTER TABLE 'parent_location'
-  ADD CONSTRAINT 'parent_location_ibfk_1' FOREIGN KEY ('id') REFERENCES 'port_location'('id') ON DELETE SET NULL ON UPDATE CASCADE;
-  ADD CONSTRAINT 'parent_location_ibfk_2' FOREIGN KEY ('parent_id') REFERENCES 'port_location'('id') ON DELETE SET NULL ON UPDATE CASCADE;
---
--- Constraints for table `route`
---
-ALTER TABLE `route`
-  ADD CONSTRAINT `route_ibfk_1` FOREIGN KEY (`origin`) REFERENCES `airport` (`airport_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `route_ibfk_2` FOREIGN KEY (`destination`) REFERENCES `airport` (`airport_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `ticket`
---
-ALTER TABLE `ticket`
-  ADD CONSTRAINT `ticket_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `ticket_ibfk_2` FOREIGN KEY (`passenger_id`) REFERENCES `passenger` (`passenger_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `ticket_ibfk_3` FOREIGN KEY (`flight_id`) REFERENCES `flight` (`flight_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `user`
---
-ALTER TABLE `user`
-  ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`discount_type`) REFERENCES `discount` (`type`) ON DELETE SET NULL ON UPDATE CASCADE;
