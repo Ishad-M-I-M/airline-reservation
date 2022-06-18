@@ -26,7 +26,7 @@ export default function Container() {
             <div className="col-md-10 bg-secondary bg-opacity-25 overflow-auto" id='content' style={{'maxHeight': '88vh' }}>
                 <BrowserRouter>
                     <Routes>
-                        <Route index element={<h3 className='text-center'> Select an option</h3>}></Route>
+                        <Route index element={<h3 className='text-center mt-5'> Select an option</h3>}></Route>
                         <Route path='/view-routes' element={<ViewRoutes/>}></Route>
                         <Route path='/view-aircrafts' element={<ViewAircrafts/>}></Route>
                         <Route path='/view-airports' element={<ViewAirports/>}></Route>
