@@ -59,12 +59,9 @@ INSERT INTO `discount` (`type`, `discount`) VALUES
 
 CREATE TABLE `route` (
   `route_id` int NOT NULL auto_increment,
-  `origin` int NOT NULL,
-  `destination` int NOT NULL,
-  primary key(route_id),
-  constraint foreign key(origin) references airport(airport_id),
-  constraint foreign key(destination) references airport(airport_id),
-  constraint unique(origin, destination)
+  `origin` int NOT NULL references airport.airport_id,
+  `destination` int NOT NULL references airport.airport_id,
+  primary key(route_id)
 );
 
 INSERT INTO `route` (`origin`, `destination`) VALUES
@@ -161,14 +158,12 @@ INSERT INTO `route` (`origin`, `destination`) VALUES
 
 CREATE TABLE `flight` (
   `flight_id` int NOT NULL auto_increment,
-  `aircraft_id` int NOT NULL,
-  `route_id` int NOT NULL,
+  `aircraft_id` int NOT NULL references aircraft.aircraft_id,
+  `route_id` int NOT NULL references route.route_id,
   `takeoff_time` datetime NOT NULL,
   `departure_time` datetime NOT NULL,
   is_active tinyint default 1,
-  primary key(flight_id),
-  constraint foreign key (aircraft_id) references aircraft(aircraft_id),
-  constraint foreign key (route_id) references route(route_id)
+  primary key(flight_id)
 ) ;
 
 INSERT INTO `flight` (`aircraft_id`, `route_id`, `takeoff_time`, `departure_time`) VALUES
@@ -189,11 +184,10 @@ INSERT INTO `flight` (`aircraft_id`, `route_id`, `takeoff_time`, `departure_time
 
 
 CREATE TABLE `flight_cost` (
-  `flight_id` int NOT NULL,
-  `class` varchar(10) NOT NULL CHECK (`class` in ('Platinum','Business','Economy')),
+  `flight_id` int NOT NULL references flight.flight_id,
+  `class` varchar(10) NOT NULL CHECK (`class` in ('platinum','business','economy')),
   `cost` decimal(10,2) NOT NULL,
-  primary key( flight_id, class),
-  constraint foreign key (flight_id ) references flight(flight_id)
+  primary key( flight_id, class)
 ) ;
 
 INSERT INTO `flight_cost` (`flight_id`, `class`, `cost`) VALUES
@@ -293,13 +287,10 @@ INSERT INTO port_location (location) VALUES
 ('Singapore');
 
 create table parent_location (
-	id int unique ,
-    parent_id int ,
-    primary key(id, parent_id),
-    constraint foreign key(id) references port_location(id),
-    constraint foreign key(parent_id) references port_location(id)
+	id int unique references port_location.id,
+    parent_id int references port_location.id,
+    primary key(id, parent_id)
 );
--- id set to unique as no location can have multiple parents
 
 INSERT INTO parent_location VALUES
 	(1, 2),
@@ -334,11 +325,10 @@ CREATE TABLE `user` (
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) DEFAULT NULL,
   `role` varchar(30) NOT NULL CHECK (`role` in ('moderator','clerk','user','guest')),
-  `discount_type` varchar(20) DEFAULT NULL ,
+  `discount_type` varchar(20) DEFAULT NULL references discount.type,
   `is_active` tinyint DEFAULT NULL,
   `dob` date NOT NULL,
-  primary key(user_id),
-  constraint foreign key(discount_type) references discount(type)
+  primary key(user_id)
 );
 
 
@@ -348,27 +338,64 @@ INSERT INTO `user` (`email`, `password`, `first_name`, `last_name`, `role`, `dis
 ('test1_usr@gmail.com', '$2b$09$/G0kHfffgFWyjrgBu8keYuMS2KSAoMu62NxunfCCyfcJHlmrUq.pK', 'usr_1', 'usr_1', 'user', 'gold', NULL, '2000-01-05');
 
 CREATE TABLE `ticket` (
-      `ticket_id` int NOT NULL auto_increment,
-      `user_id` int DEFAULT NULL,
-      `passenger_id` varchar(25) NOT NULL,
-      `flight_id` int NOT NULL,
-      `seat_number` varchar(5) NOT NULL,
-      `date` datetime NOT NULL,
-      `class` varchar(10) NOT NULL,
-      `paid` decimal(10,2) NOT NULL,
-      `status` tinyint NOT NULL DEFAULT 1,
-      `is_boarded` tinyint DEFAULT NULL,
-      primary key(ticket_id),
-      constraint foreign key(user_id) references user(user_id),
-      constraint foreign key(passenger_id) references passenger(passenger_id),
-      constraint foreign key(flight_id,class) references flight_cost(flight_id,class),
-      constraint unique(passenger_id, flight_id),
-      constraint unique(flight_id, seat_number)
+  `ticket_id` int NOT NULL auto_increment,
+  `user_id` int NOT NULL,
+  `date` datetime NOT NULL,
+  `class` varchar(10) NOT NULL,
+  `paid` decimal(10,2) NOT NULL,
+  `is_boarded` tinyint DEFAULT NULL,
+  primary key(ticket_id),
+  constraint foreign key(user_id) references user(user_id)
 );
 
-insert into ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status, is_boarded) VALUES (1, 'A0000001', 11, 10, '2022-06-14', 'Economy', '400.00',2, 0 );
-insert into ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status, is_boarded) VALUES (1, 'A0000002', 11, 11, '2022-06-14', 'Economy', '400.00',1, 0 );
-insert into ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status, is_boarded) VALUES (1, 'A0000003', 11, 12, '2022-06-14', 'Economy', '400.00',2, 0 );
+CREATE TABLE booking(
+	passenger_id varchar(25) NOT NULL,
+    flight_id int NOT NULL,
+    ticket_id int NOT NULL UNIQUE,
+    primary key(passenger_id, flight_id),
+    constraint foreign key(passenger_id) references passenger(passenger_id),
+    constraint foreign key(flight_id) references flight(flight_id),
+    constraint foreign key(ticket_id) references ticket(ticket_id)
+);
+
+CREATE TABLE seat_reservation(
+    flight_id int NOT NULL,
+    seat_number int NOT NULL,
+    ticket_id int UNIQUE NOT NULL,
+    primary key(flight_id, seat_number),
+    constraint foreign key(flight_id) references flight(flight_id),
+    constraint foreign key(ticket_id) references ticket(ticket_id)
+);
+
+delimiter $$
+create procedure book_ticket( in user_id int, 
+							in passenger_id varchar(25),
+                            in flight_id int,
+                            in seat_number int,
+                            in date datetime,
+                            in class varchar(10),
+                            in paid decimal(10,2),
+                            in is_boarded tinyint)
+begin
+	declare ticket_id int;
+	start transaction;
+		insert into ticket( `user_id`, `date`, `class`, `paid`, `is_boarded`) 
+		values (user_id, date, class, paid, is_boarded);
+        
+		select last_insert_id() into ticket_id;
+        
+        insert into booking
+		values ( passenger_id, flight_id, ticket_id);
+        
+        insert into seat_reservation
+        values (flight_id, seat_number, ticket_id);
+	commit;
+end $$
+delimiter ;
+
+call book_ticket(1, 'A0000001', 11, 10, '2022-06-14', 'Economy', '400.00', 0 );
+call book_ticket(1, 'A0000002', 11, 11, '2022-06-14', 'Economy', '400.00', 0 );
+call book_ticket(1, 'A0000003', 11, 12, '2022-06-14', 'Economy', '400.00', 0 );
 
 create view port_location_with_parent as 
 	select * from port_location left outer join parent_location using(id);
@@ -474,6 +501,7 @@ end $$
 delimiter ;
 
 -- discount procedure
+DROP PROCEDURE IF EXISTS UpdateDiscount;
 DELIMITER //
 
 create procedure UpdateDiscount(gold float,frequent float)

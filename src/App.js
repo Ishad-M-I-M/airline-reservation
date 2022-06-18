@@ -7,6 +7,7 @@ import Container from './components/Container';
 import Navbar from './components/Navbar';
 import UserStore from './stores/UserStore';
 import LoginForm from './components/LoginForm';
+import Home from './components/Home';
 
 class App extends React.Component {
 
@@ -34,20 +35,24 @@ class App extends React.Component {
         UserStore.isLoggedIn = true;
         UserStore.email = result.email;
         UserStore.role = result.role;
+    
+
       }else {
         UserStore.loading = false;
         UserStore.isLoggedIn = false;
         UserStore.email ='';
         UserStore.role = '';
+    
       }
     }catch(err) {
       UserStore.loading = false;
       UserStore.isLoggedIn = false;
-      console.error(err);
+      console.log(err);
     }
   }
 
   async doLogout() {
+    
     
     try {
 
@@ -65,6 +70,7 @@ class App extends React.Component {
         UserStore.isLoggedIn = false;
         UserStore.email = '';
         UserStore.role = '';
+     
       }
       
     } catch (error) {
@@ -83,28 +89,36 @@ class App extends React.Component {
       );
     }else if(UserStore.isLoggedIn) {
       if(UserStore.role==='moderator') {
+     
+
         return (
           <div className="App bg-black">
-            <Navbar onClick={() =>{this.doLogout()}}/>
+            <Navbar logout={this.doLogout} />
             <Container/>
           </div>
           );
       } else if (UserStore.role==='clerk') {
+
         return (
           <div className="App bg-black">
-            <Navbar onClick={() =>{this.doLogout()}}/>
+            <Navbar logout={this.doLogout}/>
             <ClerkContainer/>
           </div>
           );
       }else if(UserStore.role==='user'){
+       
+
         return(
-          <div>INSERT USER COMPONENTS HERE</div>
+          <Home logout={this.doLogout}/>
         );
       }
-    }
-    return (
-      <LoginForm />
+    }else if(!UserStore.isLoggedIn){
+      
+    return ( 
+     
+      <Home/>
     );
+    }
 
   }
 }
