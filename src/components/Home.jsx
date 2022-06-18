@@ -30,7 +30,7 @@ export default function Home(props) {
                 <div className="background-img">
                   <SearchFlight />
                 </div>
-                <Footer />
+                {/*<Footer />*/}
               </div>
             </div>
           }

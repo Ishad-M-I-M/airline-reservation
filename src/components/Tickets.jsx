@@ -10,17 +10,17 @@ export default function Tickets() {
 
   useEffect(() => {
     axios.get("/getTickets").then((response) => {
-      runInAction(() => {
+
         if(response.data.success===true){
-        setArr(response.data.data);}
-      });
+          setArr(response.data.data);}
+
     });
   }, []);
 
   return (
     <div style={{height:"100vh",backgroundColor:"#BBD2C5"}}>
     <div style={{right:"0",left:"0",marginRight:"10vw",marginLeft:"10vw"}}>
-      {/* {arr.length===0 && <h2 >No Booked Tickets</h2>} */}
+       {arr.length===0 && <h2 >No Booked Tickets</h2>}
     
       {arr.map((i) => {
         return(

@@ -116,7 +116,7 @@ class App extends React.Component {
       
     return ( 
      
-      <Home/>
+      <LoginForm/>
     );
     }
 
