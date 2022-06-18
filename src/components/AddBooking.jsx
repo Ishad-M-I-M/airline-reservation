@@ -17,13 +17,14 @@ class AddBooking extends React.Component {
       class:'',
       seat_numbers : ['Loading...'],
       seat_number:0,
+      seat_loading:false
     };
   }
 
 
   async seatNumber() {
     if(this.state.flight_id !== 0 && this.state.class !== '') {
-      console.log("Sending seat Request");
+      // console.log("Sending seat Request");
       try{
         let res = await fetch('/loadSeatnumber',{
           method:'POST',
@@ -43,7 +44,7 @@ class AddBooking extends React.Component {
         if(result && result.success){
           seats = ((result.seat_number[Object.keys(result.seat_number)[0]]).split('-')).map((s) => {return parseInt(s, 10)}).sort((a,b)=>{return a-b});
           if(seats.join('-')!==this.state.seat_numbers.join('-')) {
-            console.log("Updating Seats");
+            // console.log("Updating Seats");
             this.setState({
               seat_numbers : seats,
             });
@@ -51,7 +52,7 @@ class AddBooking extends React.Component {
               alert("Selected seat already booked. Change Seat!");
             }
           }else {
-            console.log("Not Updating Seats");
+            // console.log("Not Updating Seats");
           }  
         }
       }catch(err){}
@@ -224,7 +225,17 @@ class AddBooking extends React.Component {
                   <select defaultValue={-1} className='form-control' id='seat' onClick={()=>
                     {
                       this.seatNumber();
-                      setInterval(()=>this.seatNumber(), 10000);
+                      if(!this.state.seat_loading){
+                        console.log('Setting Interval');
+                        setInterval(()=>
+                        {
+                          this.seatNumber();
+                          this.setState({
+                            seat_loading:true
+                          })
+                        }, 
+                        10000);
+                      }
                     }}
                   onChange={(e)=>this.setState({
                     seat_number: e.target.value,

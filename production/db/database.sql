@@ -160,15 +160,15 @@ INSERT INTO `route` (`origin`, `destination`) VALUES
                                                   (10, 9);
 
 CREATE TABLE `flight` (
-                          `flight_id` int NOT NULL auto_increment,
-                          `aircraft_id` int NOT NULL,
-                          `route_id` int NOT NULL,
-                          `takeoff_time` datetime NOT NULL,
-                          `departure_time` datetime NOT NULL,
-                          is_active tinyint default 1,
-                          primary key(flight_id),
-                          constraint foreign key (aircraft_id) references aircraft(aircraft_id),
-                          constraint foreign key (route_id) references route(route_id)
+  `flight_id` int NOT NULL auto_increment,
+  `aircraft_id` int NOT NULL references aircraft.aircraft_id,
+  `route_id` int NOT NULL references route.route_id,
+  `takeoff_time` datetime NOT NULL,
+  `departure_time` datetime NOT NULL,
+  is_active tinyint default 1,
+  primary key(flight_id),
+  constraint foreign key (aircraft_id) references aircraft(aircraft_id) on delete cascade on update cascade,
+  constraint foreign key (route_id) references route(route_id) on delete cascade on update cascade
 ) ;
 
 INSERT INTO `flight` (`aircraft_id`, `route_id`, `takeoff_time`, `departure_time`) VALUES
@@ -189,11 +189,11 @@ INSERT INTO `flight` (`aircraft_id`, `route_id`, `takeoff_time`, `departure_time
 
 
 CREATE TABLE `flight_cost` (
-                               `flight_id` int NOT NULL,
-                               `class` varchar(10) NOT NULL CHECK (`class` in ('Platinum','Business','Economy')),
-                               `cost` decimal(10,2) NOT NULL,
-                               primary key( flight_id, class),
-                               constraint foreign key (flight_id ) references flight(flight_id)
+  `flight_id` int NOT NULL references flight.flight_id,
+  `class` varchar(10) NOT NULL CHECK (`class` in ('platinum','business','economy')),
+  `cost` decimal(10,2) NOT NULL,
+  primary key( flight_id, class),
+  constraint foreign key (flight_id ) references flight(flight_id) on delete cascade on update cascade
 ) ;
 
 INSERT INTO `flight_cost` (`flight_id`, `class`, `cost`) VALUES
@@ -293,11 +293,11 @@ INSERT INTO port_location (location) VALUES
                                          ('Singapore');
 
 create table parent_location (
-                                 id int unique ,
-                                 parent_id int ,
-                                 primary key(id, parent_id),
-                                 constraint foreign key(id) references port_location(id),
-                                 constraint foreign key(parent_id) references port_location(id)
+	id int unique ,
+    parent_id int ,
+    primary key(id, parent_id),
+    constraint foreign key(id) references port_location(id) on update cascade on delete cascade,
+    constraint foreign key(parent_id) references port_location(id) on update cascade on delete cascade
 );
 -- id set to unique as no location can have multiple parents
 
@@ -328,17 +328,17 @@ CREATE TABLE `sessions` (
 );
 
 CREATE TABLE `user` (
-                        `user_id` int NOT NULL auto_increment,
-                        `email` varchar(255) NOT NULL,
-                        `password` varchar(100) NOT NULL,
-                        `first_name` varchar(100) NOT NULL,
-                        `last_name` varchar(100) DEFAULT NULL,
-                        `role` varchar(30) NOT NULL CHECK (`role` in ('moderator','clerk','user','guest')),
-                        `discount_type` varchar(20) DEFAULT NULL ,
-                        `is_active` tinyint DEFAULT NULL,
-                        `dob` date NOT NULL,
-                        primary key(user_id),
-                        constraint foreign key(discount_type) references discount(type)
+  `user_id` int NOT NULL auto_increment,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) DEFAULT NULL,
+  `role` varchar(30) NOT NULL CHECK (`role` in ('moderator','clerk','user','guest')),
+  `discount_type` varchar(20) DEFAULT NULL references discount.type,
+  `is_active` tinyint DEFAULT NULL,
+  `dob` date NOT NULL,
+  primary key(user_id),
+  constraint foreign key(discount_type) references discount(type) on update cascade on delete set null
 );
 
 
@@ -348,22 +348,22 @@ INSERT INTO `user` (`email`, `password`, `first_name`, `last_name`, `role`, `dis
                                                                                                                      ('test1_usr@gmail.com', '$2b$09$/G0kHfffgFWyjrgBu8keYuMS2KSAoMu62NxunfCCyfcJHlmrUq.pK', 'usr_1', 'usr_1', 'user', 'gold', NULL, '2000-01-05');
 
 CREATE TABLE `ticket` (
-                          `ticket_id` int NOT NULL auto_increment,
-                          `user_id` int DEFAULT NULL,
-                          `passenger_id` varchar(25) NOT NULL,
-                          `flight_id` int NOT NULL,
-                          `seat_number` varchar(5) NOT NULL,
-                          `date` datetime NOT NULL,
-                          `class` varchar(10) NOT NULL,
-                          `paid` decimal(10,2) NOT NULL,
-                          `status` tinyint NOT NULL DEFAULT 1,
-                          `is_boarded` tinyint DEFAULT NULL,
-                          primary key(ticket_id),
-                          constraint foreign key(user_id) references user(user_id),
-                          constraint foreign key(passenger_id) references passenger(passenger_id),
-                          constraint foreign key(flight_id,class) references flight_cost(flight_id,class),
-                          constraint unique(passenger_id, flight_id),
-                          constraint unique(flight_id, seat_number)
+      `ticket_id` int NOT NULL auto_increment,
+      `user_id` int DEFAULT NULL,
+      `passenger_id` varchar(25) NOT NULL,
+      `flight_id` int NOT NULL,
+      `seat_number` varchar(5) NOT NULL,
+      `date` datetime NOT NULL,
+      `class` varchar(10) NOT NULL,
+      `paid` decimal(10,2) NOT NULL,
+      `status` tinyint NOT NULL DEFAULT 1,
+      `is_boarded` tinyint DEFAULT NULL,
+      primary key(ticket_id),
+      constraint foreign key(user_id) references user(user_id) on update cascade on delete set null,
+      constraint foreign key(passenger_id) references passenger(passenger_id) on update cascade on delete cascade,
+      constraint foreign key(flight_id,class) references flight_cost(flight_id,class) on update cascade on delete cascade,
+      constraint unique(passenger_id, flight_id),
+      constraint unique(flight_id, seat_number)
 );
 
 insert into ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status, is_boarded) VALUES (1, 'A0000001', 11, 10, '2022-06-14', 'Economy', '400.00',2, 0 );
@@ -488,3 +488,124 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+
+delimiter $$
+create function get_Economy_seats(fli_id int) 
+returns varchar(3000) deterministic
+begin
+	declare seats varchar(3000);
+    declare seat_num int;
+    declare counter int;
+    declare id int;
+    declare craft_id int;
+    
+    set counter = 0;
+    select aircraft_id into craft_id from flight where flight_id = fli_id limit 1;
+    select Economy_seats into seat_num from aircraft where aircraft_id = craft_id limit 1;
+    repeat
+		set counter = counter +1;
+        if not exists (select ticket_id from ticket where flight_id = fli_id and seat_number=counter and class='Economy' limit 1) then
+			if(isnull(seats)) then
+				set seats=counter;
+			else
+				set seats = concat(seats, '-', counter);
+			end if;
+		end if;
+	until counter >= seat_num
+    end repeat;
+	return seats;
+end$$
+
+delimiter ;
+
+delimiter $$
+create function get_Business_seats(fli_id int) 
+returns varchar(3000) deterministic
+begin
+	declare seats varchar(3000);
+    declare seat_num int;
+    declare counter int;
+    declare id int;
+    declare economy int;
+    declare craft_id int;
+    
+    select aircraft_id into craft_id from flight where flight_id = fli_id limit 1;
+    select Business_seats into seat_num from aircraft where aircraft_id = craft_id limit 1;
+    select Economy_seats into economy from aircraft where aircraft_id = craft_id limit 1;
+    set counter = economy;
+    repeat
+		set counter = counter +1;
+        if not exists (select ticket_id from ticket where flight_id = fli_id and seat_number=counter and class='Business' limit 1) then
+			if(isnull(seats)) then
+				set seats=counter;
+			else
+				set seats = concat(seats, '-', counter);
+			end if;
+		end if;
+	until counter >= (seat_num + economy)
+    end repeat;
+	return seats;
+end$$
+
+delimiter ;
+
+delimiter $$
+create function get_Platinum_seats(fli_id int) 
+returns varchar(3000) deterministic
+begin
+	declare seats varchar(3000);
+    declare seat_num int;
+    declare counter int;
+    declare id int;
+    declare economy int;
+    declare business int;
+    declare craft_id int;
+    
+    select aircraft_id into craft_id from flight where flight_id = fli_id; 
+    select Platinum_seats into seat_num from aircraft where aircraft_id = craft_id limit 1;
+    select Economy_seats into economy from aircraft where aircraft_id = craft_id limit 1;
+    select Business_seats into business from aircraft where aircraft_id = craft_id limit 1;
+    set counter = economy + business;
+    repeat
+		set counter = counter +1;
+        if not exists (select ticket_id from ticket where flight_id = fli_id and seat_number=counter and class='Platinum' limit 1) then
+			if(isnull(seats)) then
+				set seats=counter;
+			else
+				set seats = concat(seats, '-', counter);
+			end if;
+		end if;
+	until counter >= (seat_num + economy + business)
+    end repeat;
+	return seats;
+end$$
+
+delimiter ;
+
+delimiter //
+create procedure book_ticket
+(
+IN passenger_id_in VARCHAR(25), 
+IN name_in VARCHAR(150), 
+IN dob_in DATE, 
+IN address_in VARCHAR(255), 
+IN user_id_in INT, 
+IN flight_id_in INT, 
+IN seat_number_in varchar(5), 
+IN date_in DATETIME, 
+IN class_in VARCHAR(10), 
+IN paid_in DECIMAL(10, 2)
+)
+BEGIN
+	declare counter INT;
+    
+    SELECT count(*) into counter from passenger where passenger_id=passenger_id_in group by(passenger_id);
+    if(counter = 1) then
+		INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status,is_boarded) VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 1, 0);
+    else
+		INSERT INTO passenger(passenger_id, name, dob, address) values(passenger_id_in, name_in, dob_in, address_in);
+        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, is_boarded) VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 0);
+    end if;
+END //
+
+delimiter ;
