@@ -4,10 +4,7 @@ const router = express.Router();
 
 router.get('/', (req, res)=>{
     db.raw(
-        `select route_id as id, origin, destination
-                              from (select route_id,code as origin from route inner join airport on origin=airport_id) as origin 
-                              natural join 
-                                  (select route_id,code as destination from route inner join airport on destination=airport_id) as destination; `,
+        `select route_id as id, origin, destination from (select route_id,code as origin from route inner join airport on origin=airport_id) as origin natural join (select route_id,code as destination from route inner join airport on destination=airport_id) as destination; `,
     ).then((data)=>{
         return res.json({
             success: true,

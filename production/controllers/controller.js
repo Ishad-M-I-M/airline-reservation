@@ -125,7 +125,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
     if (req.session.userID) {
         if (
             req.body.flight_id !== "" &&
-            req.body.aircraft_id === "" &&
+            req.body.tail_number === "" &&
             req.body.origin === "" &&
             req.body.destination === ""
         ) {
@@ -200,7 +200,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
                 }
             }
         } else if (
-            req.body.aircraft_id !== "" &&
+            req.body.tail_number !== "" &&
             req.body.flight_id === "" &&
             req.body.origin === "" &&
             req.body.destination === ""
@@ -208,8 +208,8 @@ app.post("/fetchFlight/clerk", (req, res) => {
             if (req.body.past === true) {
                 if (req.body.future === true) {
                     db.query(
-                        "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where aircraft_id =?",
-                        [req.body.aircraft_id],
+                        "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where tail_number=?",
+                        [req.body.tail_number.trim()],
                         (err, data, fields) => {
                             if (err) {
                                 console.error(err);
@@ -228,8 +228,8 @@ app.post("/fetchFlight/clerk", (req, res) => {
                     );
                 } else {
                     db.query(
-                        "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where aircraft_id =? and takeoff_time < now()"[
-                            req.body.aircraft_id
+                        "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where tail_number = ? and takeoff_time < now()", [
+                            req.body.tail_number.trim()
                             ],
                         (err, data, fields) => {
                             if (err) {
@@ -251,8 +251,8 @@ app.post("/fetchFlight/clerk", (req, res) => {
             } else {
                 if (req.body.future === true) {
                     db.query(
-                        "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where aircraft_id =? and takeoff_time > now()",
-                        [req.body.aircraft_id],
+                        "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where tail_number =? and takeoff_time > now()",
+                        [req.body.aircraft_id.trim()],
                         (err, data, fields) => {
                             if (err) {
                                 console.error(err);
@@ -280,16 +280,14 @@ app.post("/fetchFlight/clerk", (req, res) => {
             req.body.origin !== "" &&
             req.body.destination !== "" &&
             req.body.flight_id === "" &&
-            req.body.aircraft_id === ""
+            req.body.tail_number === ""
         ) {
             if (req.body.past === true) {
                 if (req.body.future === true) {
                     db.query(
-                        "select flight_id, model, p1.location as origin, p2.location as destination, flight.takeoff_time, flight.departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route on route.route_id=flight.route_id left join airport as airport1 on airport1.airport_id=route.origin left join port_location as p1 on p1.id=route.origin left join port_location as p2 on p2.id=route.destination having origin=? and destination=?",
+                        "select flight_id, model, airport1.code as origin, airport2.code as destination, takeoff_time, departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route using(route_id) left join airport as airport1 on airport1.airport_id=route.origin left join airport as airport2 on airport2.airport_id=route.destination where airport1.code=? and airport2.code=?",
                         [req.body.origin.trim(), req.body.destination.trim()],
                         (err, data, fields) => {
-                            console.log("READ");
-
                             if (err) {
                                 console.error(err);
                                 res.json({
@@ -307,9 +305,10 @@ app.post("/fetchFlight/clerk", (req, res) => {
                     );
                 } else {
                     db.query(
-                        "select flight_id, model, p1.location as origin, p2.location as destination, flight.takeoff_time, flight.departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route on route.route_id=flight.route_id left join airport as airport1 on airport1.airport_id=route.origin left join port_location as p1 on p1.id=route.origin left join port_location as p2 on p2.id=route.destination having origin=? and destination=? and takeoff_time < now()",
+                        "select flight_id, model, airport1.code as origin, airport2.code as destination, takeoff_time, departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route using(route_id) left join airport as airport1 on airport1.airport_id=route.origin left join airport as airport2 on airport2.airport_id=route.destination where airport1.code=? and airport2.code=? and takeoff_time < now();",
                         [req.body.origin.trim(), req.body.destination.trim()],
                         (err, data, fields) => {
+                            console.log(data);
                             if (err) {
                                 console.error(err);
                                 res.json({
@@ -329,7 +328,7 @@ app.post("/fetchFlight/clerk", (req, res) => {
             } else {
                 if (req.body.future === true) {
                     db.query(
-                        "select flight_id, model, p1.location as origin, p2.location as destination, flight.takeoff_time, flight.departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route on route.route_id=flight.route_id left join airport as airport1 on airport1.airport_id=route.origin left join port_location as p1 on p1.id=route.origin left join port_location as p2 on p2.id=route.destination having origin=? and destination=? and takeoff_time > now()",
+                        "select flight_id, model, airport1.code as origin, airport2.code as destination, takeoff_time, departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route using(route_id) left join airport as airport1 on airport1.airport_id=route.origin left join airport as airport2 on airport2.airport_id=route.destination where airport1.code=? and airport2.code=? and takeoff_time > now()",
                         [req.body.origin.trim(), req.body.destination.trim()],
                         (err, data, fields) => {
                             if (err) {
@@ -417,7 +416,8 @@ app.post("/loadSeatnumber", (req, res) => {
 });
 
 app.post("/bookTicket", (req, res) => {
-    if (req.session.userID) {
+    if (true) {
+        console.log(req.body);
         db.query(
             "SELECT cost FROM flight LEFT JOIN flight_cost USING(flight_id) WHERE flight_id=? AND class=?",
             [req.body.flight_id, req.body.class],
@@ -431,37 +431,45 @@ app.post("/bookTicket", (req, res) => {
                     });
 
                 } else {
-                    db.query(
-                        "CALL book_ticket(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                        [
-                            req.body.passenger_id,
-                            req.body.passenger_name,
-                            req.body.date,
-                            req.body.passenger_address,
-                            req.session.userID,
-                            req.body.flight_id,
-                            req.body.seat_number,
-                            req.body.date,
-                            req.body.class,
-                            data1[0].cost,
-                        ],
-                        (err, fields) => {
-                            if (err) {
-                                res.status(500);
-                                res.json({
-                                    success: false,
-                                    msg: "Error Booking the Ticket",
-                                });
+                    if(data1.length > 0){
+                        console.log("Data available");
+                        db.query(
+                            "CALL book_ticket(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            [
+                                req.body.passenger_id,
+                                req.body.passenger_name,
+                                req.body.date,
+                                req.body.passenger_address,
+                                req.session.userID,
+                                req.body.flight_id,
+                                req.body.seat_number,
+                                req.body.date,
+                                req.body.class,
+                                data1[0].cost,
+                            ],
+                            (err, fields) => {
+                                if (err) {
+                                    res.status(500);
+                                    res.json({
+                                        success: false,
+                                        msg: "Error Booking the Ticket",
+                                    });
 
-                            } else {
-                                res.json({
-                                    success: true,
-                                    msg: "Booking Successful",
-                                });
+                                } else {
+                                    res.json({
+                                        success: true,
+                                        msg: "Booking Successful",
+                                    });
 
+                                }
                             }
-                        }
-                    );
+                        );
+                    }else {
+                        res.json({
+                            success:false,
+                            msg:"Database entry error, Inform Kabilan",
+                        });
+                    }
                 }
             }
         );

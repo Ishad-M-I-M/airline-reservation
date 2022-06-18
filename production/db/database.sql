@@ -488,3 +488,165 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+
+delimiter $$
+create function get_Economy_seats(fli_id int) 
+returns varchar(3000) deterministic
+begin
+	declare seats varchar(3000);
+    declare seat_num int;
+    declare counter int;
+    declare id int;
+    declare craft_id int;
+    
+    set counter = 0;
+    select aircraft_id into craft_id from flight where flight_id = fli_id limit 1;
+    select Economy_seats into seat_num from aircraft where aircraft_id = craft_id limit 1;
+    repeat
+		set counter = counter +1;
+        if not exists (select ticket_id from ticket where flight_id = fli_id and seat_number=counter and class='Economy' limit 1) then
+			if(isnull(seats)) then
+				set seats=counter;
+			else
+				set seats = concat(seats, '-', counter);
+			end if;
+		end if;
+	until counter >= seat_num
+    end repeat;
+	return seats;
+end$$
+
+delimiter ;
+
+delimiter $$
+create function get_Business_seats(fli_id int) 
+returns varchar(3000) deterministic
+begin
+	declare seats varchar(3000);
+    declare seat_num int;
+    declare counter int;
+    declare id int;
+    declare economy int;
+    declare craft_id int;
+    
+    select aircraft_id into craft_id from flight where flight_id = fli_id limit 1;
+    select Business_seats into seat_num from aircraft where aircraft_id = craft_id limit 1;
+    select Economy_seats into economy from aircraft where aircraft_id = craft_id limit 1;
+    set counter = economy;
+    repeat
+		set counter = counter +1;
+        if not exists (select ticket_id from ticket where flight_id = fli_id and seat_number=counter and class='Business' limit 1) then
+			if(isnull(seats)) then
+				set seats=counter;
+			else
+				set seats = concat(seats, '-', counter);
+			end if;
+		end if;
+	until counter >= (seat_num + economy)
+    end repeat;
+	return seats;
+end$$
+
+delimiter ;
+
+delimiter $$
+create function get_Platinum_seats(fli_id int) 
+returns varchar(3000) deterministic
+begin
+	declare seats varchar(3000);
+    declare seat_num int;
+    declare counter int;
+    declare id int;
+    declare economy int;
+    declare business int;
+    declare craft_id int;
+    
+    select aircraft_id into craft_id from flight where flight_id = fli_id; 
+    select Platinum_seats into seat_num from aircraft where aircraft_id = craft_id limit 1;
+    select Economy_seats into economy from aircraft where aircraft_id = craft_id limit 1;
+    select Business_seats into business from aircraft where aircraft_id = craft_id limit 1;
+    set counter = economy + business;
+    repeat
+		set counter = counter +1;
+        if not exists (select ticket_id from ticket where flight_id = fli_id and seat_number=counter and class='Platinum' limit 1) then
+			if(isnull(seats)) then
+				set seats=counter;
+			else
+				set seats = concat(seats, '-', counter);
+			end if;
+		end if;
+	until counter >= (seat_num + economy + business)
+    end repeat;
+	return seats;
+end$$
+
+delimiter ;
+
+delimiter //
+create procedure book_ticket
+(
+IN passenger_id_in VARCHAR(25), 
+IN name_in VARCHAR(150), 
+IN dob_in DATE, 
+IN address_in VARCHAR(255), 
+IN user_id_in INT, 
+IN flight_id_in INT, 
+IN seat_number_in varchar(5), 
+IN date_in DATETIME, 
+IN class_in VARCHAR(10), 
+IN paid_in DECIMAL(10, 2)
+)
+BEGIN
+	declare counter INT;
+    
+    SELECT count(*) into counter from passenger where passenger_id=passenger_id_in group by(passenger_id);
+    if(counter = 1) then
+		INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status,is_boarded) VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 1, 0);
+    else
+		INSERT INTO passenger(passenger_id, name, dob, address) values(passenger_id_in, name_in, dob_in, address_in);
+        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, is_boarded) VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 0);
+    end if;
+END //
+
+delimiter ;
+
+
+--
+-- Constraints for table `flight`
+--
+ALTER TABLE `flight`
+  ADD CONSTRAINT `flight_ibfk_1` FOREIGN KEY (`aircraft_id`) REFERENCES `aircraft` (`aircraft_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `flight_ibfk_2` FOREIGN KEY (`route_id`) REFERENCES `route` (`route_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `flight_cost`
+--
+ALTER TABLE `flight_cost`
+  ADD CONSTRAINT `flight_cost_ibfk_1` FOREIGN KEY (`flight_id`) REFERENCES `flight` (`flight_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `parent_location`
+--
+ALTER TABLE 'parent_location'
+  ADD CONSTRAINT 'parent_location_ibfk_1' FOREIGN KEY ('id') REFERENCES 'port_location'('id') ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT 'parent_location_ibfk_2' FOREIGN KEY ('parent_id') REFERENCES 'port_location'('id') ON DELETE SET NULL ON UPDATE CASCADE;
+--
+-- Constraints for table `route`
+--
+ALTER TABLE `route`
+  ADD CONSTRAINT `route_ibfk_1` FOREIGN KEY (`origin`) REFERENCES `airport` (`airport_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `route_ibfk_2` FOREIGN KEY (`destination`) REFERENCES `airport` (`airport_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `ticket`
+--
+ALTER TABLE `ticket`
+  ADD CONSTRAINT `ticket_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `ticket_ibfk_2` FOREIGN KEY (`passenger_id`) REFERENCES `passenger` (`passenger_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `ticket_ibfk_3` FOREIGN KEY (`flight_id`) REFERENCES `flight` (`flight_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user`
+--
+ALTER TABLE `user`
+  ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`discount_type`) REFERENCES `discount` (`type`) ON DELETE SET NULL ON UPDATE CASCADE;
