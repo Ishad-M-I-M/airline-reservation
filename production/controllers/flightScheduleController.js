@@ -18,17 +18,6 @@ router.get('/', function (req, res){
 });
 
 router.post('/', function (req, res){
-    let {aircraft_id, route_id, takeoff_time, landing_time} = req.body;
-
-    db.raw(
-        "INSERT INTO flight (aircraft_id, route_id, takeoff_time, departure_time) VALUES (?, ?, ?, ?)",
-        [aircraft_id, route_id, takeoff_time, landing_time],
-    ).then(() => {
-        return res.json({success: true});
-    }).catch((err) => {
-        console.error(err);
-        return res.status(500).json({success: false});
-    });
 
 });
 

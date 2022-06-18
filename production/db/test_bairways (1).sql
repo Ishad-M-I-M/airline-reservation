@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 16, 2022 at 04:50 PM
+-- Generation Time: Jun 18, 2022 at 05:31 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.28
 
@@ -91,6 +91,26 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `book_ticket` (IN `user_id` INT, IN 
         values (flight_id, seat_number, ticket_id);
 	commit;
 end$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `book_ticket_proc` (IN `in_f_id` INT(11), IN `in_user_id` INT(11), IN `in_passenger_id` VARCHAR(25), IN `in_passenger_name` VARCHAR(150), IN `in_passenger_add` VARCHAR(255), IN `in_dob` DATE, IN `in_class` VARCHAR(10), IN `in_seat_no` VARCHAR(5))   BEGIN  
+    declare payment  dec(10,2);
+    declare disc_type varchar(20);
+    declare var_discount dec(4,2);
+
+	select cost into payment from flight_cost where flight_id =in_f_id and class=in_class limit 1;
+    
+	if in_user_id !=0 then
+        
+    		select discount_type into disc_type from user where user_id=in_user_id limit 1;
+        	select discount into var_discount from discount where type =disc_type limit 1;
+        	
+            set payment= payment *( 100-var_discount)/100;
+    end if;  
+    start TRANSACTION;
+    	insert IGNORE into passenger values(in_passenger_id,in_passenger_name,in_dob,in_passenger_add);
+    	insert into ticket(user_id,passenger_id,flight_id,seat_number,date,class,paid,status,is_boarded) values (in_user_id,in_passenger_id,in_f_id,in_seat_no,NOW(),in_class,payment,0,0);
+    commit;
+END$$
 
 --
 -- Functions
@@ -235,20 +255,29 @@ CREATE TABLE `flight` (
 --
 
 INSERT INTO `flight` (`flight_id`, `aircraft_id`, `route_id`, `takeoff_time`, `departure_time`, `is_active`) VALUES
-(1, 1, 2, '2022-04-24 10:25:00', '2022-04-24 13:35:00', 1),
-(2, 8, 1, '2022-04-24 08:00:00', '2022-04-24 11:00:00', 1),
-(3, 2, 3, '2022-04-25 13:27:07', '2022-04-25 16:27:07', 1),
-(4, 4, 4, '2022-04-25 13:35:00', '2022-04-25 16:31:14', 1),
-(5, 5, 6, '2022-04-26 07:35:00', '2022-04-26 09:30:00', 1),
-(6, 6, 14, '2022-04-26 20:00:00', '2022-04-26 22:00:00', 1),
-(7, 1, 16, '2022-04-27 06:30:00', '2022-04-27 09:30:00', 1),
-(8, 2, 20, '2022-04-27 15:00:00', '2022-04-27 16:30:00', 1),
-(9, 8, 23, '2022-04-28 02:30:00', '2022-04-28 04:00:00', 1),
-(10, 3, 30, '2022-04-28 22:00:00', '2022-04-28 23:40:00', 1),
-(11, 4, 40, '2022-04-29 10:40:00', '2022-04-29 12:40:00', 1),
-(12, 5, 45, '2022-04-29 01:00:00', '2022-04-29 02:30:00', 1),
-(13, 7, 76, '2022-04-30 18:00:00', '2022-04-30 20:00:00', 1),
-(14, 8, 86, '2022-04-30 22:44:00', '2022-04-30 23:44:00', 1);
+(15, 8, 1, '2022-07-09 10:00:00', '2022-07-09 14:00:00', 1),
+(16, 1, 1, '2022-07-09 11:00:00', '2022-07-09 15:00:00', 1),
+(17, 2, 1, '2022-07-09 09:00:00', '2022-07-09 11:00:00', 1),
+(18, 3, 2, '2022-07-09 09:00:00', '2022-07-09 11:00:00', 1),
+(19, 4, 2, '2022-07-09 10:00:00', '2022-07-09 12:00:00', 1),
+(20, 5, 3, '2022-07-09 10:00:00', '2022-07-09 12:00:00', 1),
+(21, 6, 3, '2022-07-09 12:00:00', '2022-07-09 15:00:00', 1),
+(22, 7, 4, '2022-07-09 12:00:00', '2022-07-09 15:00:00', 1),
+(23, 8, 4, '2022-07-09 10:00:00', '2022-07-09 14:00:00', 1),
+(24, 1, 5, '2022-07-09 16:00:00', '2022-07-09 20:00:00', 1),
+(25, 2, 5, '2022-07-09 13:00:00', '2022-07-09 23:00:00', 1),
+(26, 3, 10, '2022-07-09 13:00:00', '2022-07-09 23:00:00', 1),
+(27, 4, 10, '2022-07-09 11:00:00', '2022-07-09 01:00:00', 1),
+(28, 5, 11, '2022-07-09 16:00:00', '2022-07-09 20:00:00', 1),
+(29, 6, 11, '2022-07-09 20:00:00', '2022-07-09 22:00:00', 1),
+(30, 7, 12, '2022-07-09 20:00:00', '2022-07-09 22:00:00', 1),
+(31, 8, 12, '2022-07-09 21:00:00', '2022-07-09 23:00:00', 1),
+(32, 1, 13, '2022-07-09 21:00:00', '2022-07-09 23:00:00', 1),
+(33, 2, 13, '2022-07-09 22:00:00', '2022-07-09 23:00:00', 1),
+(34, 3, 19, '2022-07-09 22:00:00', '2022-07-09 23:00:00', 1),
+(35, 4, 19, '2022-07-09 03:00:00', '2022-07-09 05:00:00', 1),
+(36, 5, 20, '2022-07-09 03:00:00', '2022-07-09 05:00:00', 1),
+(37, 6, 21, '2022-07-09 10:00:00', '2022-07-09 12:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -267,48 +296,75 @@ CREATE TABLE `flight_cost` (
 --
 
 INSERT INTO `flight_cost` (`flight_id`, `class`, `cost`) VALUES
-(1, 'Business', '800.00'),
-(1, 'Economy', '400.00'),
-(1, 'Platinum', '1000.00'),
-(2, 'Business', '800.00'),
-(2, 'Economy', '400.00'),
-(2, 'Platinum', '1000.00'),
-(3, 'Business', '800.00'),
-(3, 'Economy', '400.00'),
-(3, 'Platinum', '1000.00'),
-(4, 'Business', '800.00'),
-(4, 'Economy', '400.00'),
-(4, 'Platinum', '1000.00'),
-(5, 'Business', '800.00'),
-(5, 'Economy', '400.00'),
-(5, 'Platinum', '1000.00'),
-(6, 'Business', '800.00'),
-(6, 'Economy', '400.00'),
-(6, 'Platinum', '1000.00'),
-(7, 'Business', '800.00'),
-(7, 'Economy', '400.00'),
-(7, 'Platinum', '1000.00'),
-(8, 'Business', '800.00'),
-(8, 'Economy', '400.00'),
-(8, 'Platinum', '1000.00'),
-(9, 'Business', '800.00'),
-(9, 'Economy', '400.00'),
-(9, 'Platinum', '1000.00'),
-(10, 'Business', '800.00'),
-(10, 'Economy', '400.00'),
-(10, 'Platinum', '1000.00'),
-(11, 'Business', '800.00'),
-(11, 'Economy', '400.00'),
-(11, 'Platinum', '1000.00'),
-(12, 'Business', '800.00'),
-(12, 'Economy', '400.00'),
-(12, 'Platinum', '1000.00'),
-(13, 'Business', '800.00'),
-(13, 'Economy', '400.00'),
-(13, 'Platinum', '1000.00'),
-(14, 'Business', '800.00'),
-(14, 'Economy', '400.00'),
-(14, 'Platinum', '1000.00');
+(15, 'Business', '800.00'),
+(15, 'Economy', '400.00'),
+(15, 'Platinum', '1000.00'),
+(16, 'Business', '800.00'),
+(16, 'Economy', '400.00'),
+(16, 'Platinum', '1000.00'),
+(17, 'Business', '800.00'),
+(17, 'Economy', '400.00'),
+(17, 'Platinum', '1000.00'),
+(18, 'Business', '800.00'),
+(18, 'Economy', '400.00'),
+(18, 'Platinum', '1000.00'),
+(19, 'Business', '800.00'),
+(19, 'Economy', '400.00'),
+(19, 'Platinum', '1000.00'),
+(20, 'Business', '800.00'),
+(20, 'Economy', '400.00'),
+(20, 'Platinum', '1000.00'),
+(21, 'Business', '800.00'),
+(21, 'Economy', '400.00'),
+(21, 'Platinum', '1000.00'),
+(22, 'Business', '800.00'),
+(22, 'Economy', '400.00'),
+(22, 'Platinum', '1000.00'),
+(23, 'Business', '800.00'),
+(23, 'Economy', '400.00'),
+(23, 'Platinum', '1000.00'),
+(24, 'Business', '800.00'),
+(24, 'Economy', '400.00'),
+(24, 'Platinum', '1000.00'),
+(25, 'Business', '800.00'),
+(25, 'Economy', '400.00'),
+(25, 'Platinum', '1000.00'),
+(26, 'Business', '800.00'),
+(26, 'Economy', '400.00'),
+(26, 'Platinum', '1000.00'),
+(27, 'Business', '800.00'),
+(27, 'Economy', '400.00'),
+(27, 'Platinum', '1000.00'),
+(28, 'Business', '800.00'),
+(28, 'Economy', '400.00'),
+(28, 'Platinum', '1000.00'),
+(29, 'Business', '800.00'),
+(29, 'Economy', '400.00'),
+(29, 'Platinum', '1000.00'),
+(30, 'Business', '800.00'),
+(30, 'Economy', '400.00'),
+(30, 'Platinum', '1000.00'),
+(31, 'Business', '800.00'),
+(31, 'Economy', '400.00'),
+(31, 'Platinum', '1000.00'),
+(32, 'Business', '800.00'),
+(32, 'Economy', '400.00'),
+(32, 'Platinum', '1000.00'),
+(33, 'Business', '800.00'),
+(33, 'Economy', '400.00'),
+(33, 'Platinum', '1000.00'),
+(34, 'Business', '800.00'),
+(34, 'Economy', '400.00'),
+(34, 'Platinum', '1000.00'),
+(35, 'Business', '800.00'),
+(35, 'Economy', '400.00'),
+(35, 'Platinum', '1000.00'),
+(36, 'Business', '800.00'),
+(36, 'Economy', '400.00'),
+(36, 'Platinum', '1000.00'),
+(37, 'Business', '800.00'),
+(37, 'Economy', '400.00'),
+(37, 'Platinum', '1000.00');
 
 -- --------------------------------------------------------
 
@@ -371,7 +427,9 @@ INSERT INTO `passenger` (`passenger_id`, `name`, `dob`, `address`) VALUES
 ('A0000008', 'Gotabaya Rajapaksa', '1948-06-20', 'No. 26/A, Pangiriwatta Mawatha, Mirihana, Nugegoda, Sri Lanka'),
 ('A0000009', 'Basil Rajapaksa', '1951-04-27', 'No. 1316, Jayanthipura, Nelum Mawatha, Battaramulla, Sri Lanka'),
 ('A0000010', 'Goran Peterson', '2010-04-10', 'No. 15, Lotus Avenue, Helineski, Finland'),
-('A0000011', 'Arifullah Khan', '2015-04-10', 'No. 1516, Havelok street, Stockholm, Sweden');
+('A0000011', 'Arifullah Khan', '2015-04-10', 'No. 1516, Havelok street, Stockholm, Sweden'),
+('q', 'q', '2022-06-11', 'q'),
+('test1', 'test1', '2022-06-03', 'test1');
 
 -- --------------------------------------------------------
 
@@ -548,6 +606,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
+('Cb3bBef18c8HLJ0YSjwmkuGtwRzxf75w', 1687059088, '{\"cookie\":{\"originalMaxAge\":31536000000,\"expires\":\"2023-06-18T03:31:28.070Z\",\"httpOnly\":false,\"path\":\"/\"},\"userID\":3}'),
+('kfScdvB6JFCcfw-8a_k05nsBC05QJU2D', 1687057417, '{\"cookie\":{\"originalMaxAge\":31536000000,\"expires\":\"2023-06-18T03:02:22.930Z\",\"httpOnly\":false,\"path\":\"/\"},\"userID\":1}'),
 ('m1_pYtOWab2H2y1IGBi20VJOFq51wbS3', 1686916490, '{\"cookie\":{\"originalMaxAge\":31536000000,\"expires\":\"2023-06-16T11:40:25.519Z\",\"httpOnly\":false,\"path\":\"/\"},\"userID\":2}');
 
 -- --------------------------------------------------------
@@ -568,6 +628,14 @@ CREATE TABLE `ticket` (
   `status` tinyint(4) NOT NULL DEFAULT 1,
   `is_boarded` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `ticket`
+--
+
+INSERT INTO `ticket` (`ticket_id`, `user_id`, `passenger_id`, `flight_id`, `seat_number`, `date`, `class`, `paid`, `status`, `is_boarded`) VALUES
+(80, 3, 'q', 2, '1', '2022-06-18 08:22:50', 'Economy', '364.00', -1, 0),
+(82, NULL, 'test1', 15, '1', '2022-06-18 08:53:50', 'Economy', '400.00', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -718,7 +786,7 @@ ALTER TABLE `airport`
 -- AUTO_INCREMENT for table `flight`
 --
 ALTER TABLE `flight`
-  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `flight_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `port_location`
@@ -736,7 +804,7 @@ ALTER TABLE `route`
 -- AUTO_INCREMENT for table `ticket`
 --
 ALTER TABLE `ticket`
-  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `ticket_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `user`

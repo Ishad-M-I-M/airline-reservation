@@ -29,7 +29,7 @@ class ViewFlights extends React.Component {
     if(this.state.aircrafts.length === 0) {
       try {
         let res = await fetch('/aircraft',{
-          method:'get',
+          method:'post',
           headers:{
             'Accept': 'application/json',
             'Content-Type':'application/json'
@@ -40,8 +40,8 @@ class ViewFlights extends React.Component {
 
         if(result && result.success) {
           let temp_craft = [];
-          result.aircrafts.forEach(element => {
-            temp_craft.push(`${element.model} - ${element.aircraft_id}`);
+          result.details.forEach(element => {
+            temp_craft.push(`${element.model} - ${element.aircraft_id}`);          
           });
           this.setState({
             aircrafts: temp_craft,
@@ -57,8 +57,8 @@ class ViewFlights extends React.Component {
     if(this.state.codes.length === 0){
       try{
 
-        let res = await fetch('/airport',{
-          method: 'get',
+        let res = await fetch('/airportCodes',{
+          method: 'post',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ class ViewFlights extends React.Component {
 
         if(result && result.success) {
           let temp_codes = [];
-          result.airports.forEach(element => {
+          result.codes.forEach(element => {
             temp_codes.push(element.code);
           });
           temp_codes.sort((a, b) => a > b ? 1 : -1);

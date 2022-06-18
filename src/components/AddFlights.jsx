@@ -82,7 +82,7 @@ class AddFlights extends React.Component {
       alert("Fill all Columns");
     }else {
       try {
-        let res = await fetch('/flightSchedule',{
+        let res = await fetch('/addFlight',{
           method:'post',
           headers: {
             'Accept' : 'application/json',

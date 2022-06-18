@@ -11,7 +11,6 @@ class AddAircraft extends Component {
       this.state = {
          model:"",
          total_seats:null,
-         tail_number:"",
          economy:null,
          business:null,
          platinum:null,
@@ -21,10 +20,10 @@ class AddAircraft extends Component {
     }
 
     
-      async addFlight(){
+      async ADD_FLIGHT(){
 
         try {
-            let res = await fetch('/aircraft',{
+            let res = await fetch('/addAircraft',{
               method:'post',
               headers: {
                 'Accept' : 'application/json',
@@ -32,10 +31,10 @@ class AddAircraft extends Component {
               },
               body: JSON.stringify({
                 model : this.state.model,
+                seats : this.state.total_seats,
                 economy : this.state.economy,
                 business : this.state.business,
-                platinum : this.state.platinum,
-                tail_number : this.state.tail_number
+                platinum : this.state.platinum
               }),
               credentials : 'include',
             });
@@ -87,13 +86,6 @@ class AddAircraft extends Component {
         })
 
     }
-    Addtail_number= (event) =>{
-      this.setState({
-          tail_number: event.target.value
-          
-      })
-
-  }
     Addseats = (event) =>{
             this.setState({
                 total_seats: event.target.value
@@ -173,7 +165,7 @@ class AddAircraft extends Component {
     return (
       <div className='Aircraft_form'>
         <AlertMe shows = {this.state.alert}/>
-        <form onSubmit={()=>{this.addFlight()}}>
+        <form onSubmit={()=>{this.ADD_FLIGHT()}}>
 
             <div class="form-floating mb-3">
 
@@ -183,16 +175,6 @@ class AddAircraft extends Component {
             <label for="floatingInput">Model</label>
 
             </div>
-
-
-            <div class="form-floating mb-3">
-
-              <input type="text" className="form-control" id="floatingInput" value={this.state.tail_number} 
-              onChange={this.Addtail_number} placeholder="Tail Number" required
-              />
-              <label for="floatingInput">Tail Number</label>
-
-              </div>
 
             <div class="form-floating mb-3">
 

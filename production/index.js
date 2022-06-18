@@ -4,7 +4,9 @@ const path = require('path');
 const mysql = require('mysql');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
-require('dotenv').config();
+require('dotenv').config({
+    path:'../.env'
+});
 
 // controllers
 const airportController = require('./controllers/airportController');
@@ -12,8 +14,9 @@ const routeController = require('./controllers/routeController');
 const aircraftController = require('./controllers/aircraftController');
 const flightScheduleController = require('./controllers/flightScheduleController');
 const reportController = require('./controllers/reportController');
-const discountController = require('./controllers/discountController');
 const controller = require('./controllers/controller');
+
+
 // app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
@@ -23,6 +26,9 @@ const db = mysql.createConnection({
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASS,
     database: process.env.DATABASE_NAME,
+    multipleStatements: true,
+
+
 });
 
 db.connect(function(err) {
@@ -54,7 +60,6 @@ app.use('/route', routeController );
 app.use('/aircraft', aircraftController);
 app.use('/flightSchedule', flightScheduleController);
 app.use('/report', reportController);
-app.use('/discount', discountController);
 app.use('/', controller);
 
 // app.get('/', function(req, res) {

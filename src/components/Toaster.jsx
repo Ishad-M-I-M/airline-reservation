@@ -21,8 +21,8 @@ function Example(props) {
               <small>Just Now</small>
             </Toast.Header>
             <Toast.Body> 
-                Frequent : {props.Frequent}% <br />
-                Gold : {props.SavedGold}%
+              Frequnt : {props.Frequent}% and 
+            Gold : {props.SavedGold}%
             </Toast.Body>
           </Toast>
         </Col>
