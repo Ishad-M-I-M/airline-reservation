@@ -10,6 +10,7 @@ import NotFound from './NotFound';
 import ViewReports from './ViewReports';
 import ViewFlightSchedules from './ViewFlightSchedules';
 import ClerkPage from "./ClerkPage";
+// import SignUpNew from './SignUPNew';
 
 export default function Container() {
 
@@ -28,6 +29,7 @@ export default function Container() {
                     <Routes>
                         <Route index element={<h3 className='text-center'> Select an option</h3>}></Route>
                         <Route path='/view-routes' element={<ViewRoutes/>}></Route>
+                        {/* <Route path='/signup' element={<SignUpNew/>}></Route> */}
                         <Route path='/view-aircrafts' element={<ViewAircrafts/>}></Route>
                         <Route path='/view-airports' element={<ViewAirports/>}></Route>
                         <Route path='/view-reports' element={<ViewReports/>}></Route>
