@@ -17,6 +17,7 @@
     "express-session": "^1.17.2",
     "knex": "^2.1.0",
     "mysql": "^2.18.1",
+    "nodemon": "^2.0.18",
     "sqlite3": "^5.0.8"
   }
 }

@@ -19,12 +19,6 @@ function ClerkPage() {
   return (
 
     <div>
-
-        <div className="navbar">
-        <a href="#">Home</a>
-        <a href="#contact">Log Out</a>
-
-      </div>
       <div>
           <Popup trigger={buttonpopup} setTrigger = {setbuttonpopup}>
         <h1 style={{textAlign: 'center'}}>

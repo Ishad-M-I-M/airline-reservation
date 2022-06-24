@@ -1,6 +1,6 @@
 // Update with your config settings.
 require('dotenv').config({
-  path:'../.env'
+  path:'.env'
 });
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
@@ -13,7 +13,7 @@ module.exports = {
       host: 'localhost',
       database: 'test_bairways',
       user:     'root',
-      password: '',
+      password: '1234',
      
 
     },
@@ -33,11 +33,7 @@ module.exports = {
       host: process.env.DATABASE_HOST,
       database: process.env.DATABASE_NAME,
       user:     process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASS, 
-   
-
-      
-
+      password: process.env.DATABASE_PASS,
     },
     pool: {
       min: 2,

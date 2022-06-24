@@ -19,7 +19,7 @@ a {
   align-items: center;
   justify-content: space-around;
   height: 65px;
-  background: rgb(0, 28, 73);
+  background: rgba(0, 28, 73,0.2);
   text-align: left;
 }
 
@@ -32,12 +32,12 @@ a {
 .nav_items {
   display: flex;
   align-items: center;
-
-  @media screen and (max-width: 768px) {
+}
+@media screen and (max-width: 768px) {
+  .nav_items {
     display: none;
   }
 }
-
 .nav_item:hover {
   background: #103d80;
   border-radius: 5px;

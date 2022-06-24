@@ -14,7 +14,9 @@ export default function ViewAircrafts() {
     axios.get('/aircraft').then((res)=>{
       aircraftList.current = res.data.aircrafts;
       setAircrafts(res.data.aircrafts);
-    })
+    }).catch((err)=>{
+      console.log(err);
+    });
   }, []);
 
   let handleDelete = (aircraft_id_) => {
