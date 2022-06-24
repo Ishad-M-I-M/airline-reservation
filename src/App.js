@@ -1,5 +1,6 @@
 import React from 'react';
 import {observer} from 'mobx-react';
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 
 import './App.css';
 import ClerkContainer from './components/ClerkContainer';
@@ -8,8 +9,8 @@ import Navbar from './components/Navbar';
 import UserStore from './stores/UserStore';
 import Home from './components/Home';
 import {LandingPage} from "./components/LandingPage";
-import LoginForm from "./components/LoginForm";
 import SignupForm from "./components/SignupForm";
+import LoginForm from "./components/LoginForm";
 
 class App extends React.Component {
 
@@ -112,19 +113,14 @@ class App extends React.Component {
                 );
             }
         } else if (!UserStore.isLoggedIn) {
-            console.log(window.location.pathname);
-            if(window.location.pathname === '/sign-in'){
-                return (
-                    <LoginForm/>
-                );
-            }
-            else if(window.location.pathname === '/sign-up'){
-                return (
-                    <SignupForm/>
-                );
-            }
             return (
-                <LandingPage/>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<LandingPage/>}/>
+                        <Route path="/sign-in" element={<LoginForm/>}/>
+                        <Route path="/sign-up" element={<SignupForm/>}/>
+                    </Routes>
+                </BrowserRouter>
             );
         }
 

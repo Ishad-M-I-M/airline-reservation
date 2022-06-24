@@ -71,8 +71,6 @@ router.post("/isLoggedIn", (req, res) => {
                 return res.json({
                     success: true, email: data[0][0].email, role: data[0][0].role,
                 });
-
-                return true;
             } else {
                 return res.json({
                     success: false,
