@@ -79,6 +79,9 @@ function SearchFlight() {
         }
       }
     )
+        .catch(function(error){
+            console.log(error);
+        })
 
     
   };
@@ -89,7 +92,7 @@ function SearchFlight() {
     axios
       .get("/airport")
       .then((res) => {
-        setAirports(res.data.data);
+        setAirports(res.data.airports);
       })
       .catch((err) => {
         console.log(err);

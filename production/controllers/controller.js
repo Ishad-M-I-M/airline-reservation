@@ -146,7 +146,7 @@ app.post("/search-result", function (req, res) {
               and origin = (select airport_id from airport where code = "${departingAirportCode}");
     `).then((data) => {
         if (data[0].length !== 0) {
-            let route_id = JSON.stringify(data[0]["r1_id"]);
+            let route_id = JSON.stringify(data[0][0]["r1_id"]);
 
             if (route_id != null) {
                 db.raw(`select *
@@ -160,14 +160,15 @@ app.post("/search-result", function (req, res) {
                             where origin = (select airport_id from airport where code = "${destinationAirportCode}")
                               and destination =
                                   (select airport_id from airport where code = "${departingAirportCode}");`)
-                        .then((data) => {
-                            if (data[0].length != 0) {
-                                let return_route_id = JSON.stringify(data[0][0]["r2_id"]);
+                        .then((result) => {
+                            if (result[0].length != 0) {
+                                let return_route_id = JSON.stringify(result[0][0]["r2_id"]);
                                 if (return_route_id != null) {
-                                    db.query(`select *
+                                    db.raw(`select *
                                               from flight
                                               where route_id = '${return_route_id}'
-                                                and DATE(takeoff_time) = '${destinationDate}'`).then((data) => {
+                                                and DATE(takeoff_time) = '${destinationDate}'`)
+                                        .then((data) => {
                                         return res.json({
                                             success: true, data: flightDetails, return_data: result,
                                         });
