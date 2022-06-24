@@ -3,7 +3,8 @@ const app = express();
 const path = require('path');
 const mysql = require('mysql');
 const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
+
+const KnexSessionStore = require('connect-session-knex')(session);
 require('dotenv').config({
     path:'../.env'
 });
@@ -17,32 +18,15 @@ const reportController = require('./controllers/reportController');
 const discountController = require('./controllers/discountController');
 const controller = require('./controllers/controller');
 
-
+const db = require('./db');
 // app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
-//Database
-const db = mysql.createConnection({
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASS,
-    database: process.env.DATABASE_NAME,
-    multipleStatements: true,
-
-
+const sessionStore = new KnexSessionStore({
+    knex: db,
+    clearInterval : (365 * 86400 * 1000),
+    disableDbCleanup: true
 });
-
-db.connect(function(err) {
-    if(err) {
-        console.log("DB error");
-        throw err;
-    }
-});
-
-const sessionStore = new MySQLStore({
-    expiration : (365 * 86400 * 1000),
-    endConnectionOnClose: false,
-}, db);
 
 app.use(session({
     key: 'fsasfsfafawfrhykuytjdafapsovapjv32fq',
