@@ -47,7 +47,7 @@ class LoginForm extends React.Component {
     });
 
     try {
-      let res = await fetch("/login", {
+      let res = await fetch("/auth/login", {
         method: "post",
         headers: {
           "Accept": "application/json",
