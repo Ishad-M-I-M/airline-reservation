@@ -87,7 +87,7 @@ function SearchFlight() {
     document.querySelector(".noReturnCheckBox").setAttribute("checked",true);
 
     axios
-      .get("/getAirports")
+      .get("/airport")
       .then((res) => {
         setAirports(res.data.data);
       })
