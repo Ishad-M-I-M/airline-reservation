@@ -18,6 +18,7 @@ const discountController = require('./controllers/discountController');
 const authController = require('./controllers/authController');
 const controller = require('./controllers/controller');
 
+
 const db = require('./db');
 // app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());

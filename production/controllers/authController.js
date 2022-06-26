@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const express = require("express");
 const db = require("../db");
-
 const router = express.Router();
 
 router.post("/login", (req, res) => {
@@ -82,5 +81,37 @@ router.post("/isLoggedIn", (req, res) => {
             return res.status(500).json({success: false});
         });
 });
+
+
+router.post('/adduser', (req, res) =>{
+
+    let date = req.body.date;
+    let dob = date.split("T")[0];
+    let e =  req.body.email;
+    let pwd =  req.body.password;
+    let fn = req.body.fname;
+    let ln = req.body.lname;
+    let ln1 = ln === "" ? null :ln;
+
+    
+    let pswrd = bcrypt.hashSync(pwd, 10);
+
+    console.log(req.body);
+    console.log(pswrd);
+    console.log(dob);
+    console.log(ln1);
+    // INSERT into user(email,password,first_name,role,is_active,dob) VALUES("one@gmail.com2","hash2","one2","user",1,'2022-11-12');;
+
+
+    db.raw(`INSERT into user(email,password,first_name,last_name,role,is_active,dob) VALUES (?,?,?,?,?,?,?)`, [e,pswrd,fn,ln1,"user",1,dob])
+        .then(()=>{
+            return res.json({success: true});
+        })
+        .catch((err)=>{
+            console.error(err);
+            return res.status(500).json({success: false});
+        })
+});
+
 
 module.exports = router;
