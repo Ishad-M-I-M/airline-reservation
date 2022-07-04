@@ -11,12 +11,15 @@ import Home from './components/Home';
 import {LandingPage} from "./components/LandingPage";
 import SignupForm from "./components/SignupForm";
 import LoginForm from "./components/LoginForm";
-
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
+// import CircularProgress from '@mui/material/CircularProgress';
 class App extends React.Component {
 
     constructor(props) {
         super(props);
         UserStore.isLoggedIn = true;
+        // UserStore.loading=true;    
     }
 
     async componentDidMount() {
@@ -84,11 +87,17 @@ class App extends React.Component {
     render() {
         if (UserStore.loading) {
             return (
-                <div className='App bg-black'>
-                    <div className='container'>
-                        Loading, please wait...
-                    </div>
+                <div>
+                    
+                <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open = {true}
+                onClick={()=>{}}
+              >
+                <CircularProgress color="inherit" />
+              </Backdrop>
                 </div>
+
             );
         } else if (UserStore.isLoggedIn) {
             if (UserStore.role === 'moderator') {
