@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from "axios";
+
 import TotalRevenueOverlay from './TotalRevenueOverlay';
 import PassengerDetailsOverlay from './PassengerDetailsOverlay';
 import PassengerCountOverlay from './PassengerCountOverlay';
@@ -10,25 +12,26 @@ class ViewReports extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {  
+    this.state = {
 
-      aircrafts:[],
+      aircrafts: [],
+      airports: [],
 
-      aircraft_id:'',
-      flight:'',
-      Startdate:'',
-      Enddate:'',
+      aircraft_id: '',
+      flight: '',
+      Startdate: '',
+      Enddate: '',
       Origin: '',
-      Destination:'',
+      Destination: '',
 
       below: false,
       above: false,
 
-      resultVisibility1:false,
-      resultVisibility2:false,
-      resultVisibility3:false,
-      resultVisibility4:false,
-      resultVisibility5:false,
+      resultVisibility1: false,
+      resultVisibility2: false,
+      resultVisibility3: false,
+      resultVisibility4: false,
+      resultVisibility5: false,
 
       PassengerDetailsOutput: [],
       TotalRevenueOutput: [],
@@ -38,15 +41,36 @@ class ViewReports extends React.Component {
     }
   }
 
+  componentDidMount() {
+    axios.get('/aircraft')
+        .then(res => {
+          console.log(res.data);
+          this.setState({
+            aircrafts: res.data.aircrafts,
+          });
+        })
+        .catch(err => {
+          console.error(err);
+        });
+
+    axios.get('/airport')
+        .then(res => {
+          console.log(res.data);
+          this.setState({
+            airports: res.data.airports,
+          });
+        }).catch(err => {
+      console.error(err);
+
+    })
+  }
+
   async fetchPassengerDetailsReport() {
-    try{
-      let res = await fetch('/report/passenger-details',{
-        method: 'post',
-        headers: {
-          'Accept':'application/json',
-          'Content-Type':'application/json'
-        },
-        body: JSON.stringify({
+    try {
+      let res = await fetch('/report/passenger-details', {
+        method: 'post', headers: {
+          'Accept': 'application/json', 'Content-Type': 'application/json'
+        }, body: JSON.stringify({
           flight: this.state.flight,
           below: this.state.below,
           above: this.state.above,
@@ -190,30 +214,58 @@ class ViewReports extends React.Component {
     }
   }
 
+  onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+
 
   render() {
 
-    return (
-      <div>
-        <h2 className='text-center mt-1'>View Reports</h2>
-        
-        <div>
+    return (<div>
+          <datalist id="tail_numbers">
+            {this.state.aircrafts.map(aircraft => {
+              return <option key={aircraft.id} value={aircraft.id}>{aircraft.tail_number}</option>
+            })}
+          </datalist>
+          <datalist id="models">
+            {this.state.aircrafts.map(aircraft => aircraft.model).filter(this.onlyUnique).map(model => {
+              return <option key={model} value={model}>{model}</option>
+            })}
+          </datalist>
+          <datalist id="codes">
+            {this.state.airports.map(airport => {
+              return <option key={airport.id} value={airport.code}>{airport.code}</option>
+            })}
+          </datalist>
 
-          {this.state.resultVisibility1 && <PassengerDetailsOverlay visibility={this.state.resultVisibility1} information={this.state.PassengerDetailsOutput} onClick={()=>this.setState({resultVisibility1:false})}/>}
-          {this.state.resultVisibility2 && <TotalRevenueOverlay visibility={this.state.resultVisibility2} information={this.state.TotalRevenueOutput} onClick={()=>this.setState({resultVisibility2:false})}/>}
-          {this.state.resultVisibility3 && <PassengerCountOverlay visibility={this.state.resultVisibility3} information={this.state.PassengerCountOutput} onClick={()=>this.setState({resultVisibility3:false})}/>}
-          {this.state.resultVisibility4 && <BookingReportOverlay visibility={this.state.resultVisibility4} information={this.state.BookingReportOutput} onClick={()=>this.setState({resultVisibility4:false})}/>}
-          {this.state.resultVisibility5 && <PastFlightDetailsOverlay visibility={this.state.resultVisibility5} information={this.state.PastFlightDetailsOutput} onClick={()=>this.setState({resultVisibility5:false})}/>}
+          <h2 className='text-center mt-1'>View Reports</h2>
+
+          <div>
+
+            {this.state.resultVisibility1 && <PassengerDetailsOverlay visibility={this.state.resultVisibility1}
+                                                                      information={this.state.PassengerDetailsOutput}
+                                                                      onClick={() => this.setState({resultVisibility1: false})}/>}
+            {this.state.resultVisibility2 && <TotalRevenueOverlay visibility={this.state.resultVisibility2}
+                                                                  information={this.state.TotalRevenueOutput}
+                                                                  onClick={() => this.setState({resultVisibility2: false})}/>}
+            {this.state.resultVisibility3 && <PassengerCountOverlay visibility={this.state.resultVisibility3}
+                                                                    information={this.state.PassengerCountOutput}
+                                                                    onClick={() => this.setState({resultVisibility3: false})}/>}
+            {this.state.resultVisibility4 && <BookingReportOverlay visibility={this.state.resultVisibility4}
+                                                                   information={this.state.BookingReportOutput}
+                                                                   onClick={() => this.setState({resultVisibility4: false})}/>}
+            {this.state.resultVisibility5 && <PastFlightDetailsOverlay visibility={this.state.resultVisibility5}
+                                                                       information={this.state.PastFlightDetailsOutput}
+                                                                       onClick={() => this.setState({resultVisibility5: false})}/>}
 
 
-
-          <div className="col-3 text-center fw-bold fs-7">
+            <div className="col-3 text-center fw-bold fs-7">
             <label htmlFor="flight" className="form-label"> Flight Model </label>
           </div>
 
           <div className="row">
             <div className="col-3">
-              <input id = "flight" className="form-control" type="text" placeholder='Eg :- PK-MGI' onChange={(e)=>{this.setState({ flight: e.target.value })}} />
+              <input id = "flight" list="tail_numbers" className="form-control" type="text" placeholder='Eg :- PK-MGI' onChange={(e)=>{this.setState({ flight: e.target.value })}} />
             </div>
 
             <div className=" col-5 form-check">
@@ -251,7 +303,7 @@ class ViewReports extends React.Component {
 
           <div className="row">
             <div className="col-3">
-              <input id = "aircraft" className="form-control" type="text" placeholder='Eg :- Boeing 737' onChange={(e)=>{this.setState({ aircraft_id: e.target.value })}} />
+              <input id = "aircraft" list="models" className="form-control" type="text" placeholder='Eg :- Boeing 737' onChange={(e)=>{this.setState({ aircraft_id: e.target.value })}} />
             </div>
           
             <div className='col-5'> </div>
@@ -293,7 +345,7 @@ class ViewReports extends React.Component {
           <div className="row">
             <div className="col-3 text-center fw-bold fs-7">
               <label htmlFor='destination' className='form-label'> Destination </label>
-              <input id = "destination" className="form-control" type="text" placeholder='Eg :- BIA' onChange={(e)=>{this.setState({ Destination: e.target.value })}} />
+              <input id = "destination" list="codes" className="form-control" type="text" placeholder='Eg :- BIA' onChange={(e)=>{this.setState({ Destination: e.target.value })}} />
             </div>
 
             <div className='col-5'> </div>
@@ -312,14 +364,14 @@ class ViewReports extends React.Component {
           <div className="row align-items-center mb-3">
             <div className="col-3 text-center fw-bold fs-7">
               <label htmlFor='origin' className='form-label'> Origin </label>
-              <input id = "origin" className="form-control" type="text" placeholder='Eg :- CGK' onChange={(e)=>{this.setState({ Origin: e.target.value })}} />
+              <input id = "origin" list="codes" className="form-control" type="text" placeholder='Eg :- CGK' onChange={(e)=>{this.setState({ Origin: e.target.value })}} />
             </div>
 
             <div className="col-md-1 text-center align-middle fw-bold fs-5"> to </div>
 
             <div className="col-md-3 text-center fw-bold fs-7">
               <label htmlFor='destination' className='form-label'> Destination </label>
-              <input id = "destination" className="form-control" type="text" placeholder='Eg :- BIA' onChange={(e)=>{this.setState({ Destination: e.target.value })}} />
+              <input id = "destination" list="codes" className="form-control" type="text" placeholder='Eg :- BIA' onChange={(e)=>{this.setState({ Destination: e.target.value })}} />
             </div>
 
             <div className='col-1'> </div>
