@@ -10,7 +10,9 @@ class ViewReports extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {   
+    this.state = {  
+
+      aircrafts:[],
 
       aircraft_id:'',
       flight:'',
@@ -190,7 +192,6 @@ class ViewReports extends React.Component {
 
 
   render() {
-    const {items } = this.state;
 
     return (
       <div>
@@ -232,15 +233,15 @@ class ViewReports extends React.Component {
               </ul>          
             </div>
 
-            <div className="col-3">
+            <div className="col-4">
               <button className='btn btn-primary' onClick={()=>{this.fetchPassengerDetailsReport()}}>Fetch Passenger Details Report</button>
             </div>
           </div>
 
 
 
-          <div className='mt-4 text-center' style={{ borderStyle: 'dashed', borderWidth: 2,}} />
-          <div className='mt-4 text-center' />
+          <div className='mt-3 text-center' style={{ borderStyle: 'dashed', borderWidth: 2,}} />
+          <div className='mt-3 text-center' />
 
 
 
@@ -262,22 +263,22 @@ class ViewReports extends React.Component {
 
 
 
-          <div className='mt-4 text-center' style={{ borderStyle: 'dashed', borderWidth: 2,}} />
-          <div className='mt-4 text-center' />
+          <div className='mt-3 text-center' style={{ borderStyle: 'dashed', borderWidth: 2,}} />
+          <div className='mt-3 text-center' />
 
 
 
           <div className="col-3 text-center fw-bold fs-7">
-            <label htmlFor='dateRange' className='form-label'> Date Range (yyyy-mm-dd) </label>
+            <label htmlFor='dateRange' className='form-label'> Date Range </label>
           </div>
 
           <div className="row">
             <div className="col-3">
-              <input id = "startDate" className="form-control" type="text" placeholder='Eg :- 2022-05-25' onChange={(e)=>{this.setState({ Startdate: e.target.value })}} />
+              <input id = "startDate" className="form-control" type="date" onChange={(e)=>{this.setState({ Startdate: e.target.value })}} />
             </div>
             <div className="col-md-1 text-center align-middle fw-bold fs-5"> to </div>
             <div className="col-md-3 text-center fw-bold fs-7">
-              <input id = "endDate" className="form-control" type="text" placeholder='Eg :- 2022-06-01' onChange={(e)=>{this.setState({ Enddate: e.target.value })}} />
+              <input id = "endDate" className="form-control" type="date" onChange={(e)=>{this.setState({ Enddate: e.target.value })}} />
             </div>
 
             <div className='col-1'> </div>
@@ -287,7 +288,7 @@ class ViewReports extends React.Component {
             </div>
           </div>
 
-          <div className='mt-4 text-center'> </div>
+          <div className='mt-1 text-center'> </div>
 
           <div className="row">
             <div className="col-3 text-center fw-bold fs-7">
@@ -304,8 +305,8 @@ class ViewReports extends React.Component {
 
 
 
-          <div className='mt-4 text-center' style={{ borderStyle: 'dashed', borderWidth: 2,}} />
-          <div className='mt-4 text-center' />
+          <div className='mt-3 text-center' style={{ borderStyle: 'dashed', borderWidth: 2,}} />
+          <div className='mt-3 text-center' />
 
 
           <div className="row align-items-center mb-3">
