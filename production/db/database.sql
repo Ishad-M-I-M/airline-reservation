@@ -394,3 +394,41 @@ BEGIN
 END //
 
 delimiter ;
+
+
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `release_booking`(IN `f_id` INT(11), IN `seatNo` VARCHAR(11), IN `passengerId` VARCHAR(11))
+BEGIN
+	START TRANSACTION;
+    	DELETE FROM ticket WHERE flight_id=f_id and seat_number=seatNo and status=0;
+        DELETE FROM passenger WHERE passenger_id=passengerId and passenger_id not in (SELECT passenger_id FROM ticket);
+    
+    COMMIT;
+
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `book_ticket_proc`(IN `in_f_id` INT(11), IN `in_user_id` INT(11), IN `in_passenger_id` VARCHAR(25), IN `in_passenger_name` VARCHAR(150), IN `in_passenger_add` VARCHAR(255), IN `in_dob` DATE, IN `in_class` VARCHAR(10), IN `in_seat_no` VARCHAR(5))
+BEGIN  
+    declare payment  dec(10,2);
+    declare disc_type varchar(20);
+    declare var_discount dec(4,2);
+
+	select cost into payment from flight_cost where flight_id =in_f_id and class=in_class limit 1;
+    
+	if in_user_id !=0 then
+        
+    		select discount_type into disc_type from user where user_id=in_user_id limit 1;
+        	select discount into var_discount from discount where type =disc_type limit 1;
+        	
+            set payment= payment *( 100-var_discount)/100;
+    end if;  
+    start TRANSACTION;
+    	insert IGNORE into passenger values(in_passenger_id,in_passenger_name,in_dob,in_passenger_add);
+    	insert into ticket(user_id,passenger_id,flight_id,seat_number,date,class,paid,status,is_boarded) values (in_user_id,in_passenger_id,in_f_id,in_seat_no,NOW(),in_class,payment,0,0);
+    commit;
+END$$
+DELIMITER ;

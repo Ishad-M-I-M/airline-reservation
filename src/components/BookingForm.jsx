@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import UserStore from "../stores/UserStore";
 
 const BookingForm = (props) => {
-  
+
   let unbookedEconomy = [];
   let unbookedBusiness = [];
   let unbookedPlatinum = [];
@@ -24,7 +24,7 @@ const BookingForm = (props) => {
   const navigate = useNavigate();
 
 
- 
+
   function checkValidBooking() {
     axios
       .post("/checkValidBooking", {
@@ -54,8 +54,8 @@ const BookingForm = (props) => {
               .post("/reserveBooking", ticket_details)
               .then(function (response) {
                 if (response.data.success) {
-                  navigate("/paymentPage", { state: {f_id,seatNo,passengerId} });
-                  
+                  navigate("/paymentPage", { state: { f_id, seatNo, passengerId } });
+
                 } else {
                   alert("sorry your booking cannot be reserved!");
                   window.location.href = "/";
@@ -77,9 +77,10 @@ const BookingForm = (props) => {
 
 
 
-  function handleChangeFClass(e){
+  function handleChangeFClass(e) {
+    console.log(props.seatDet)
     
-    
+
     const EconomySeatBookings = props.seatDet.eco_booked;
     const BusinessSeatBookings = props.seatDet.busi_booked;
     const PlatinumSeatBookings = props.seatDet.plat_booked;
@@ -88,6 +89,8 @@ const BookingForm = (props) => {
     const EconomySeats = props.seatDet.eco_seats;
     const BusinessSeats = props.seatDet.busi_seats;
     const PlatinumSeats = props.seatDet.plat_seats;
+  
+    
 
     for (let i = 1; i <= EconomySeats; i++) {
       if (!EconomySeatBookings.includes(i)) {
@@ -156,7 +159,7 @@ const BookingForm = (props) => {
         style={{
           width: "400px",
           margin: "auto",
-          marginTop: "200px",
+          marginTop: "5vh",
           backgroundColor: "white",
           padding: "20px",
           borderRadius: "10px",
