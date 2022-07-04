@@ -404,4 +404,13 @@ app.get("/getTickets", (req, res) => {
     });
 });
 
+app.get('/flightsUpdate', (req, res) => {
+    db.raw("SELECT flight_id, tail_number, model, takeoff_time, departure_time, a1.code AS origin, a2.code AS destination FROM flight NATURAL JOIN aircraft LEFT JOIN route USING (route_id) LEFT JOIN airport a1 ON route.origin=a1.airport_id left join airport a2 ON route.destination=a2.airport_id WHERE takeoff_time>now()-3600000000 ORDER BY takeoff_time DESC").then((data)=>{
+        return res.json({success: true, data:data[0]});
+    }).catch((err) =>{
+        console.error(err);
+        return res.status(500).json({success: false});
+    });
+
+});
 module.exports = app;

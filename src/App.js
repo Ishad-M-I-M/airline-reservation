@@ -11,6 +11,7 @@ import Home from './components/Home';
 import {LandingPage} from "./components/LandingPage";
 import SignupForm from "./components/SignupForm";
 import LoginForm from "./components/LoginForm";
+import NotFound from "./components/NotFound";
 
 class App extends React.Component {
 
@@ -119,6 +120,7 @@ class App extends React.Component {
                         <Route path="/" element={<LandingPage/>}/>
                         <Route path="/sign-in" element={<LoginForm/>}/>
                         <Route path="/sign-up" element={<SignupForm/>}/>
+                        <Route path='/*' element={<NotFound/>} />
                     </Routes>
                 </BrowserRouter>
             );

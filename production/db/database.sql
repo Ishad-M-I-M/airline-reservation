@@ -190,7 +190,7 @@ INSERT INTO `flight` (`aircraft_id`, `route_id`, `takeoff_time`, `departure_time
 
 CREATE TABLE `flight_cost` (
   `flight_id` int NOT NULL references flight.flight_id,
-  `class` varchar(10) NOT NULL CHECK (`class` in ('platinum','business','economy')),
+  `class` varchar(10) NOT NULL CHECK (`class` in ('Platinum','Business','Economy')),
   `cost` decimal(10,2) NOT NULL,
   primary key( flight_id, class),
   constraint foreign key (flight_id ) references flight(flight_id) on delete cascade on update cascade
@@ -606,6 +606,28 @@ BEGIN
 		INSERT INTO passenger(passenger_id, name, dob, address) values(passenger_id_in, name_in, dob_in, address_in);
         INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, is_boarded) VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 0);
     end if;
+END //
+
+delimiter ;
+
+delimiter //
+CREATE PROCEDURE schedule_flight
+(
+IN aircraft_id_in INT,
+IN route_id_in INT,
+IN takeoff_time_in DATETIME,
+IN departure_time_in DATETIME,
+IN business_cost_in decimal(10,2),
+IN economy_cost_in decimal(10,2),
+IN platinum_cost_in decimal(10,2)
+)
+BEGIN
+	DECLARE flight_id_get INT;
+	INSERT INTO flight (aircraft_id, route_id, takeoff_time, departure_time) VALUES(aircraft_id_in, route_id_in, takeoff_time_in, departure_time_in);
+	SELECT flight_id into flight_id_get from flight order by flight_id desc limit 1;
+	INSERT INTO flight_cost(flight_id, class, cost) VALUES (flight_id_get, 'Business',business_cost_in);
+	INSERT INTO flight_cost(flight_id, class, cost) VALUES (flight_id_get, 'Economy',economy_cost_in);
+	INSERT INTO flight_cost(flight_id, class, cost) VALUES (flight_id_get, 'Platinum',platinum_cost_in);
 END //
 
 delimiter ;

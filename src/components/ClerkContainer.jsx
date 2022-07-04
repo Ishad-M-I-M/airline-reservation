@@ -6,6 +6,7 @@ import AddFlights from './AddFlights';
 import ViewFlights from './ViewFlights';
 import AddBooking from './AddBooking';
 import PaymentPortal from './PaymentPortal';
+import FlightUpdate from './FlightUpdate';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import NotFound from "./NotFound";
 
@@ -16,6 +17,7 @@ export default function Container() {
                 <a href='/add-flight' className="btn btn-primary rounded-pill sidebar-btn mb-1">Add Flights</a>
                 <a href='/view-flight' className="btn btn-primary rounded-pill sidebar-btn mb-1">View Flight Detail</a>
                 <a href='/add-booking' className="btn btn-primary rounded-pill sidebar-btn mb-1">Booking</a>
+                <a href='/update-flight' className="btn btn-primary rounded-pill sidebar-btn mb-1">Update Flight Time</a>
             </div>
             <div className="col-md-10 bg-secondary bg-opacity-25 overflow-auto" id='content'
                  style={{'maxHeight': '88vh'}}>
@@ -25,6 +27,7 @@ export default function Container() {
                         <Route path='/add-flight' element={<AddFlights/>}/>
                         <Route path='/view-flight' element={<ViewFlights/>}/>
                         <Route path='/add-booking' element={<AddBooking/>}/>
+                        <Route path='/update-flight' element={<FlightUpdate/>}/>
                         <Route path='/paymentportal' element={<PaymentPortal/>}/>
                         <Route path='/*' element={<NotFound/>}/>
                     </Routes>

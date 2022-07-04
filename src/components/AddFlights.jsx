@@ -13,6 +13,9 @@ class AddFlights extends React.Component {
       routes:[],
       aircrafts:[],
       aircraft_id:0,
+      business_cost:0,
+      economy_cost:0,
+      platinum_cost:0,
     };
     // setInterval(() => {
     //   console.log(`Takeoff Time: ${this.state.takeoff_date} ` + `${this.state.takeoff_time}\nLanding Time: ${this.state.landing_date} ` + `${this.state.landing_time}`);
@@ -75,9 +78,8 @@ class AddFlights extends React.Component {
   }
 
   async addFlight() {
-    
-    if(this.state.aircraft_id<=0 || this.state.route_id<=0 || this.state.takeoff_date === '' || this.state.takeoff_time === '' || this.state.landing_date === '' || this.state.landing_time==='') {
-      alert("Fill all Columns");
+    if(this.state.aircraft_id<=0 || this.state.route_id<=0 || this.state.takeoff_date === '' || this.state.takeoff_time === '' || this.state.landing_date === '' || this.state.landing_time==='' || this.state.business_cost === 0 || this.state.business_cost === '' || this.state.platinum_cost === 0 || this.state.platinum_cost === '' || this.state.economy_cost ===0 || this.state.economy_cost === '') {
+      alert("Fill all Columns appropriately");
     }else {
       try {
         let res = await fetch('/flightSchedule',{
@@ -91,6 +93,9 @@ class AddFlights extends React.Component {
             route_id: this.state.route_id,
             takeoff_time: `${this.state.takeoff_date} ${this.state.takeoff_time}`,
             landing_time: `${this.state.landing_date} ${this.state.landing_time}`,
+            business_cost:`${this.state.business_cost}`,
+            economy_cost:`${this.state.economy_cost}`,
+            platinum_cost: `${this.state.platinum_cost}` 
           }),
           credentials : 'include',
         });
@@ -105,6 +110,16 @@ class AddFlights extends React.Component {
       }catch(error){
 
       }
+    }
+  }
+
+  setCost(property, value) {
+    if(isNaN(value)){
+      alert("Enter only valid amount")
+    }else {
+      this.setState({
+        [property]: value,
+      })
     }
   }
 
@@ -187,6 +202,33 @@ class AddFlights extends React.Component {
                 </div>
               </div>
             </div>
+            
+          <div className='mb-3'>
+            <div className='row'>
+              <div className='col-md-6'>
+                <label htmlFor="cost_business" className='form-label'>Business Class Cost</label>
+                <input placeholder='$.' id='cost_business' type="text" className='form-control' onChange={(e)=>this.setCost('business_cost', e.target.value)
+                  } />
+              </div>
+
+              <div className='col-md-6'>
+                <label htmlFor="cost_economy" className='form-label'>Economy Class Cost</label>
+                <input placeholder='$.' id='cost_economy' type="text" className='form-control' onChange={(e)=>this.setCost('economy_cost', e.target.value)
+                  } />
+              </div>
+            </div>
+          </div>
+          
+          <div className='mb-3'>
+            <div className='row'>
+              <div className='col-md-6'>
+                <label htmlFor="cost_platinum" className='form-label'>Platinum Class Cost</label>
+                <input placeholder='$.' id='cost_platinum' type="text" className='form-control' onChange={(e)=>this.setCost('platinum_cost', e.target.value)
+                  } />
+              </div>
+            </div>
+          </div>
+
           </form>
           <div className='mt-5 text-center'>
               <button className='btn btn-primary' onClick={()=>{this.addFlight()}}>Add Flight</button>
