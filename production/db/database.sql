@@ -12,6 +12,7 @@ CREATE TABLE aircraft
     Economy_seats  int DEFAULT 0 check (Economy_seats > 0),
     Business_seats int DEFAULT 0 check (Business_seats > 0),
     Platinum_seats int DEFAULT 0 check (Platinum_seats > 0),
+    is_active tinyint DEFAULT 1,
     primary key (aircraft_id)
 );
 CREATE TABLE airport
@@ -20,6 +21,7 @@ CREATE TABLE airport
     code       char(3)     NOT NULL unique,
     name       varchar(50) NOT NULL,
     location   int         NOT NULL,
+    is_active tinyint DEFAULT 1,
     primary key (airport_id)
 );
 
@@ -98,8 +100,8 @@ CREATE TABLE `user`
     `first_name`    varchar(100) NOT NULL,
     `last_name`     varchar(100) DEFAULT NULL,
     `role`          varchar(30)  NOT NULL CHECK (`role` in ('moderator', 'clerk', 'user', 'guest')),
-    `discount_type` varchar(20)  DEFAULT NULL,
-    `is_active`     tinyint      DEFAULT NULL,
+    `discount_type` varchar(20)  DEFAULT 'Normal',
+    `is_active`     tinyint      DEFAULT 1,
     `dob`           date         NOT NULL,
     primary key (user_id),
     constraint foreign key (discount_type) references discount (type) on update cascade on delete set null
