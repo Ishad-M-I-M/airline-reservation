@@ -16,8 +16,11 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Button from '@mui/material/Button';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
-
-// import TextField from '@mui/material/TextField';
+import background from '../images/background.jpg'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+// import TextField from '@mui/material/TextField';<FontAwesomeIcon icon="fa-solid fa-circle-check" />
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -30,10 +33,61 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 // import Password from './PasswordAlert';
 import ListGroup from 'react-bootstrap/ListGroup';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+// import Button from '@mui/material/Button';
+import validator from 'validator'
+
+import { useState } from "react";
+import { height, width } from '@mui/system';
+import { Attachment } from '@mui/icons-material';
+
+
+// import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 function SignupForm() {
+
+  const [state, setState] = React.useState({
+    open1: false,
+    vertical: 'top',
+    horizontal: 'center',
+  });
+
+  const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+  
+  const { vertical, horizontal, open1 } = state;
+
+  const handleClick = (newState) => () => {
+    setState({ open1: true, ...newState });
+  };
+
+  const handleClose1 = () => {
+    setState({ ...state, open1: false });
+  };
+  //--------------------------
+
+  // const buttons = (
+  //   <React.Fragment>
+  //     <Button
+  //       onClick={handleClick({
+  //         vertical: 'top',
+  //         horizontal: 'center',
+  //       })}
+  //     >
+  //       Top-Center
+  //     </Button>
+
+  //   </React.Fragment>
+  // );
+
+
   const nav = useNavigate();
   const [value, setValue] = React.useState(false);
+  const [emailAlert, setAlert] = React.useState(false);
   const [values, setValues] = React.useState({
     password: "",
     re_password: "",
@@ -45,7 +99,21 @@ function SignupForm() {
     date: ""
 
   });
-
+  const [emailError, setEmailError] = useState('')
+  const validateEmail = (e) => {
+    setAlert({
+      emailAlert: true
+    });
+    var email = e.target.value;
+    setValues({ ...values, email: email });
+    if (validator.isEmail(email)) {
+      setEmailError(<Alert severity="success"><strong>Valid Email ;)</strong> </Alert>)
+    } else {
+      setEmailError(
+        <Alert severity="warning"><strong>Enter Valid Email! </strong> </Alert>
+        )
+    }
+  }
 
   const validatePassword = (p) => {
     // var p = document.getElementById('newPassword').value,
@@ -86,9 +154,25 @@ function SignupForm() {
   const handleSubmit = (e) => {
     // alert("hi");
     // // console.log(values);
-    axios.post('auth/adduser', values).then(() => {
-      alert('Account Created');
-      nav("/");
+handleClick({
+      vertical: 'top',
+      horizontal: 'center',
+    })
+    axios.post('auth/adduser', values).then((res) => {
+     
+      if(res.data.message){
+        
+        handleClick({
+          vertical: 'top',
+          horizontal: 'center'
+        })()
+      }
+      
+      else if (res.data.success){
+      alert(`Account Created`);
+        nav("/");
+      }
+      
     }).catch((err) => {
       console.log(err);
     });
@@ -102,40 +186,49 @@ function SignupForm() {
     });
   };
 
-  const addUser = () => {
-    
+  const [open, setOpen] = React.useState(true);
 
-    if (values.fname==="" || values.email === "" || values.password=== "" || values.re_password === "" || values.date === "" ){
+  const handleClose = () => {
+    setOpen(true);
+  };
+  const handleToggle = () => {
+    setOpen(!open);
+  };
+
+  const addUser = () => {
+
+
+    if (values.fname === "" || values.email === "" || values.password === "" || values.re_password === "" || values.date === "") {
       // console.log("Empty");
       setValue({
         value: true
       });
       // console.log(value.value);
-    }else{
+    } else {
       // console.log(values.fname);
       setValue({
         value: false
       });
       // console.log(value.value);
-    
-    // setTimeout(function(){ setValues({ ...values, ['alert']: false }); }, 6000);
-    if (values.password !== values.re_password && !values.samepassword) {
-      samePwd();
-    }
-    if (values.password == values.re_password && !values.samepassword && validatePassword(values.password)) {
 
-      // alert("hi");
-      handleSubmit();
-      // const bcrypt = require('bcrypt');
-      // let pswrd = bcrypt.hashSync(values.password, 10);
-    } else if (values.password == values.re_password && values.samepassword && validatePassword(values.password)) {
-      console.log(validatePassword(values.password));
-      samePwd();
-      handleSubmit();
-    }
-    // values.email !== '' && alert(`${values.email}___${values.fname}`);
+      // setTimeout(function(){ setValues({ ...values, ['alert']: false }); }, 6000);
+      if (values.password !== values.re_password && !values.samepassword) {
+        samePwd();
+      }
+      if (values.password == values.re_password && !values.samepassword && validatePassword(values.password)) {
 
-  }
+        // alert("hi");
+        handleSubmit();
+        // const bcrypt = require('bcrypt');
+        // let pswrd = bcrypt.hashSync(values.password, 10);
+      } else if (values.password == values.re_password && values.samepassword && validatePassword(values.password)) {
+        console.log(validatePassword(values.password));
+        samePwd();
+        handleSubmit();
+      }
+      // values.email !== '' && alert(`${values.email}___${values.fname}`);
+
+    }
   };
 
   const handleMouseDownPassword = (event) => {
@@ -143,8 +236,27 @@ function SignupForm() {
   };
 
   return (
+    <div style=
+    {{backgroundImage : `url(${background})`,
+    height: '100vh',top:'0',bottom:'0',position:'fixed' ,width:'100vw'
+  
+  }}
+    >
 
+
+    
     <div className='optionsss'>
+    {/* {buttons} */}
+      <Snackbar autoHideDuration={4000}
+      
+        anchorOrigin={{ vertical, horizontal }}
+        open={open1}
+        onClose={handleClose1}
+        message=""
+        key={vertical + horizontal}
+      >
+        <Alert severity="warning"><strong>Email ID Already Exits!! </strong></Alert>
+      </Snackbar>
       <h2>Sign UP</h2>
       <FormControl >
         <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -180,11 +292,11 @@ function SignupForm() {
                 id="outlined-adornment-password"
                 type={'text'}
                 value={values.email}
-                onChange={handleChange('email')}
+                onChange={(e) => validateEmail(e)}
                 label="Email*"
                 startAdornment={<InputAdornment position="start"> <MailOutlineIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} /></InputAdornment>}
               />
-
+              {emailError}
             </FormControl>
             <br />
             <FormControl sx={{ m: 1, width: '30ch' }} variant="outlined">
@@ -237,30 +349,30 @@ function SignupForm() {
           </div>
 
         </Box>
-        {value.value? <Alert severity="warning"><strong>Fill All Required (*) Details!</strong> </Alert> :""}
+        {value.value ? <Alert severity="warning"><strong>Fill All Required (*) Details!</strong> </Alert> : ""}
         {values.samepassword ? <div> <Stack sx={{ width: '100%' }} spacing={2}>
-          <Alert  severity="info">
+          <Alert severity="info">
             <AlertTitle>Warning</AlertTitle>
             Warning in password — <strong>
-            <br />
-            Both password must be Same!
-            <br />
-            Your password must be at least 8 characters!
-            <br />
-            Your password must contain at least one letter!
-            <br />
-            Your password must contain at least one digit!
-            <br />
+              <br />
+              Both password must be Same!
+              <br />
+              Your password must be at least 8 characters!
+              <br />
+              Your password must contain at least one letter!
+              <br />
+              Your password must contain at least one digit!
+              <br />
             </strong>
           </Alert>
         </Stack></div> : ""}
 
-       
+
         <Button variant="contained" sx={{ m: 1, width: '15ch' }} onClick={addUser} >Submit</Button>
       </FormControl>
 
     </div>
-
+    </div>
   );
 }
 
