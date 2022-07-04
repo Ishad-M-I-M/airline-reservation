@@ -8,7 +8,7 @@ export default function AddAirport() {
 
     useEffect(()=>{
         axios.get('/location').then((res)=>{
-            setData(res.data.locations);
+            setData(res.data.data);
         })
     }, []);
 

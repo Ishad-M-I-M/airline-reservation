@@ -34,9 +34,8 @@ class AddFlights extends React.Component {
         let result = await res.json();
         if(result && result.success) {
           var temp_craft = [];
-          result.details.forEach(element => {
-            // console.log(element);
-            var output = element.model;
+          result.aircrafts.forEach(element => {
+            var output = element.model +" - " + element.tail_number;
             temp_craft[element.aircraft_id] = output;
           });
           this.setState({aircrafts: temp_craft});
@@ -62,10 +61,9 @@ class AddFlights extends React.Component {
         let result = await res.json();
         if(result && result.success) {
           var temp_route = [];
-          result.details.forEach(element => {
-            // console.log(element);
-            var output = element.origin + '->' + element.destination;
-            temp_route[element.route_id] = output;
+          result.data.forEach(element => {
+            var output = element.origin + ' -> ' + element.destination;
+            temp_route[element.id] = output;
           });
           this.setState({routes: temp_route});
         }else {
@@ -125,7 +123,7 @@ class AddFlights extends React.Component {
                   })}>
                     <option value={-1} disabled selected> --select-- </option>
                     {
-                      this.state.aircrafts.map((model, i) => <option key={i} value={i}>{model+' - ' + i}</option>)
+                      this.state.aircrafts.map((model, i) => <option key={i} value={i}>{model}</option>)
                     }
                   </select>
                 </div>
