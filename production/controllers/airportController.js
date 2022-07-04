@@ -24,7 +24,7 @@ router.post('/', function (req, res){
 });
 
 router.delete('/:id', function (req, res){
-    db.raw(`DELETE FROM airport WHERE airport_id=? `,[req.params.id])
+    db.raw(`UPDATE airport SET is_active=0 WHERE airport_id=? `,[req.params.id])
     .then(() => {
         return  res.json({ success:true });
     })

@@ -30,7 +30,7 @@ router.post('/', function (req, res){
 });
 
 router.delete('/:id', function (req, res){
-    db.raw(`DELETE FROM aircraft WHERE aircraft_id=? `,[req.params.id])
+    db.raw(`UPDATE aircraft SET is_active=0 WHERE aircraft_id=? `,[req.params.id])
     .then(() => {
         return res.send({success: true});
     })
