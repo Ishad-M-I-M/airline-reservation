@@ -603,8 +603,10 @@ BEGIN
     if(counter = 1) then
 		INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status,is_boarded) VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 1, 0);
     else
+        START TRANSACTION;
 		INSERT INTO passenger(passenger_id, name, dob, address) values(passenger_id_in, name_in, dob_in, address_in);
         INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, is_boarded) VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 0);
+        COMMIT;
     end if;
 END //
 
@@ -623,11 +625,13 @@ IN platinum_cost_in decimal(10,2)
 )
 BEGIN
 	DECLARE flight_id_get INT;
+    START TRANSACTION;
 	INSERT INTO flight (aircraft_id, route_id, takeoff_time, departure_time) VALUES(aircraft_id_in, route_id_in, takeoff_time_in, departure_time_in);
 	SELECT flight_id into flight_id_get from flight order by flight_id desc limit 1;
 	INSERT INTO flight_cost(flight_id, class, cost) VALUES (flight_id_get, 'Business',business_cost_in);
 	INSERT INTO flight_cost(flight_id, class, cost) VALUES (flight_id_get, 'Economy',economy_cost_in);
 	INSERT INTO flight_cost(flight_id, class, cost) VALUES (flight_id_get, 'Platinum',platinum_cost_in);
+    COMMIT;
 END //
 
 delimiter ;

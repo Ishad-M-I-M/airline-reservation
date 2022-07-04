@@ -84,7 +84,7 @@ app.post("/loadSeatnumber", (req, res) => {
     db.raw(stmt, [flight_id])
         .then((data) => {
             return res.json({
-                success: true, data: data[0],
+                success: true, seat_number: data,
             });
         }).catch((err) => {
         console.error(err);

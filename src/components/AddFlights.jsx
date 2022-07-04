@@ -103,7 +103,7 @@ class AddFlights extends React.Component {
         let result = await res.json();
         console.log(result);
         if(result && result.success) {
-          console.log('Data Successfully entered to database')
+          alert('Data Successfully entered to database')
         }else {
           console.log(result.msg);
         }
