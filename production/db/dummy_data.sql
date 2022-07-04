@@ -289,10 +289,7 @@ VALUES ('A0000001', 'Kabilan Mahathevan', '1999-03-25', 'No. 45/60, Thirunavatku
 
 INSERT INTO `ticket` ( `user_id`, `passenger_id`, `flight_id`, `seat_number`, `date`, `class`, `paid`,
                       `status`, `is_boarded`)
-VALUES (3, 'A0000001', 2, '1', '2022-06-18 08:22:50', 'Economy', '364.00', -1, 0),
-       (NULL, 'A0000002', 15, '1', '2022-06-18 08:53:50', 'Economy', '400.00', 1, 0); -- a guest booking
-
-       (3, 'A0000001', 2, '1', '2022-06-18 08:22:50', 'Economy', '364.00', -1, 1),
+VALUES (3, 'A0000001', 2, '1', '2022-06-18 08:22:50', 'Economy', '364.00', -1, 1),
        (-1, 'A0000002', 15, '1', '2022-06-18 08:53:50', 'Economy', '400.00', 1, 1), -- a guest booking
        (4, 'A0000003', 1, '1', '2022-06-18 06:22:50', 'Business', '760.00', 1, 1),
        (5, 'A0000004', 1, '2', '2022-06-17 06:22:50', 'Economy', '400.00', 1, 1),
