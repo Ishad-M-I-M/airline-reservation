@@ -1,4 +1,4 @@
-import  React from "react";
+import React from "react";
 import UserStore from "../stores/UserStore";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
@@ -10,7 +10,7 @@ export default function PaymentPage() {
     axios
       .delete("/releaseBooking", { data: location.state })
       .then(function (response) {
-        if (response.data.success===true) {
+        if (response.data.success === true) {
           alert("requested time out!");
           window.location.href = "/";
 
@@ -21,38 +21,42 @@ export default function PaymentPage() {
   }, 10000);
 
   const confirmBooking = () => {
-    axios
-      .get("/isReserved", {
-        params: location.state,
-      })
-      .then(function (response) {
-        if (response.data.success) {
-          if (response.data.data.length === 0) {
-            alert("cannot process payment! no reserved seats");
-            window.location.href = "/";
+    if (!location.state) { alert("not allowed") } {
+      axios
+        .get("/isReserved", {
+          params: location.state,
+        })
+        .then(function (response) {
+          console.log(response)
+          if (response.data.success) {
+            if (response.data.data.length === 0) {
+              alert("cannot process payment! no reserved seats");
+              window.location.href = "/";
+            }
+            else {
+              axios
+                .post("/confirmBooking", location.state)
+                .then(function (response) {
+                  if (response.data.success) {
+                    alert("booking confirmed!");
+                    window.location.href = "/";
+                  } else {
+                    alert("sorry your booking cannot be confirmed!");
+                    console.log(response);
+                    window.location.href = "/";
+                  }
+                })
+                .catch(function (error) {
+                  alert("oops an error occured!");
+                  // window.location.href = "/";
+                });
+            }
           } else {
-            axios
-              .post("/confirmBooking", location.state)
-              .then(function (response) {
-                if (response.data.success) {
-                  alert("booking confirmed!");
-                  window.location.href = "/";
-                } else {
-                  alert("sorry your booking cannot be confirmed!");
-                  console.log(response);
-                  window.location.href = "/";
-                }
-              })
-              .catch(function (error) {
-                alert("oops an error occured!");
-                // window.location.href = "/";
-              });
+            alert("oops an error occured!");
+            // window.location.href = "/";
           }
-        } else {
-          alert("oops an error occured!");
-          // window.location.href = "/";
-        }
-      });
+        });
+    }
   }
 
   return (
@@ -91,6 +95,6 @@ export default function PaymentPage() {
       </button>
     </div>
   )
-    
-  
+
+
 }

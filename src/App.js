@@ -90,14 +90,14 @@ class App extends React.Component {
         if (UserStore.loading) {
             return (
                 <div>
-                    
-                <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open = {true}
-                onClick={()=>{}}
-              >
-                <CircularProgress color="inherit" />
-              </Backdrop>
+
+                    <Backdrop
+                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                        open={true}
+                        onClick={() => { }}
+                    >
+                        <CircularProgress color="inherit" />
+                    </Backdrop>
                 </div>
 
             );
@@ -127,9 +127,18 @@ class App extends React.Component {
             return (
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/" element={<LandingPage/>}/>
-                        <Route path="/sign-in" element={<LoginForm/>}/>
-                        <Route path="/sign-up" element={<SignupForm/>}/>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/usr-booking" element={<div>
+                            <div className="home-page">
+                                <Navbar />
+                                <div className="background-img">
+                                    <SearchFlight />
+                                </div>
+                                {/*<Footer />*/}
+                            </div>
+                        </div>} />
+                        <Route path="/sign-in" element={<LoginForm />} />
+                        <Route path="/sign-up" element={<SignupForm />} />
                         <Route path="/searchResult" element={<ChooseFlights />}></Route>
                         <Route path="/paymentPage" element={<PaymentPage />}></Route>
                         <Route path="/tickets" element={<Tickets />}></Route>
@@ -138,7 +147,7 @@ class App extends React.Component {
             );
         }
 
-                        
+
     }
 }
 
