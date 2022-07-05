@@ -63,48 +63,29 @@ router.post("/logout", (req, res) => {
 });
 
 router.post("/isLoggedIn", (req, res) => {
-
-    let cols = [req.session.userID];
-    db.raw("SELECT * FROM user WHERE user_id = ? LIMIT 1", cols)
-        .then((data) => {
-            if (data[0] && data[0].length === 1) {
-                return res.json({
-                    success: true, email: data[0][0].email, role: data[0][0].role,
+        if (req.session.userID) {
+            let cols = [req.session.userID];
+            db.raw("SELECT * FROM user WHERE user_id = ? LIMIT 1", cols)
+                .then((data) => {
+                    if (data[0] && data[0].length === 1) {
+                        return res.json({
+                            success: true, email: data[0][0].email, role: data[0][0].role,
+                        });
+                    } else {
+                        return res.json({
+                            success: false,
+                        });
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                    return res.status(500).json({success: false});
                 });
-            } else {
-                return res.json({
-                    success: false,
-                });
-            }
-        })
-        .catch((err) => {
-            console.error(err);
-            return res.status(500).json({success: false});
-
-            if (req.session.userID) {
-                let cols = [req.session.userID];
-                db.raw("SELECT * FROM user WHERE user_id = ? LIMIT 1", cols)
-                    .then((data) => {
-                        if (data[0] && data[0].length === 1) {
-                            return res.json({
-                                success: true, email: data[0][0].email, role: data[0][0].role,
-                            });
-                        } else {
-                            return res.json({
-                                success: false,
-                            });
-                        }
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        return res.status(500).json({success: false});
-                    });
-            } else {
-                return res.json({
-                    success: false,
-                });
-            }
-        });
+        } else {
+            return res.json({
+                success: false,
+            });
+        }
 });
 
 
