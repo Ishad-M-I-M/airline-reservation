@@ -185,7 +185,6 @@ class AddAircraft extends Component {
 
             </div>
 
-
             <div class="form-floating mb-3">
 
             <input type="text" className="form-control" id="floatingInput" value={this.state.tail} 

@@ -9,6 +9,7 @@ router.get('/', function (req, res){
         return res.send({success: true, airports: results[0]});
     })
     .catch((err) => {
+        console.log(err)
         return res.status(404).send({'sucess': false});
     });
 });

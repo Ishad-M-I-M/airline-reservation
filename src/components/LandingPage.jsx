@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import '../css/LandingPage.css';
 import Navbar from "./Navbar";
-import * as url from "url";
 
 export function LandingPage() {
     return (
