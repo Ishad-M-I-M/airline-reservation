@@ -44,7 +44,7 @@ class AddBooking extends React.Component {
         if(result && result.success){
           seats = ((result.seat_number[Object.keys(result.seat_number)[0]]).split('-')).map((s) => {return parseInt(s, 10)}).sort((a,b)=>{return a-b});
           if(seats.join('-')!==this.state.seat_numbers.join('-')) {
-            // console.log("Updating Seats");
+            console.log("Updating Seats");
             this.setState({
               seat_numbers : seats,
             });
@@ -52,7 +52,7 @@ class AddBooking extends React.Component {
               alert("Selected seat already booked. Change Seat!");
             }
           }else {
-            // console.log("Not Updating Seats");
+            console.log("Not Updating Seats");
           }  
         }
       }catch(err){}
