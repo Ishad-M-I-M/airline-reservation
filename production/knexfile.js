@@ -14,6 +14,7 @@ module.exports = {
       database: process.env.DATABASE_NAME,
       user:     process.env.DATABASE_USER,
       password: process.env.DATABASE_PASS,
+      multipleStatements: true
     },
     migrations: {
       tableName: 'knex_migrations',
@@ -32,6 +33,7 @@ module.exports = {
       database: process.env.DATABASE_NAME,
       user:     process.env.DATABASE_USER,
       password: process.env.DATABASE_PASS,
+      multipleStatements: true
     },
     pool: {
       min: 2,
