@@ -11,9 +11,9 @@ class ViewFlights extends React.Component {
       flight_id:'',
       origin:'',
       destination:'',
-      aircraft_id:'',
-      past:false,
-      future:false,
+      tail_number:'',
+      past:true,
+      future:true,
       resultVisibility:false,
       FlightOutput: [],
     }
@@ -37,11 +37,10 @@ class ViewFlights extends React.Component {
         });
 
         let result = await res.json();
-
         if(result && result.success) {
           let temp_craft = [];
           result.aircrafts.forEach(element => {
-            temp_craft.push(`${element.model} - ${element.aircraft_id}`);
+            temp_craft.push(`${element.model} : ${element.tail_number}`);
           });
           this.setState({
             aircrafts: temp_craft,
@@ -66,7 +65,6 @@ class ViewFlights extends React.Component {
         });
 
         let result = await res.json();
-
         if(result && result.success) {
           let temp_codes = [];
           result.airports.forEach(element => {
@@ -86,6 +84,7 @@ class ViewFlights extends React.Component {
   }
 
   async fetchFlightDetails() {
+    console.log(this.state);
     try{
       let res = await fetch('/fetchFlight/clerk',{
         method: 'post',
@@ -95,7 +94,7 @@ class ViewFlights extends React.Component {
         },
         body: JSON.stringify({
           flight_id: this.state.flight_id,
-          aircraft_id: this.state.aircraft_id,
+          tail_number: this.state.tail_number,
           origin: this.state.origin,
           destination: this.state.destination,
           past: this.state.past,
@@ -131,11 +130,11 @@ class ViewFlights extends React.Component {
               <div className='col-md-6'>
                 <label htmlFor="flightid" className='form-label'>Flight ID</label>
                 {
-                (this.state.origin !== '' || this.state.destination !== '' || this.state.aircraft_id !== '') && 
+                (this.state.origin !== '' || this.state.destination !== '' || this.state.tail_number !== '') && 
                 <input id='flightid' type='text' className='form-control' disabled/>
                 }
                 {
-                  ((this.state.origin === '' && this.state.destination === '') && this.state.aircraft_id==='') &&
+                  ((this.state.origin === '' && this.state.destination === '') && this.state.tail_number==='') &&
                   <input id='flightid' type="text" className='form-control' onChange={(e)=>{
                     this.setState({
                       flight_id: e.target.value,
@@ -153,13 +152,13 @@ class ViewFlights extends React.Component {
               <div className='col-md-6'>
                 <label htmlFor='origin' className='form-label'>Origin</label>
                 {
-                  (this.state.flight_id !== '' || this.state.aircraft_id !== '')&& 
+                  (this.state.flight_id !== '' || this.state.tail_number !== '')&& 
                   <select className='form-control' disabled>
                     <option>--Select--</option>
                   </select>
                 }
                 {
-                  (this.state.flight_id === '' && this.state.aircraft_id === '' )&&
+                  (this.state.flight_id === '' && this.state.tail_number === '' )&&
                   <select className='form-control' id='origin' onChange={(e)=>{
                     this.setState({
                     origin: e.target.value
@@ -177,13 +176,13 @@ class ViewFlights extends React.Component {
               <div className='col-md-6'>
                 <label htmlFor='destination' className='form-label'>Destination</label>
                 {
-                  (this.state.flight_id !== '' || this.state.aircraft_id !== '')&& 
+                  (this.state.flight_id !== '' || this.state.tail_number !== '')&& 
                   <select defaultValue className='form-control' disabled>
                     <option>--Select--</option>
                   </select>
                 }
                 {
-                  (this.state.flight_id === '' && this.state.aircraft_id === '' )&&
+                  (this.state.flight_id === '' && this.state.tail_number === '' )&&
                   <select defaultValue={''} className='form-control' id='destination' onChange={(e)=>{this.setState({
                     destination: e.target.value
                   })}}>
@@ -212,12 +211,12 @@ class ViewFlights extends React.Component {
                 {
                   (this.state.flight_id === '' && this.state.origin === '' && this.state.destination === '') && 
                   <select className='form-control' id='aircraft' onChange={(e)=>{this.setState({
-                    aircraft_id: e.target.value
+                    tail_number: e.target.value
                   })}}>
                     <option value={''} >--Select--</option>
                     {
                       this.state.aircrafts.map((craft, i)=>
-                      <option key={i} value={craft.split("-")[1].trim()}>{craft}</option>)
+                      <option key={i} value={craft.split(":")[1].trim()}>{craft}</option>)
                     }
                   </select>
                 }
@@ -237,7 +236,7 @@ class ViewFlights extends React.Component {
               <div className=''>
                 <input className="form-check-input" type="checkbox" value="" id="past" onClick={()=>{this.setState({
                   past: !this.state.past,
-                })}}/>
+                })}} defaultChecked/>
                 <label className="form-check-label" htmlFor="past">Past Flight Details</label>
               </div>
             </li>
@@ -245,7 +244,7 @@ class ViewFlights extends React.Component {
               <div className=''>
                 <input className="form-check-input" type="checkbox" value="" id="future" onClick={()=>{this.setState({
                   future: !this.state.future,
-                })}} />
+                })}} defaultChecked/>
                 <label className="form-check-label" htmlFor="future">Future Flight Details</label>
               </div>
             </li>

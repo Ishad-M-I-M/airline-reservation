@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const mysql = require('mysql');
 const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
-require('dotenv').config();
+
+const KnexSessionStore = require('connect-session-knex')(session);
+require('dotenv').config({
+    path:'../.env'
+});
 
 // controllers
 const airportController = require('./controllers/airportController');
@@ -13,29 +15,19 @@ const aircraftController = require('./controllers/aircraftController');
 const flightScheduleController = require('./controllers/flightScheduleController');
 const reportController = require('./controllers/reportController');
 const discountController = require('./controllers/discountController');
+const authController = require('./controllers/authController');
 const controller = require('./controllers/controller');
+
+
+const db = require('./db');
 // app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
-//Database
-const db = mysql.createConnection({
-    host: process.env.DATABASE_HOST,
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASS,
-    database: process.env.DATABASE_NAME,
+const sessionStore = new KnexSessionStore({
+    knex: db,
+    clearInterval : (365 * 86400 * 1000),
+    disableDbCleanup: true
 });
-
-db.connect(function(err) {
-    if(err) {
-        console.log("DB error");
-        throw err;
-    }
-});
-
-const sessionStore = new MySQLStore({
-    expiration : (365 * 86400 * 1000),
-    endConnectionOnClose: false,
-}, db);
 
 app.use(session({
     key: 'fsasfsfafawfrhykuytjdafapsovapjv32fq',
@@ -55,6 +47,7 @@ app.use('/aircraft', aircraftController);
 app.use('/flightSchedule', flightScheduleController);
 app.use('/report', reportController);
 app.use('/discount', discountController);
+app.use('/auth', authController);
 app.use('/', controller);
 
 // app.get('/', function(req, res) {

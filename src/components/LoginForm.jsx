@@ -47,7 +47,7 @@ class LoginForm extends React.Component {
     });
 
     try {
-      let res = await fetch("/login", {
+      let res = await fetch("/auth/login", {
         method: "post",
         headers: {
           "Accept": "application/json",
@@ -67,6 +67,7 @@ class LoginForm extends React.Component {
         UserStore.isLoggedIn = true;
         UserStore.email = result.email;
         UserStore.role = result.role;
+        window.location.href="/";
       } else if (result && result.success === false) {
         console.log("NOT SUCCESSFULLY RECEIVED THE RESULT");
         this.resetForm();
@@ -81,26 +82,34 @@ class LoginForm extends React.Component {
   render() {
     document.body.style.backgroundImage = `url(${background})`;
     return (
-        <div className="container text-center bg-white bg-opacity-25 p-3" style={{width: "50rem",height: "fit-content", marginTop: "16rem"}}>
-          <h2>Log in</h2>
-          <InputField
-            type="text"
-            placeholder="Email"
-            value={this.state.email ? this.state.email : ""}
-            onChange={(val) => this.setInputValue("email", val)}
-          />
-          <InputField
-            type="password"
-            placeholder="Password"
-            value={this.state.password ? this.state.password : ""}
-            onChange={(val) => this.setInputValue("password", val)}
-          />
+        <>
           <SubmitButton
-            text="Login"
-            disabled={this.state.buttonDisabled}
-            onClick={() => this.doLogin()}
+              text="&larr; Back"
+              disabled={this.state.buttonDisabled}
+              onClick={() => window.history.back()}
           />
-        </div>
+          <div className="container text-center bg-white bg-opacity-25 p-3" style={{width: "50rem",height: "fit-content", marginTop: "16rem"}}>
+            <h2>Log in</h2>
+            <InputField
+                type="text"
+                placeholder="Email"
+                value={this.state.email ? this.state.email : ""}
+                onChange={(val) => this.setInputValue("email", val)}
+            />
+            <InputField
+                type="password"
+                placeholder="Password"
+                value={this.state.password ? this.state.password : ""}
+                onChange={(val) => this.setInputValue("password", val)}
+            />
+            <SubmitButton
+                text="Login"
+                disabled={this.state.buttonDisabled}
+                onClick={() => this.doLogin()}
+            />
+          </div>
+        </>
+
     );
   }
 }
