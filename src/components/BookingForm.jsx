@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Form, Button, Dropdown } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserStore from "../stores/UserStore";
+import PaymentPage from "./PaymentPage";
 
 const BookingForm = (props) => {
 
@@ -55,6 +56,7 @@ const BookingForm = (props) => {
               .then(function (response) {
                 if (response.data.success) {
                   navigate("/paymentPage", { state: { f_id, seatNo, passengerId } });
+            
 
                 } else {
                   alert("sorry your booking cannot be reserved!");

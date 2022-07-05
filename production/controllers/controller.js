@@ -298,7 +298,8 @@ app.post("/confirmBooking", (req, res) => {
 });
 
 app.post("/checkValidBooking", (req, res) => {
-   
+
+    if(req.body.f_id)
 
     db.raw(`SELECT ticket_id
             from ticket
@@ -336,6 +337,8 @@ app.post("/checkValidBooking", (req, res) => {
 });
 
 app.get("/isReserved", (req, res) => {
+
+    
     db.raw(`select ticket_id
             from ticket
             where flight_id = ${req.query.f_id}

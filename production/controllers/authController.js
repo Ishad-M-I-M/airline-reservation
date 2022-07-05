@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const express = require("express");
+const { data } = require("jquery");
 const db = require("../db");
 const router = express.Router();
-
 router.post("/login", (req, res) => {
     // console.log("Request to login");
     let email = req.body.email;
@@ -43,7 +43,7 @@ router.post("/login", (req, res) => {
         })
         .catch((err) => {
             console.error(err);
-            return res.status(500).json({success: false});
+            return res.status(500).json({ success: false });
         })
 });
 
@@ -63,60 +63,108 @@ router.post("/logout", (req, res) => {
 });
 
 router.post("/isLoggedIn", (req, res) => {
-    if (req.session.userID) {
-        let cols = [req.session.userID];
-        db.raw("SELECT * FROM user WHERE user_id = ? LIMIT 1", cols)
-            .then((data) => {
-                if (data[0] && data[0].length === 1) {
-                    return res.json({
-                        success: true, email: data[0][0].email, role: data[0][0].role,
+
+    let cols = [req.session.userID];
+    db.raw("SELECT * FROM user WHERE user_id = ? LIMIT 1", cols)
+        .then((data) => {
+            if (data[0] && data[0].length === 1) {
+                return res.json({
+                    success: true, email: data[0][0].email, role: data[0][0].role,
+                });
+            } else {
+                return res.json({
+                    success: false,
+                });
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            return res.status(500).json({success: false});
+
+            if (req.session.userID) {
+                let cols = [req.session.userID];
+                db.raw("SELECT * FROM user WHERE user_id = ? LIMIT 1", cols)
+                    .then((data) => {
+                        if (data[0] && data[0].length === 1) {
+                            return res.json({
+                                success: true, email: data[0][0].email, role: data[0][0].role,
+                            });
+                        } else {
+                            return res.json({
+                                success: false,
+                            });
+                        }
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        return res.status(500).json({success: false});
                     });
-                } else {
-                    return res.json({
-                        success: false,
-                    });
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                return res.status(500).json({success: false});
-            });
-    } else {
-        return res.json({
-            success: false,
+            } else {
+                return res.json({
+                    success: false,
+                });
+            }
         });
-    }
 });
 
 
-router.post('/adduser', (req, res) =>{
+router.post('/adduser', (req, res) => {
 
     let date = req.body.date;
     let dob = date.split("T")[0];
-    let e =  req.body.email;
-    let pwd =  req.body.password;
+    let e = req.body.email;
+    let pwd = req.body.password;
     let fn = req.body.fname;
     let ln = req.body.lname;
-    let ln1 = ln === "" ? null :ln;
+    let ln1 = ln === "" ? null : ln;
 
-    
+
     let pswrd = bcrypt.hashSync(pwd, 10);
 
     console.log(req.body);
     console.log(pswrd);
     console.log(dob);
     console.log(ln1);
+
+    db.raw(`SELECT count(*) as num from user where email='${e}';`).then((data) => {
+        console.log(data[0][0].num);
+        if (data[0][0].num == 0) {
+            db.raw(`INSERT into user(email,password,first_name,last_name,role,is_active,dob) VALUES (?,?,?,?,?,?,?)`, [e, pswrd, fn, ln1, "user", 1, dob])
+                .then(() => {
+                    return res.json({ success: true ,message: false });
+                })
+                .catch((err) => {
+                    console.error(err);
+                    return res.status(500).json({ success: false });
+                })
+        }else{
+            return res.json({ message: true });
+        }
+    })
     // INSERT into user(email,password,first_name,role,is_active,dob) VALUES("one@gmail.com2","hash2","one2","user",1,'2022-11-12');;
 
 
-    db.raw(`INSERT into user(email,password,first_name,last_name,role,is_active,dob) VALUES (?,?,?,?,?,?,?)`, [e,pswrd,fn,ln1,"user",1,dob])
-        .then(()=>{
-            return res.json({success: true});
-        })
-        .catch((err)=>{
-            console.error(err);
-            return res.status(500).json({success: false});
-        })
+    // db.raw(`INSERT into user(email,password,first_name,last_name,role,is_active,dob) VALUES (?,?,?,?,?,?,?)`, [e,pswrd,fn,ln1,"user",1,dob])
+    //     .then(()=>{
+    //         return res.json({success: true});
+    //     })
+    //     .catch((err)=>{
+    //         console.error(err);
+    //         return res.status(500).json({success: false});
+    //     })
+
+    // db.raw(`SELECT addUser(?,?)`, [e, pswrd])
+    //     .then((data) => {
+    //         console.log(data[0])
+    //         return res.send({
+    //             success: true,
+    //             data: data[0]
+    //         });
+    //     })
+    //     .catch((err) => {
+    //         console.error(err);
+    //         return res.status(500).json({ success: false });
+    //     })
 });
 
 

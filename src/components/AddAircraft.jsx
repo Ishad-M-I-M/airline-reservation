@@ -10,6 +10,7 @@ class AddAircraft extends Component {
     
       this.state = {
          model:"",
+         tail:"",
          total_seats:null,
          economy:null,
          business:null,
@@ -33,7 +34,8 @@ class AddAircraft extends Component {
                 model : this.state.model,
                 economy : this.state.economy,
                 business : this.state.business,
-                platinum : this.state.platinum
+                platinum : this.state.platinum,
+                tail_number : this.state.tail
               }),
               credentials : 'include',
             });
@@ -85,6 +87,14 @@ class AddAircraft extends Component {
         })
 
     }
+
+    AddTail= (event) =>{
+      this.setState({
+          tail: event.target.value
+          
+      })
+
+  }
     Addseats = (event) =>{
             this.setState({
                 total_seats: event.target.value
@@ -172,6 +182,15 @@ class AddAircraft extends Component {
             onChange={this.Addmodel} placeholder="Model" required
             />
             <label for="floatingInput">Model</label>
+
+            </div>
+
+            <div class="form-floating mb-3">
+
+            <input type="text" className="form-control" id="floatingInput" value={this.state.tail} 
+            onChange={this.AddTail} placeholder="Tail ID" required
+            />
+            <label for="floatingInput">Tail ID</label>
 
             </div>
 

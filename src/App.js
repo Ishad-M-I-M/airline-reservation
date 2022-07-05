@@ -15,9 +15,8 @@ import SearchFlight from './components/SearchFlight';
 import ChooseFlights from './components/ChooseFlights';
 import PaymentPage from './components/PaymentPage';
 import Tickets from './components/Tickets';
-
-
-
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 class App extends React.Component {
 
     constructor(props) {
@@ -90,11 +89,17 @@ class App extends React.Component {
     render() {
         if (UserStore.loading) {
             return (
-                <div className='App bg-black'>
-                    <div className='container'>
-                        Loading, please wait...
-                    </div>
+                <div>
+
+                    <Backdrop
+                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                        open={true}
+                        onClick={() => { }}
+                    >
+                        <CircularProgress color="inherit" />
+                    </Backdrop>
                 </div>
+
             );
         } else if (UserStore.isLoggedIn) {
             if (UserStore.role === 'moderator') {
@@ -125,7 +130,7 @@ class App extends React.Component {
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/usr-booking" element={<div>
                             <div className="home-page">
-                                <Navbar logout={this.doLogout} />
+                                <Navbar />
                                 <div className="background-img">
                                     <SearchFlight />
                                 </div>
@@ -141,6 +146,7 @@ class App extends React.Component {
                 </BrowserRouter>
             );
         }
+
 
     }
 }

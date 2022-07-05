@@ -1,24 +1,23 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import SearchFlight from "./SearchFlight.jsx";
 import "../css/home.css";
 import Navbar from "./Navbar.jsx";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import FlightCard from "./FlightCard.jsx";
+import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
 import ChooseFlights from "./ChooseFlights.jsx";
 import LoginForm from "./LoginForm.jsx";
-import Footer from "./Footer.jsx";
 import PaymentPage from "./PaymentPage";
-import Tickets from "./Tickets"
+import Tickets from "./Tickets";
+import NotFound from "./NotFound";
 
 export default function Home(props) {
-  // useEffect(()=>{
-    
-  //   window.addEventListener('popstate', function(event) {
-  //     window.location.href="/";
-  //   });
-  // },[]);
+    // useEffect(()=>{
 
-  return (
+    //   window.addEventListener('popstate', function(event) {
+    //     window.location.href="/";
+    //   });
+    // },[]);
+
+    return (
     <BrowserRouter>
       <Routes>
         <Route
@@ -40,6 +39,7 @@ export default function Home(props) {
         <Route path="/paymentPage" element={<PaymentPage />}></Route>
         <Route path="/signIn" element={<LoginForm />}></Route>
         <Route path="/tickets" element={<Tickets />}></Route>
+        <Route path="*" element={<NotFound />}></Route>
 
       </Routes>
     </BrowserRouter>
