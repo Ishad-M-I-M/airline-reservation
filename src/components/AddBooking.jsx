@@ -42,7 +42,7 @@ class AddBooking extends React.Component {
         let result = await res.json();
         let seats = [];
         if(result && result.success){
-          seats = ((result.seat_number[Object.keys(result.seat_number)[0]]).split('-')).map((s) => {return parseInt(s, 10)}).sort((a,b)=>{return a-b});
+          seats = ((Object.values(Object.values(result.data)[0]))[0].split('-')).map((s) => {return parseInt(s, 10)}).sort((a,b)=>{return a-b});
           if(seats.join('-')!==this.state.seat_numbers.join('-')) {
             console.log("Updating Seats");
             this.setState({
@@ -100,6 +100,7 @@ class AddBooking extends React.Component {
     if(this.state.name === '' || this.state.address === '' || this.state.dob === ''|| this.state.id === '' || this.state.flight_id === 0 || this.state.class === '' || this.state.seat_number === 0) {
       alert("Fill all the columns");
     }else {
+      console.log(this.state);
       try{
         let res = await fetch('/bookTicket',{
           method:'POST',
@@ -120,7 +121,7 @@ class AddBooking extends React.Component {
         });
 
         let result = await res.json();
-
+        console.log(result);
         if(result && result.success) {
           window.location.href = "/paymentportal";
         }else {
