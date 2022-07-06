@@ -6,9 +6,10 @@ const Table = (props) => {
         <table className={"table table-hover"}>
             <thead>
                 <tr>
-                    {props.tableHeadings.map((heading)=>{
-                        return <th className={"text-center"} scope={"row"} key={heading}>{heading}</th>
+                    {Object.keys(props.tableHeadings).map((heading)=>{
+                        return <th className={"text-center"} scope={"row"} key={heading}>{props.tableHeadings[heading]}</th>
                     })}
+
                     <th></th>
                     <th></th>
                 </tr>
@@ -16,8 +17,8 @@ const Table = (props) => {
             <tbody>
 
                 {props.tableData.map((row)=>{
-                    return <tr key={row[props.id]} onClick={()=>{props.updateHandler(row[props.id])}}>
-                    {props.tableHeadings.map((heading)=>{
+                    return <tr key={row[props.id]}>
+                    {Object.keys(props.tableHeadings).map((heading)=>{
                         return <td className={"text-center"}>{row[heading]}</td>
                     })}
                         {(props.deleteHandler !== null)?
@@ -39,7 +40,7 @@ const Table = (props) => {
 };
 
 Table.propTypes = {
-    tableHeadings: PropTypes.array.isRequired,
+    tableHeadings: PropTypes.object.isRequired,
     tableData: PropTypes.array.isRequired,
     deleteHandler: PropTypes.func,
     updateHandler: PropTypes.func,

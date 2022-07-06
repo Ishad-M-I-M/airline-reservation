@@ -101,7 +101,7 @@ export default function ViewRoutes() {
         </div>
       </form>
       <div>
-          <Table id = "id" tableHeadings={['origin', 'destination']} tableData={routes} deleteHandler={handleDelete}/>
+          <Table id = "id" tableHeadings={{'origin': 'Origin', 'destination': 'Destination'}} tableData={routes} deleteHandler={handleDelete}/>
 
       </div>
     </div>

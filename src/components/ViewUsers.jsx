@@ -75,7 +75,7 @@ const ViewUsers = () => {
 
             </form>
         </Overlay>
-        <Table id={"id"} tableHeadings={["name", "email", "role", "discount_type", "dob"]} tableData={users}
+        <Table id={"id"} tableHeadings={{"name": "Name", "email": "Email", "role": "Role", "discount_type": "Discount Type", "dob": "Date of Birth"}} tableData={users}
                deleteHandler={handleDelete} updateHandler={handleUpdate}/>
     </div>);
 };

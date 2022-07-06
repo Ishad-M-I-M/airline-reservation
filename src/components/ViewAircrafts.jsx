@@ -45,7 +45,7 @@ export default function ViewAircrafts() {
           {[...new Set(aircrafts.map(({model})=> model))].map((x)=> <option key={x}>{x}</option>)}
         </datalist>
       </form>
-      <Table id={"aircraft_id"} tableHeadings={["tail_number", "model", "Economy_seats", "Business_seats", "Platinum_seats"]} tableData={aircrafts} deleteHandler={handleDelete}/>
+      <Table id={"aircraft_id"} tableHeadings={{"tail_number": 'Tail Number', "model": 'Model', "Economy_seats": 'Economy Seats', "Business_seats": "Business Seats", "Platinum_seats": "Platinum Seats"}} tableData={aircrafts} deleteHandler={handleDelete}/>
     </div>
   )
 }
