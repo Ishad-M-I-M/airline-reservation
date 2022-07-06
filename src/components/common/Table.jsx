@@ -10,17 +10,25 @@ const Table = (props) => {
                         return <th className={"text-center"} scope={"row"} key={heading}>{heading}</th>
                     })}
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
 
                 {props.tableData.map((row)=>{
-                    console.log(row);
-                    return <tr key={row[props.id]}>
+                    return <tr key={row[props.id]} onClick={()=>{props.updateHandler(row[props.id])}}>
                     {props.tableHeadings.map((heading)=>{
                         return <td className={"text-center"}>{row[heading]}</td>
                     })}
-                        <td className={"text-center"}><button className={"btn btn-primary"} onClick={()=> props.deleteHandler(row[props.id])}>Delete</button></td>
+                        {(props.deleteHandler !== null)?
+                                <td className={"text-center"}><button type="button" className={"btn btn-primary"} onClick={()=> props.deleteHandler(row[props.id])}>Delete</button></td>
+                            : <td></td>
+                        }
+                        {(props.updateHandler !== null)?
+                            <td className={"text-center"}><button type="button" className={"btn btn-primary"} onClick={()=> props.updateHandler(row[props.id])}>Update</button></td>
+                            :<td></td>
+                        }
+
                     </tr>
                 })}
 
@@ -31,9 +39,15 @@ const Table = (props) => {
 };
 
 Table.propTypes = {
-    tableHeadings: PropTypes.array,
-    tableData: PropTypes.array,
+    tableHeadings: PropTypes.array.isRequired,
+    tableData: PropTypes.array.isRequired,
     deleteHandler: PropTypes.func,
-    id: PropTypes.string
+    updateHandler: PropTypes.func,
+    id: PropTypes.string.isRequired
+}
+
+Table.defaultProps = {
+    deleteHandler: null,
+    updateHandler: null
 }
 export default Table;
