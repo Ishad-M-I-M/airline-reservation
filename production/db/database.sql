@@ -167,6 +167,11 @@ create view airport_locations as
 select airport_id as id, code, name, is_active, get_location(location) as location
 from airport;
 
+create view users_view as
+select user_id as id, email, concat(first_name,' ', last_name) as name, role, discount_type, date_format(dob, '%Y-%m-%d') as dob
+from user where is_active= 1;
+
+
 CREATE FUNCTION SPLIT_STR(
     x VARCHAR(255),
     delim VARCHAR(12),
