@@ -164,7 +164,7 @@ end$$
 delimiter ;
 
 create view airport_locations as
-select airport_id as id, code, name, get_location(location) as location
+select airport_id as id, code, name, is_active, get_location(location) as location
 from airport;
 
 CREATE FUNCTION SPLIT_STR(
