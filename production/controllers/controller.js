@@ -166,7 +166,7 @@ app.post("/search-result", function (req, res) {
                                               where route_id = '${return_route_id}'
                                                 and DATE(takeoff_time) = '${destinationDate}'`)
                                         .then((data) => {
-                                            console.log(data[0])
+
                                             return res.json({
                                                 success: true, data: flightDetails, return_data: data[0],
                                             });
@@ -227,27 +227,27 @@ app.post("/flightCard", function (req, res) {
 
         )
             .then((result) => {
-                
-               
-                    for (let i = 0; i < result[0][0].length; i++) {
-                        eco_booked_seats.push(Number(result[0][0][i]["seat_number"]));
-                    }
-                
-                
-                    for (let i = 0; i < result[0][1].length; i++) {
-                        busi_booked_seats.push(Number(result[0][1][i]["seat_number"]));
-                    }
-                
-                
-                    for (let i = 0; i < result[0][2].length; i++) {
-                        plat_booked_seats.push(Number(result[0][2][i]["seat_number"]));
-                    }
-                
+
+
+                for (let i = 0; i < result[0][0].length; i++) {
+                    eco_booked_seats.push(Number(result[0][0][i]["seat_number"]));
+                }
+
+
+                for (let i = 0; i < result[0][1].length; i++) {
+                    busi_booked_seats.push(Number(result[0][1][i]["seat_number"]));
+                }
+
+
+                for (let i = 0; i < result[0][2].length; i++) {
+                    plat_booked_seats.push(Number(result[0][2][i]["seat_number"]));
+                }
+
                 Economy_seats = Number(result[0][3][0]["Economy_seats"]);
                 Business_seats = Number(result[0][3][0]["Business_seats"]);
                 Platinum_seats = Number(result[0][3][0]["Platinum_seats"]);
-                
-               
+
+
                 return res.json({
                     eco_booked_seats,
                     busi_booked_seats,
@@ -265,10 +265,10 @@ app.post("/flightCard", function (req, res) {
 });
 
 app.post("/reserveBooking", (req, res) => {
-    console.log(req.session.userID);
-    let userId = req.session.userID ? req.session.userID : -1 ;
-    console.log(userId)
-    console.log(req.body);
+
+    let userId = req.session.userID ? req.session.userID : -1;
+
+
     db.raw("call book_ticket_proc(?,?,?,?,?,?,?,?)", [req.body.f_id, userId, req.body.passengerId, req.body.passengerName, req.body.passengerAdd, req.body.bDay, req.body.flight_class, req.body.seatNo,]).then((result) => {
         return res.json({
             success: true, data: result[0],
@@ -297,46 +297,46 @@ app.post("/confirmBooking", (req, res) => {
 
 app.post("/checkValidBooking", (req, res) => {
 
-    if(req.body.f_id)
+    if (req.body.f_id)
 
-    db.raw(`SELECT ticket_id
+        db.raw(`SELECT ticket_id
             from ticket
             where flight_id = ${req.body.f_id}
               and passenger_id = '${req.body.passengerId}'
               and status = 1`).then((result) => {
-        db.raw(`SELECT seat_number
+            db.raw(`SELECT seat_number
                 from ticket
                 where flight_id = ${req.body.f_id}
                   and seat_number = ${req.body.seatNo}`).then((result2) => {
-            if (result2[0].length !== 0) {
-                res.json({
-                    success: true, data: "seat_occupied",
-                });
-            } else {
-                if (result[0].length !== 0) {
+                if (result2[0].length !== 0) {
                     res.json({
-                        success: true, data: "passenger_occupied",
+                        success: true, data: "seat_occupied",
                     });
                 } else {
-                    res.json({
-                        success: true, data: "available",
-                    });
+                    if (result[0].length !== 0) {
+                        res.json({
+                            success: true, data: "passenger_occupied",
+                        });
+                    } else {
+                        res.json({
+                            success: true, data: "available",
+                        });
+                    }
                 }
-            }
+            }).catch((err) => {
+                console.error(err);
+                return res.status(500).json({ success: false });
+            });
+
         }).catch((err) => {
             console.error(err);
             return res.status(500).json({ success: false });
         });
-
-    }).catch((err) => {
-        console.error(err);
-        return res.status(500).json({ success: false });
-    });
 });
 
 app.get("/isReserved", (req, res) => {
 
-    
+
     db.raw(`select ticket_id
             from ticket
             where flight_id = ${req.query.f_id}
@@ -363,23 +363,29 @@ app.delete("/releaseBooking", (req, res) => {
         return res.status(500).json({ success: false });
     });
 
-           
-    
+
+
 });
 
 app.get("/getTickets", (req, res) => {
-    db.raw(`select *
+    if (req.session.userID) {
+        db.raw(`select *
             from ticket
             where user_id = ${req.session.userID}
               and status = 1;`)
-        .then((result) => {
-            return res.json({
-                success: true, data: result[0],
+            .then((result) => {
+                return res.json({
+                    success: true, data: result[0],
+                });
+            }).catch((err) => {
+                console.error(err);
+                return res.status(500).json({ success: false });
             });
-        }).catch((err) => {
-            console.error(err);
-            return res.status(500).json({ success: false });
-        });
+    }
+    else {
+        return res.status(500).json({ success: false });
+
+    }
 });
 
 module.exports = app;

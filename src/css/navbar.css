@@ -39,7 +39,6 @@ a {
   }
 }
 .nav_item:hover {
-  background: #103d80;
   border-radius: 5px;
   text-align: center;
 }
@@ -52,10 +51,9 @@ a {
 .nav_links {
   float: right;
   border-radius: 4px;
-  background: #99c2ff;
+  /* background: #99c2ff; */
   padding: 10px 10px;
   color: #000;
-  border: 3px aliceblue solid;
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease-in-out;

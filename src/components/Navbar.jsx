@@ -27,30 +27,41 @@ function Navbar(props) {
   return (
     <nav className="nav navbar fixed-top">
       <ul className={active}>
-        {props.items && props.items.map(({item, link}) => {
+        {props.items && props.items.map(({ item, link }) => {
           return (
-              <li className="nav_item nav-item" key={item}>
-                <a href={link} className="nav_link nav-link">
-                  {item}
-                </a>
-              </li>
+            <li className="nav_item nav-item" key={item}>
+              <a href={link} className="nav_link nav-link">
+                {item}
+              </a>
+            </li>
           )
         })}
-          { !UserStore.isLoggedIn && (
-              <>
-                <li className="nav_item nav-item" >
-                  <a href="/sign-up" className="nav_link nav-link">
-                    Sign Up
-                  </a>
-                </li>
+        {UserStore.isLoggedIn && (
+          <>
+            <li className="nav_item nav-item" >
+              <a href="/tickets" className="nav_link nav-link">
+                View Tickets
+              </a>
+            </li>
+          </>
+        )
 
-                <li className="nav_items sign-in-btn">
-                  <a href="/sign-in" className="nav_links">
-                    Sign In
-                  </a>
-                </li>
-            </>
-              )}
+        }
+        {!UserStore.isLoggedIn && (
+          <>
+            <li className="nav_item nav-item" >
+              <a href="/sign-up" className="nav_link nav-link">
+                Sign Up
+              </a>
+            </li>
+
+            <li className="nav_items sign-in-btn">
+              <a href="/sign-in" className="nav_links">
+                Sign In
+              </a>
+            </li>
+          </>
+        )}
         <li
           className="nav_items sign-out-btn"
           style={{ display: `${signOutBtn}` }}
