@@ -55,29 +55,6 @@ export default function ViewRoutes() {
 
     }
 
-    let handleDelete =(id_) => {
-      // rest API request to delete.: DELETE /routes/:id
-      fetch(`/route/${id_}`,{
-        method: 'DELETE',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
-      })
-      .then((res)=>{
-        res.json()
-        .then((result)=> {
-          alert("Route sucessfully deleted");
-          window.location.reload();
-        } )
-        .catch((e)=> console.error(e));
-      })
-      .catch((e)=>{
-        console.error(e);
-      })
-      
-    }
-
   return (
     <div className="m-3">
       <form>
@@ -101,7 +78,7 @@ export default function ViewRoutes() {
         </div>
       </form>
       <div>
-          <Table id = "id" tableHeadings={{'origin': 'Origin', 'destination': 'Destination'}} tableData={routes} deleteHandler={handleDelete}/>
+          <Table id = "id" tableHeadings={{'origin': 'Origin', 'destination': 'Destination'}} tableData={routes} />
 
       </div>
     </div>
