@@ -463,3 +463,9 @@ BEGIN
 END $$
 
 delimiter ;
+
+-- set a trigger when aircraft is deleted to set is_active of scheduled flights to 0
+create trigger on_aircraft_delete
+    after update on aircraft
+    for each row
+    update flight set is_active = 0 where NEW.is_active = 0 and flight.aircraft_id = OLD.aircraft_id and flight.takeoff_time > CURTIME();
