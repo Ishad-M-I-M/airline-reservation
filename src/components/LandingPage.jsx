@@ -6,7 +6,7 @@ import Navbar from "./Navbar";
 export function LandingPage() {
     return (
         <div className="wrapper">
-            <Navbar items={[{"item": "Home", "link": "#home"},
+            <Navbar items={[{"item": "Home", "link": "#Home"},
                 {"item": "About", "link": "#About"},
                 {"item": "Services", "link": "#Services"},
                 {"item": "Contact", "link": "#Contact"}]}></Navbar>

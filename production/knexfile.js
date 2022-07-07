@@ -1,6 +1,6 @@
 // Update with your config settings.
 require('dotenv').config({
-  path: '.env'
+  path:'.env'
 });
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
@@ -12,10 +12,9 @@ module.exports = {
     connection: {
       host: process.env.DATABASE_HOST,
       database: process.env.DATABASE_NAME,
-      user: process.env.DATABASE_USER,
+      user:     process.env.DATABASE_USER,
       password: process.env.DATABASE_PASS,
-      multipleStatements: true,
-
+      multipleStatements: true
     },
     migrations: {
       tableName: 'knex_migrations',
@@ -32,10 +31,9 @@ module.exports = {
     connection: {
       host: process.env.DATABASE_HOST,
       database: process.env.DATABASE_NAME,
-      user: process.env.DATABASE_USER,
+      user:     process.env.DATABASE_USER,
       password: process.env.DATABASE_PASS,
-      multipleStatements: true,
-
+      multipleStatements: true
     },
     pool: {
       min: 2,

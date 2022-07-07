@@ -66,65 +66,13 @@ CREATE TABLE `flight_cost`
 );
 
 
-CREATE TABLE `flight_cost` (
-  `flight_id` int NOT NULL references flight.flight_id,
-  `class` varchar(10) NOT NULL CHECK (`class` in ('Platinum','Business','Economy')),
-  `cost` decimal(10,2) NOT NULL,
-  primary key( flight_id, class),
-  constraint foreign key (flight_id ) references flight(flight_id) on delete cascade on update cascade
-) ;
-
-INSERT INTO `flight_cost` (`flight_id`, `class`, `cost`) VALUES
-                                                             (1, 'Business', '800.00'),
-                                                             (1, 'Economy', '400.00'),
-                                                             (1, 'Platinum', '1000.00'),
-                                                             (2, 'Business', '800.00'),
-                                                             (2, 'Economy', '400.00'),
-                                                             (2, 'Platinum', '1000.00'),
-                                                             (3, 'Business', '800.00'),
-                                                             (3, 'Economy', '400.00'),
-                                                             (3, 'Platinum', '1000.00'),
-                                                             (4, 'Business', '800.00'),
-                                                             (4, 'Economy', '400.00'),
-                                                             (4, 'Platinum', '1000.00'),
-                                                             (5, 'Business', '800.00'),
-                                                             (5, 'Economy', '400.00'),
-                                                             (5, 'Platinum', '1000.00'),
-                                                             (6, 'Business', '800.00'),
-                                                             (6, 'Economy', '400.00'),
-                                                             (6, 'Platinum', '1000.00'),
-                                                             (7, 'Business', '800.00'),
-                                                             (7, 'Economy', '400.00'),
-                                                             (7, 'Platinum', '1000.00'),
-                                                             (8, 'Business', '800.00'),
-                                                             (8, 'Economy', '400.00'),
-                                                             (8, 'Platinum', '1000.00'),
-                                                             (9, 'Business', '800.00'),
-                                                             (9, 'Economy', '400.00'),
-                                                             (9, 'Platinum', '1000.00'),
-                                                             (10, 'Business', '800.00'),
-                                                             (10, 'Economy', '400.00'),
-                                                             (10, 'Platinum', '1000.00'),
-                                                             (11, 'Business', '800.00'),
-                                                             (11, 'Economy', '400.00'),
-                                                             (11, 'Platinum', '1000.00'),
-                                                             (12, 'Business', '800.00'),
-                                                             (12, 'Economy', '400.00'),
-                                                             (12, 'Platinum', '1000.00'),
-                                                             (13, 'Business', '800.00'),
-                                                             (13, 'Economy', '400.00'),
-                                                             (13, 'Platinum', '1000.00'),
-                                                             (14, 'Business', '800.00'),
-                                                             (14, 'Economy', '400.00'),
-                                                             (14, 'Platinum', '1000.00');
-
-
-CREATE TABLE `passenger` (
-                             `passenger_id` varchar(25) NOT NULL,
-                             `name` varchar(150) NOT NULL,
-                             `dob` date NOT NULL,
-                             `address` varchar(255) NOT NULL,
-                             primary key(passenger_id)
+CREATE TABLE `passenger`
+(
+    `passenger_id` varchar(25)  NOT NULL,
+    `name`         varchar(150) NOT NULL,
+    `dob`          date         NOT NULL,
+    `address`      varchar(255) NOT NULL,
+    primary key (passenger_id)
 ); -- need to include passport number?
 
 CREATE TABLE port_location
@@ -216,8 +164,13 @@ end$$
 delimiter ;
 
 create view airport_locations as
-select airport_id as id, code, name, get_location(location) as location
+select airport_id as id, code, name, is_active, get_location(location) as location
 from airport;
+
+create view users_view as
+select user_id as id, email, concat(first_name,' ', last_name) as name, role, discount_type, date_format(dob, '%Y-%m-%d') as dob
+from user where is_active= 1;
+
 
 CREATE FUNCTION SPLIT_STR(
     x VARCHAR(255),
@@ -510,3 +463,14 @@ BEGIN
 END $$
 
 delimiter ;
+
+-- set a trigger when aircraft is deleted to set is_active of scheduled flights to 0
+create trigger on_aircraft_delete
+    after update on aircraft
+    for each row
+    update flight set is_active = 0 where NEW.is_active = 0 and flight.aircraft_id = OLD.aircraft_id and flight.takeoff_time > CURTIME();
+
+create trigger on_flight_delete
+    after update on flight
+    for each row
+    update ticket set status = 0 where NEW.is_active = 0 and ticket.flight_id = OLD.flight_id;

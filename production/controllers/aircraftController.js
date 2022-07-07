@@ -3,7 +3,7 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', function (req, res){
-    db.raw("SELECT * from aircraft")
+    db.raw("SELECT * from aircraft WHERE is_active = 1")
     .then((data) => {
         return res.send({
             success: true,
@@ -31,10 +31,12 @@ router.post('/', function (req, res){
 
 router.delete('/:id', function (req, res){
     db.raw(`UPDATE aircraft SET is_active=0 WHERE aircraft_id=? `,[req.params.id])
-    .then(() => {
+    .then((data) => {
+        console.log(data);
         return res.send({success: true});
     })
-    .catch(()=>{
+    .catch((err)=>{
+        console.error(err);
         return res.status(500).send({success: false});
     })
 

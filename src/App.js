@@ -105,22 +105,22 @@ class App extends React.Component {
             if (UserStore.role === 'moderator') {
                 return (
                     <div className="App bg-black">
-                        <Navbar logout={this.doLogout} />
-                        <Container />
+                        <Navbar logout={this.doLogout}/>
+                        <Container/>
                     </div>
                 );
             } else if (UserStore.role === 'clerk') {
 
                 return (
                     <div className="App bg-black">
-                        <Navbar logout={this.doLogout} />
-                        <ClerkContainer />
+                        <Navbar logout={this.doLogout}/>
+                        <ClerkContainer/>
                     </div>
                 );
             } else if (UserStore.role === 'user') {
 
                 return (
-                    <Home logout={this.doLogout} />
+                    <Home logout={this.doLogout}/>
                 );
             }
         } else if (!UserStore.isLoggedIn) {

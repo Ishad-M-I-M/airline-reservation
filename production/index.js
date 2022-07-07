@@ -16,6 +16,7 @@ const flightScheduleController = require('./controllers/flightScheduleController
 const reportController = require('./controllers/reportController');
 const discountController = require('./controllers/discountController');
 const authController = require('./controllers/authController');
+const userController = require('./controllers/userController');
 const controller = require('./controllers/controller');
 
 
@@ -48,6 +49,7 @@ app.use('/flightSchedule', flightScheduleController);
 app.use('/report', reportController);
 app.use('/discount', discountController);
 app.use('/auth', authController);
+app.use('/user', userController);
 app.use('/', controller);
 
 // app.get('/', function(req, res) {

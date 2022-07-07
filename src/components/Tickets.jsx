@@ -6,35 +6,53 @@ export default function Tickets() {
   const [arr, setArr] = useState([]);
 
 
-  
+
 
   useEffect(() => {
     axios.get("/getTickets").then((response) => {
 
-        if(response.data.success===true){
-          setArr(response.data.data);}
+      if (response.data.success === true) {
+        setArr(response.data.data);
+      }
 
     });
   }, []);
 
   return (
-    <div style={{height:"100vh",backgroundColor:"#BBD2C5"}}>
-    <div style={{right:"0",left:"0",marginRight:"10vw",marginLeft:"10vw"}}>
-       {arr.length===0 && <h2 >No Booked Tickets</h2>}
-    
-      {arr.map((i) => {
-        return(
-          <div className="card" style={{width:"50vw",padding:"10px",marginLeft:"20%",marginTop:"20px",top:"100px"}}>
-          <div className="card-body">
-            <h5 className="card-title">Ticket Id : {i['ticket_id']}</h5>
-            <h5 className="card-title">Fight Id : {i['flight_id']}</h5>
-            <h5 className="card-title">Passenger Id : {i['passenger_id']}</h5>
-            <h5 className="card-title">Seat No : {i['seat_number']}</h5>
+    <div style={{ height: "100%" ,width:"100%",backgroundColor:"#8e9099",position:"fixed",overflow:"scroll"}}>
+      <div style={{ right: "0", left: "0", marginRight: "10vw", marginLeft: "10vw" }}>
+        {arr.length === 0 && <h2 >No Booked Tickets</h2>}
 
-          </div>
-        </div>)
-      })}
-    </div>
+        {arr.map((i) => {
+          return (
+            <div className="card" style={{ width: "40vw", padding: "10px", marginLeft: "25%", marginTop: "20px", top: "100px" }}>
+              <table className="table  table-striped">
+                <tbody>
+                  <tr>
+                    <th scope="col">Ticket Id </th>
+                    <th> {i['ticket_id']}</th>
+                  </tr>
+
+                  <tr>
+                    <th scope="col">Fight Id</th>
+                    <th> {i['flight_id']}</th>
+                  </tr>
+
+                  <tr>
+                    <th scope="col">Passenger Id</th>
+                    <th> {i['passenger_id']}</th>
+                  </tr>
+
+                  <tr>
+                    <th scope="col">Seat No  </th>
+                    <th> {i['seat_number']}</th>
+                  </tr>
+                </tbody>
+
+              </table>
+            </div>)
+        })}
+      </div>
     </div>
   );
 }
