@@ -33,8 +33,8 @@ class BookingReportOverlay extends React.Component {
                     </thead>
                     <tbody>
                         {this.state.data.map(booking => (
-                            <tr key={booking.type}>
-                                <td>{booking.type}</td>
+                            <tr key={booking.class}>
+                                <td>{booking.class}</td>
                                 <td>{booking.Booking_Count}</td>
                             </tr>
                         ))}
