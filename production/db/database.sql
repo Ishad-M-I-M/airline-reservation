@@ -469,3 +469,8 @@ create trigger on_aircraft_delete
     after update on aircraft
     for each row
     update flight set is_active = 0 where NEW.is_active = 0 and flight.aircraft_id = OLD.aircraft_id and flight.takeoff_time > CURTIME();
+
+create trigger on_flight_delete
+    after update on flight
+    for each row
+    update ticket set status = 0 where NEW.is_active = 0 and ticket.flight_id = OLD.flight_id;
