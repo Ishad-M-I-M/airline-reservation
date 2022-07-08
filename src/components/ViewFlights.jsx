@@ -117,6 +117,15 @@ class ViewFlights extends React.Component {
     }
   }
 
+  reset() {
+    this.setState({
+      flight_id: '',
+      origin: '',
+      destination: '',
+      tail_number: '',
+    });
+  }
+
 
   render() {
 
@@ -125,6 +134,7 @@ class ViewFlights extends React.Component {
         <h2 className='text-center mt-1'>View Flight Details</h2>
         <div>
           {this.state.resultVisibility && <FlightResultOverlay visibility={this.state.resultVisibility} information={this.state.FlightOutput} onClick={()=>this.setState({resultVisibility:false})}/>}
+          <form>
           <div className='mb-3'>
             <div className='row'>
               <div className='col-md-6'>
@@ -224,10 +234,10 @@ class ViewFlights extends React.Component {
             </div>
           </div>
           
-          <div className='mt-5 text-center'>
-
+          <div className='mt-5 text-center position-fixed'>
+            <button type='reset'className='btn btn-danger' onClick={()=>{this.reset()}}>Reset</button>
           </div>
-
+          </form>
         </div>
 
         <div className="form-check">
@@ -251,7 +261,7 @@ class ViewFlights extends React.Component {
           </ul>
           
           </div>
-        <div className='mt-5 text-center'>
+        <div className='mt-5 text-center d-flex justify-content-around'>
           <button className='btn btn-primary' onClick={()=>{this.fetchFlightDetails()}}>Fetch Flight Details</button>
         </div>
       </div>
