@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 export default function PaymentPage() {
   const location = useLocation();
 
+
   setTimeout(function () {
     axios
       .delete("/releaseBooking", { data: location.state })

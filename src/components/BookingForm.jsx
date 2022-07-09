@@ -206,6 +206,7 @@ const BookingForm = (props) => {
           />
         </Form.Group>
         <Form.Group className="mb-3" controlId="formDOB">
+        <Form.Label>Date of Birth</Form.Label>
           <Form.Control
             type="date"
             name="date_of_birth"
