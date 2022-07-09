@@ -125,7 +125,7 @@ class App extends React.Component {
 
                 return (
                     <div className="App bg-black">
-                        <Navbar logout={this.doLogout} />
+                        <Navbar items = {[ {item : "View Tickets", link : "/tickets"}]} logout={this.doLogout} />
                         <ClerkContainer />
                         <ToastContainer
                             position="top-right"
