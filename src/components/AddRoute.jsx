@@ -2,7 +2,6 @@ import React, { useEffect, useState} from 'react'
 import '../css/formstyle.css'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from "axios";
-import alert from "./Alert";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -10,8 +9,7 @@ export default function AddRoute (){
     const nav = useNavigate();
     const [origin, setOrigin] = useState(0);
     const [destination, setDestination] = useState(0);
-    const [airports, setAirports] = useState([])
-    // {airport_id:0,code:"Select"}
+    const [airports, setAirports] = useState([]);
 
     useEffect(()=>{
         axios.get('/airport').then((res) =>{
@@ -78,7 +76,7 @@ export default function AddRoute (){
                     progress: 0,
                   });
                   setTimeout(() => {
-                    console.log("working");; // count is 0 here
+                    console.log("working"); // count is 0 here
                     window.location.href  = "/add";
                     }, 2000);
                   
@@ -100,7 +98,7 @@ export default function AddRoute (){
                         <option value={true} >Select</option>
                         {
                             airports.map((c)=>(
-                                <option key={c.airport_id} value={c.airport_id}>{c.code}</option>
+                                <option key={c.id} value={c.id}>{c.code}</option>
                             ))
                         }
                     </select>
@@ -117,7 +115,7 @@ export default function AddRoute (){
                         <option value={true}>Select</option>
                         {
                             airports.map((c)=>(
-                                <option key={c.airport_id} value={c.airport_id}>{c.code}</option>
+                                <option key={c.id} value={c.id}>{c.code}</option>
                             ))
                         }
                     </select>

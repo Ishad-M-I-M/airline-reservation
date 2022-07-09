@@ -3,7 +3,7 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', function (req, res){
-    db.raw(`select airport_id,code from airport WHERE is_active = 1`)
+    db.raw(`select * from airport_locations WHERE is_active = 1`)
     .then((results) => {
 
         return res.send({success: true, airports: results[0]});

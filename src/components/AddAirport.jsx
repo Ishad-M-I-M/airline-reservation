@@ -36,7 +36,7 @@ export default function AddAirport() {
                         if(data[i].location === e.target.value) {
                             newField['id'] = data[i].id;
                             newField['parent_id'] = data[i].parent_id;
-                        };
+                        }
                     }
                 }
                 return newField;
@@ -83,7 +83,7 @@ export default function AddAirport() {
                     progress: 0,
                   });
                   setTimeout(() => {
-                    console.log("working");; // count is 0 here
+                    console.log("working"); // count is 0 here
                     window.location.href  = "/add";
                     }, 2000);
             }else{
@@ -120,9 +120,7 @@ export default function AddAirport() {
                     <input name='code' placeholder='Airport code' className='form-control'  id="floatingInput" maxLength={3} type="text" value={inputs.code || ""} onChange={(e) => handleChange(e)}></input>
                     <label htmlFor="floatingInput">Airport code</label>
                 </div>
-                
-        
-                {/* <div className="form-floating mb-3"> */}
+
                 <div className='form-floating mb-3'>
                     <input name='name' placeholder='Airport name' className='form-control' type="text" id="floatingInput" value={inputs.name || ""} onChange={(e) => handleChange(e)}></input>
                     <label htmlFor="floatingInput">Airport name</label>
