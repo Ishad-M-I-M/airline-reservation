@@ -176,7 +176,7 @@ handleClick({
           progress: 0,
         });
         setTimeout(() => {
-          console.log("working");; // count is 0 here
+          console.log("working"); // count is 0 here
           nav("/");
           }, 1550);
         

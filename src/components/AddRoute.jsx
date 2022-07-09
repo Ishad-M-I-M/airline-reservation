@@ -37,7 +37,7 @@ export default function AddRoute (){
         if (origin === destination || origin === 0 || destination ===0){
             toast.error("Invalid Input", {
                 toastId: "1",position: "top-right",
-                autoClose: 4000,
+                autoClose: 1500,
                 hideProgressBar: false,
                 closeOnClick: false,
                 pauseOnHover: false,
@@ -78,7 +78,7 @@ export default function AddRoute (){
                   setTimeout(() => {
                     console.log("working"); // count is 0 here
                     window.location.href  = "/add";
-                    }, 2000);
+                    }, 1500);
                   
                 }
                 

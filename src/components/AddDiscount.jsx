@@ -103,9 +103,9 @@ class AddDiscount extends Component {
               });
               this.getDiscounts();
               setTimeout(() => {
-                console.log("working");; // count is 0 here
+                console.log("working"); // count is 0 here
                 window.location.href  = "/add";
-                }, 2000);
+                }, 1500);
               
             }else {
               console.log(result.msg);
