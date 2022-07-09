@@ -95,7 +95,7 @@ export default function AddRoute (){
                 <div className="form-floating">
                     <select className="form-select" id="floatingSelect" aria-label="Floating label select example" placeholder = 'Origin'
                             onChange={handleOriginChange}>
-                        <option value={true} >Select</option>
+                        <option value={origin} >Select</option>
                         {
                             airports.map((c)=>(
                                 <option key={c.id} value={c.id}>{c.code}</option>
@@ -112,7 +112,7 @@ export default function AddRoute (){
                     <select className="form-select" id="floatingSelect" aria-label="Floating label select example"
                             placeholder = 'Destination'
                             onChange={handleDestinationChange}>
-                        <option value={true}>Select</option>
+                        <option value={destination}>Select</option>
                         {
                             airports.map((c)=>(
                                 <option key={c.id} value={c.id}>{c.code}</option>
