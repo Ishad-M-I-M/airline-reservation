@@ -1,7 +1,8 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import './App.css';
 import ClerkContainer from './components/ClerkContainer';
 import Container from './components/Container';
@@ -17,6 +18,7 @@ import PaymentPage from './components/PaymentPage';
 import Tickets from './components/Tickets';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
+import { toast } from "react-toastify";
 class App extends React.Component {
 
     constructor(props) {
@@ -105,45 +107,91 @@ class App extends React.Component {
             if (UserStore.role === 'moderator') {
                 return (
                     <div className="App bg-black">
-                        <Navbar logout={this.doLogout}/>
-                        <Container/>
+                        <Navbar logout={this.doLogout} />
+                        <Container />
+                        <ToastContainer
+                            position="top-right"
+                            autoClose={4000}
+                            hideProgressBar={false}
+                            theme="colored"
+                            newestOnTop
+                            closeOnClick
+                            rtl={false}
+                            draggable={false}
+                        />
                     </div>
                 );
             } else if (UserStore.role === 'clerk') {
 
                 return (
                     <div className="App bg-black">
-                        <Navbar logout={this.doLogout}/>
-                        <ClerkContainer/>
+                        <Navbar items = {[ {item : "View Tickets", link : "/tickets"}]} logout={this.doLogout} />
+                        <ClerkContainer />
+                        <ToastContainer
+                            position="top-right"
+                            autoClose={4000}
+                            hideProgressBar={false}
+                            theme="colored"
+                            newestOnTop
+                            closeOnClick
+                            rtl={false}
+                            draggable={false}
+                        />
                     </div>
                 );
             } else if (UserStore.role === 'user') {
 
                 return (
-                    <Home logout={this.doLogout}/>
+                    <div>
+                        <ToastContainer
+                            position="top-right"
+                            autoClose={4000}
+                            hideProgressBar={false}
+                            theme="colored"
+                            newestOnTop
+                            closeOnClick
+                            rtl={false}
+                            draggable={false}
+                        />
+                        <Home logout={this.doLogout} />
+                    </div>
+
                 );
             }
         } else if (!UserStore.isLoggedIn) {
             return (
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<LandingPage />} />
-                        <Route path="/usr-booking" element={<div>
-                            <div className="home-page">
-                                <Navbar />
-                                <div className="background-img">
-                                    <SearchFlight />
+                <div>
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={4000}
+                        hideProgressBar={false}
+                        theme="colored"
+                        newestOnTop
+                        closeOnClick
+                        rtl={false}
+                        draggable={false}
+                    />
+
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/" element={<LandingPage />} />
+                            <Route path="/usr-booking" element={<div>
+                                <div className="home-page">
+                                    <Navbar />
+                                    <div className="background-img">
+                                        <SearchFlight />
+                                    </div>
+                                    {/*<Footer />*/}
                                 </div>
-                                {/*<Footer />*/}
-                            </div>
-                        </div>} />
-                        <Route path="/sign-in" element={<LoginForm />} />
-                        <Route path="/sign-up" element={<SignupForm />} />
-                        <Route path="/searchResult" element={<ChooseFlights />}></Route>
-                        <Route path="/paymentPage" element={<PaymentPage />}></Route>
-                        <Route path="/tickets" element={<Tickets />}></Route>
-                    </Routes>
-                </BrowserRouter>
+                            </div>} />
+                            <Route path="/sign-in" element={<LoginForm />} />
+                            <Route path="/sign-up" element={<SignupForm />} />
+                            <Route path="/searchResult" element={<ChooseFlights />}></Route>
+                            <Route path="/paymentPage" element={<PaymentPage />}></Route>
+                            <Route path="/tickets" element={<Tickets />}></Route>
+                        </Routes>
+                    </BrowserRouter>
+                </div>
             );
         }
 

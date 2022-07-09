@@ -36,17 +36,6 @@ function Navbar(props) {
             </li>
           )
         })}
-        {UserStore.isLoggedIn && (
-          <>
-            <li className="nav_item nav-item" >
-              <a href="/tickets" className="nav_link nav-link">
-                View Tickets
-              </a>
-            </li>
-          </>
-        )
-
-        }
         {!UserStore.isLoggedIn && (
           <>
             <li className="nav_item nav-item" >

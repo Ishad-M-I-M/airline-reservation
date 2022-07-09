@@ -219,7 +219,7 @@ const BookingForm = (props) => {
         </Form.Group>
 
         <select
-          class="form-select"
+          className="form-select"
           aria-label="Default select example"
           style={{ marginBottom: "20px", width: "200px" }}
           onChange={handleChangeFClass}

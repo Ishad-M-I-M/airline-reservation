@@ -25,7 +25,7 @@ export default function Home(props) {
           element={
             <div>
               <div className="home-page">
-                <Navbar logout={props.logout} />
+                <Navbar items = {[ {item : "View Tickets", link : "/tickets"}]} logout={props.logout} />
                 <div className="background-img">
                   <SearchFlight />
                 </div>

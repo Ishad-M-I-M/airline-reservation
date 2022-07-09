@@ -134,7 +134,7 @@ function SearchFlight() {
                 <i className="bi bi-geo-alt-fill  icon"></i>
                 <select
                   required
-                  class="mdb-select md-form"
+                  className="mdb-select md-form"
                   searchable="Search here.."
                   style={{ height: "40px", width: "300px" }}
                   onChange={(e) => {
@@ -157,7 +157,7 @@ function SearchFlight() {
                 <i className="bi bi-geo-alt-fill  icon"></i>
                 <select
                   required
-                  class="mdb-select md-form"
+                  className="mdb-select md-form"
                   searchable="Search here.."
                   style={{ height: "40px", width: "300px" }}
                   onChange={(e) => {
@@ -213,14 +213,14 @@ function SearchFlight() {
             <div className="col count loc">
               <label>Passenger</label>
               <div className="loc">
-                <i class="bi bi-people-fill icon"></i>
+                <i className="bi bi-people-fill icon"></i>
                 <input
                   type="number"
                   min={1}
                   step={1}
                   max={10}
                   defaultValue={1}
-                  class="form-control"
+                  className="form-control"
                   id="input1"
                   placeholder="how many"
                   value={count}

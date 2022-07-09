@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/formstyle.css'
 import Example from './Toaster';
-
-
+import { toast } from "react-toastify";
 class AddDiscount extends Component {
 
 
@@ -12,11 +11,11 @@ class AddDiscount extends Component {
       super(props)
     
       this.state = {
-         discount:null,
-         gold : null,
-         Frequent :null,
-         SavedGold : null
- 
+         discount:'',
+         gold : '',
+         Frequent :'',
+         SavedGold : ''
+
       }
       this.getDiscounts();
     }
@@ -47,17 +46,43 @@ class AddDiscount extends Component {
       // alert(result.data[0].type+" : "+result.data[0].discount+"\n"+result.data[1].type+" : "+result.data[1].discount);
     }
 
-    async Add_Discount() {
+    async Add_Discount(e) {
+      e.preventDefault();
+      if(this.state.gold === '' && this.state.discount ===''){
+        toast.info("Enter Discount", {
+          toastId: "1",position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: 0,
+        });
+      }else{
+       
+      if(parseInt(this.state.gold) < 0 || parseInt(this.state.discount) < 0|| parseInt(this.state.gold) > 100 || parseInt(this.state.discount) > 100){
+        toast.warn("Invalid Input", {
+          toastId: "1",position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: 0,
+        });
+      }else{
+
+      
         try {
             let res = await fetch('/discount',{
-              method:'PATCH',
+              method:'POST',
               headers: {
                 'Accept' : 'application/json',
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                  gold : this.state.gold,
-                  discount : this.state.discount
+                  gold : parseInt(this.state.gold),
+                  discount : parseInt(this.state.discount)
               }),
               credentials : 'include',
             });
@@ -65,15 +90,31 @@ class AddDiscount extends Component {
             let result = await res.json();
             console.log(result);
             console.log(result.msg);
+            
             if(result.success) {
-              alert('Data Successfully entered to database');
-
+              toast.success("Discount Updated", {
+                toastId: "1",position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: true,
+                progress: 0,
+              });
+              this.getDiscounts();
+              setTimeout(() => {
+                console.log("working"); // count is 0 here
+                window.location.href  = "/add";
+                }, 1500);
+              
             }else {
               console.log(result.msg);
             }
           }catch(error){
       
           }
+      }
+    }
         }
 
     updateDiscount = (event) =>{
@@ -96,7 +137,7 @@ class AddDiscount extends Component {
       <div className='Discount_form'>
 
 
-        <form onSubmit ={()=>{this.Add_Discount()}}>
+        <form onSubmit ={(e)=>{this.Add_Discount(e)}}>
 
           <Example Frequent={this.state.Frequent} SavedGold={this.state.SavedGold}/>
           <br></br>
