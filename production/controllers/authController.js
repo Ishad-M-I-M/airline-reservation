@@ -122,7 +122,7 @@ router.post('/adduser', (req, res) => {
             return res.json({ message: true });
         }
     })
-    // INSERT into user(email,password,first_name,role,is_active,dob) VALUES("one@gmail.com2","hash2","one2","user",1,'2022-11-12');;
+    // INSERT into user(email,password,first_name,role,is_active,dob) VALUES("one@gmail.com2","hash2","one2","user",1,'2022-11-12');
 
 
     // db.raw(`INSERT into user(email,password,first_name,last_name,role,is_active,dob) VALUES (?,?,?,?,?,?,?)`, [e,pswrd,fn,ln1,"user",1,dob])

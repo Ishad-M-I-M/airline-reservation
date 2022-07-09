@@ -60,7 +60,7 @@ function AddAircraft() {
           progress: 0,
         });
         setTimeout(() => {
-          console.log("working");; // count is 0 here
+          console.log("working"); // count is 0 here
           window.location.href  = "/add";
           }, 1500);
         // handleClick({

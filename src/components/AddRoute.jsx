@@ -11,7 +11,7 @@ export default function AddRoute (){
     const [origin, setOrigin] = useState(0);
     const [destination, setDestination] = useState(0);
     const [airports, setAirports] = useState([])
-    // {airport_id:0,code:"Select"}
+    // {id:0,code:"Select"}
 
     useEffect(()=>{
         axios.get('/airport').then((res) =>{
@@ -39,7 +39,7 @@ export default function AddRoute (){
         if (origin === destination || origin === 0 || destination ===0){
             toast.error("Invalid Input", {
                 toastId: "1",position: "top-right",
-                autoClose: 4000,
+                autoClose: 1500,
                 hideProgressBar: false,
                 closeOnClick: false,
                 pauseOnHover: false,
@@ -78,9 +78,9 @@ export default function AddRoute (){
                     progress: 0,
                   });
                   setTimeout(() => {
-                    console.log("working");; // count is 0 here
+                    console.log("working"); // count is 0 here
                     window.location.href  = "/add";
-                    }, 2000);
+                    }, 1500);
                   
                 }
                 
@@ -100,7 +100,7 @@ export default function AddRoute (){
                         <option value={true} >Select</option>
                         {
                             airports.map((c)=>(
-                                <option key={c.airport_id} value={c.airport_id}>{c.code}</option>
+                                <option key={c.id} value={c.id}>{c.code}</option>
                             ))
                         }
                     </select>
@@ -117,7 +117,7 @@ export default function AddRoute (){
                         <option value={true}>Select</option>
                         {
                             airports.map((c)=>(
-                                <option key={c.airport_id} value={c.airport_id}>{c.code}</option>
+                                <option key={c.id} value={c.id}>{c.code}</option>
                             ))
                         }
                     </select>

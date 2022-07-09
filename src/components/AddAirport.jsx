@@ -83,9 +83,9 @@ export default function AddAirport() {
                     progress: 0,
                   });
                   setTimeout(() => {
-                    console.log("working");; // count is 0 here
+                    console.log("working"); // count is 0 here
                     window.location.href  = "/add";
-                    }, 2000);
+                    }, 1500);
             }else{
                 toast.error("Aircraft Not Added", {
                     toastId: "1",position: "top-right",
