@@ -3,15 +3,21 @@ import '../css/formstyle.css'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from "axios";
 import alert from "./Alert";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function AddRoute (){
+    const nav = useNavigate();
     const [origin, setOrigin] = useState(0);
     const [destination, setDestination] = useState(0);
-    const [airports, setAirports] = useState([]);
+    const [airports, setAirports] = useState([])
+    // {airport_id:0,code:"Select"}
 
     useEffect(()=>{
         axios.get('/airport').then((res) =>{
-            setAirports(res.data.airports);
+            // console.log(typeof(res.data.airports ));
+            setAirports(res.data.airports)
+            // airports.push(res.data.airports);
         }).catch((e)=>{
             console.error(e);
         });
@@ -19,6 +25,7 @@ export default function AddRoute (){
 
     const handleOriginChange = (e) =>{
         setOrigin(e.target.value);
+        console.log("value", e.target.value);
     }
 
     const handleDestinationChange = (e) =>{
@@ -26,17 +33,60 @@ export default function AddRoute (){
     }
 
     const handleSubmit = (e) =>{
+        e.preventDefault();
+    //    console.log(origin);
+    //    console.log(destination);
         if (origin === destination || origin === 0 || destination ===0){
-            alert('Invalid origin or destination');
+            toast.error("Invalid Input", {
+                toastId: "1",position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: false,
+                progress: 0,
+              });
         }
         else{
             axios.post('/route', {origin: origin, destination: destination})
-                .then(()=>{
-                    alert('Route successfully added');
-                })
-                .catch(()=>{
-                    alert('Failed to add route');
-                });
+            .then((res) => {
+     
+                if(res.data.message){
+                  toast.warn("Route Exists", {
+                    toastId: "1",position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: 0,
+                  });
+                  // handleClick({
+                  //   vertical: 'top',
+                  //   horizontal: 'center'
+                  // })()
+                }
+                
+                else if (res.data.success){
+                  toast.success("Route Added", {
+                    toastId: "1",position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: 0,
+                  });
+                  setTimeout(() => {
+                    console.log("working");; // count is 0 here
+                    window.location.href  = "/add";
+                    }, 2000);
+                  
+                }
+                
+              }).catch((err) => {
+                console.log(err);
+              });
         }
 
     }
@@ -44,15 +94,13 @@ export default function AddRoute (){
     return (
         <div className='testform'>
             <form onSubmit={handleSubmit}>
-
-
                 <div className="form-floating">
                     <select className="form-select" id="floatingSelect" aria-label="Floating label select example" placeholder = 'Origin'
                             onChange={handleOriginChange}>
-                        <option disabled={true} selected={true}>Select</option>
+                        <option value={true} >Select</option>
                         {
                             airports.map((c)=>(
-                                <option key={c.id} value={c.id}>{c.code}</option>
+                                <option key={c.airport_id} value={c.airport_id}>{c.code}</option>
                             ))
                         }
                     </select>
@@ -66,10 +114,10 @@ export default function AddRoute (){
                     <select className="form-select" id="floatingSelect" aria-label="Floating label select example"
                             placeholder = 'Destination'
                             onChange={handleDestinationChange}>
-                        <option disabled={true} selected={true}>Select</option>
+                        <option value={true}>Select</option>
                         {
                             airports.map((c)=>(
-                                <option key={c.id} value={c.id}>{c.code}</option>
+                                <option key={c.airport_id} value={c.airport_id}>{c.code}</option>
                             ))
                         }
                     </select>

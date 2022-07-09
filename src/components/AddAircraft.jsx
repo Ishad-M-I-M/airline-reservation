@@ -1,262 +1,410 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../css/formstyle.css'
 import 'bootstrap/dist/css/bootstrap.css';
 import AlertMe from './Alert';
+import { toast } from "react-toastify";
+import axios from 'axios';
+import TextField from "@mui/material/TextField";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 
-class AddAircraft extends Component {
+const filter = createFilterOptions();
 
-    constructor(props) {
-      super(props)
-    
-      this.state = {
-         model:"",
-         tail:"",
-         total_seats:null,
-         economy:null,
-         business:null,
-         platinum:null,
-         alert:false
- 
+function AddAircraft() {
+  const [value, setValue] = useState("");
+  const [models, setmodels] = useState([]);
+  const [state, setState] = useState({
+    tail: "",
+    total_seats: '',
+    economy: '',
+    business: '',
+    platinum: '',
+    alert: false,
+
+  });
+
+
+
+  useEffect(() => {
+    axios.get('/aircraft/model').then((res) => {
+      console.log(res.data.aircrafts);
+      setmodels(res.data.aircrafts);
+      // airports.push(res.data.airports);
+    }).catch((e) => {
+      console.error(e);
+    });
+  }, []);
+
+
+  const addFlight = (e) => {
+    e.preventDefault();
+    if(value === ""){
+      toast.warn("Enter Model", {
+        toastId: "1",position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: 0,
+      });
+    }else{
+    axios.post('/aircraft', {state,value}).then((res) => {
+      if (res.data.success) {
+        toast.success("Aircraft Added", {
+          toastId: "1",position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: 0,
+        });
+        setTimeout(() => {
+          console.log("working");; // count is 0 here
+          window.location.href  = "/add";
+          }, 1500);
+        // handleClick({
+        //   vertical: 'top',
+        //   horizontal: 'center'
+        // })()
       }
-    }
 
-    
-      async addFlight(){
-
-        try {
-            let res = await fetch('/aircraft',{
-              method:'post',
-              headers: {
-                'Accept' : 'application/json',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                model : this.state.model,
-                economy : this.state.economy,
-                business : this.state.business,
-                platinum : this.state.platinum,
-                tail_number : this.state.tail
-              }),
-              credentials : 'include',
-            });
-      
-            let result = await res.json();
-            console.log(result);
-            if(result && result.success) {
-              console.log('Data Successfully entered to database')
-            }else {
-              console.log(result.msg);
-            }
-          }catch(error){
-      
-          }
-
-
-
-
-        // fetch('/addAircraft',{
-        //     method: 'POST',
-        //         headers: {
-        //           'Accept': 'application/json',
-        //           'Content-Type': 'application/json'
-        //         }
-                
-        //         ,body: JSON.stringify({
-        //           model : this.state.model,
-        //           seats : this.state.total_seats,
-        //           economy : this.state.economy,
-        //           business : this.state.business,
-        //           platinum : this.state.platinum
-        //         })
-        //   })
-        //   .then((res)=>{
-        //     res.json()
-        //     .then((result)=> console.log(result.data) )
-        //     .catch((e)=> console.error(e));
-        //   })
-        //   .catch((e)=>{
-        //     console.error(e);
-        //   })
-   
-       }
-
-    Addmodel= (event) =>{
-        this.setState({
-            model: event.target.value
-            
-        })
-
-    }
-
-    AddTail= (event) =>{
-      this.setState({
-          tail: event.target.value
-          
-      })
-
-  }
-    Addseats = (event) =>{
-            this.setState({
-                total_seats: event.target.value
-                
-            })
-
-
-    }
-    Addeconomy = (event) =>{
-        if(event.target.value > this.state.total_seats- this.state.business - this.state.platinum){
-            // alert("invalid input");
-
-       
-            event.target.value = null;
-            this.setState({
-                economy: null,
-                alert:true
-
-            
-                
-            });
+      else if (!res.data.success) {
+        if(res.data.duplicate){
+          toast.error("Tail ID Already Exits", {
+            toastId: "1",position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: true,
+            progress: 0,
+          });
         }else{
-            this.setState({
-                economy: event.target.value
-                
-            })
+          toast.warn("Aircraft Not Added", {
+            toastId: "1",position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: true,
+            progress: 0,
+          });
 
         }
+        // console.log(res.data);
+        
+        // nav("/");
+      }
 
-
-    }
-    Addbusiness = (event) =>{
-
-        if(event.target.value>this.state.total_seats - this.state.economy - this.state.platinum){
-
-            alert("invalid input");
-           
-           
-            
-            event.target.value = null;
-            this.setState({
-                business: null
-                
-            })
-        }else{
-            this.setState({
-                business: event.target.value
-                
-            })
-
-        }
-
-
-    }
-    Addplatinum = (event) =>{
-
-        if(event.target.value>this.state.total_seats - this.state.economy - this.state.business){
-
-            alert("invalid input");
-            event.target.value = null;
-            this.setState({
-                platinum: null
-                
-            })
-        }else{
-            this.setState({
-                platinum: event.target.value
-                
-            })
-
-        }
-
-
-    }
-
-  render() {
-    return (
-      <div className='Aircraft_form'>
-        <AlertMe shows = {this.state.alert}/>
-        <form onSubmit={()=>{this.addFlight()}}>
-
-            <div class="form-floating mb-3">
-
-            <input type="text" className="form-control" id="floatingInput" value={this.state.model} 
-            onChange={this.Addmodel} placeholder="Model" required
-            />
-            <label for="floatingInput">Model</label>
-
-            </div>
-
-            <div class="form-floating mb-3">
-
-            <input type="text" className="form-control" id="floatingInput" value={this.state.tail} 
-            onChange={this.AddTail} placeholder="Tail ID" required
-            />
-            <label for="floatingInput">Tail ID</label>
-
-            </div>
-
-            <div class="form-floating mb-3">
-
-              <input type="number" className="form-control" id="floatingInput" value={this.state.total_seats} 
-              onChange={this.Addseats} placeholder="Total seats" required
-              />
-              <label for="floatingInput">Total seats</label>
-
-              </div>
-
-              <div class="form-floating mb-3">
-
-                <input type="number" className="form-control" id="floatingInput" value={this.state.economy} 
-                onChange={this.Addeconomy} placeholder="Economy seats" required
-                />
-                <label for="floatingInput">Economy seats</label>
-
-                </div>
-
-
-                <div class="form-floating mb-3">
-
-                <input type="number" className="form-control" id="floatingInput" value={this.state.business} 
-                onChange={this.Addbusiness} placeholder="Business seats" required
-                />
-                <label for="floatingInput">Business seats</label>
-
-                </div>
-
-
-
-                <div class="form-floating mb-3">
-
-                <input type="number" className="form-control" id="floatingInput" value={this.state.platinum} 
-                onChange={this.Addplatinum} placeholder="Platinum seats" required
-                />
-                <label for="floatingInput">Platinum seats</label>
-
-                </div>
-            
-            {/* <input type="text" value={this.state.model} 
-            onChange={this.Addmodel} placeholder="Model" required/>             */}
-            
-
-
-            {/* <input type="number" value={this.state.total_seats}  
-            onChange={this.Addseats} placeholder="Total seats" required/>             */}
-            
-            {/* <input type="text" value={this.state.economy}  
-            onChange={this.Addeconomy} placeholder="Economy seats" required/>             */}
-           
-            {/* <input type="text" value={this.state.business}  
-            onChange={this.Addbusiness} placeholder="Business seats" required/>             */}
-            {/* <input type="text" value={this.state.platinum}  
-            onChange={this.Addplatinum} placeholder="Platinum seats" required/>             */}
-          
-            <button className="btn btn-primary" type='submit'>Submit</button>
-
-
-   
-        </form>
-      </div>
-    )
+    }).catch((err) => {
+      console.log(err);
+    });
   }
 }
 
-export default AddAircraft
+
+
+  const AddTail = (event) => {
+    setState({
+      ...state,
+      tail: event.target.value
+
+    })
+
+  }
+  const Addseats = (event) => {
+    if(event.target.value<0){
+      toast.warn("Invalid Input", {
+     
+        toastId: "1",
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: 0,
+      });
+      event.target.value = '';
+    }else{
+    setState({
+      ...state,
+      total_seats: event.target.value
+
+    });
+    }
+
+  }
+  const Addeconomy = (event) => {
+    if (state.total_seats === '') {
+      toast.info("Fill the total seats", {
+     
+        toastId: "1",
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: 0,
+      });
+      event.target.value = '';
+    } else {
+
+
+      if (event.target.value < 0  || event.target.value > state.total_seats - state.business - state.platinum) {
+        toast.warn("Invalid economy seat count", {
+    
+          toastId: "1",position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: 0,
+        });
+
+        event.target.value = '';
+        setState({
+          ...state,
+          economy: '',
+          alert: true
+
+
+
+        });
+      } else {
+        setState({
+          ...state,
+          economy: event.target.value
+
+        })
+
+      }
+    }
+
+  }
+  const Addbusiness = (event) => {
+    if (state.total_seats === '') {
+      toast.info("Fill the total seats", {
+        
+        toastId: "1",position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: 0,
+      });
+      event.target.value = '';
+    } else {
+      if (event.target.value < 0  || event.target.value > state.total_seats - state.economy - state.platinum) {
+
+        toast.warn("Invalid business seat count", {
+ 
+          toastId: "1",position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: 0,
+        });
+
+
+
+        event.target.value = '';
+        setState({
+          ...state,
+          business: ''
+
+        })
+      } else {
+        setState({
+          ...state,
+          business: event.target.value
+
+        })
+
+      }
+
+    }
+  }
+  const Addplatinum = (event) => {
+    // console.log(state.total_seats);
+    if (state.total_seats === '') {
+      toast.info("Fill the total seats", {
+   
+        toastId: "1",position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: 0,
+      });
+      event.target.value = '';
+    } else {
+
+      if (event.target.value < 0  || event.target.value > state.total_seats - state.economy - state.business) {
+
+
+        toast.warn("Invalid platinum seat count", {
+
+          toastId: "1",position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: 0,
+        });
+        event.target.value = '';
+        setState({
+          ...state,
+          platinum: ''
+
+        })
+      } else {
+        setState({
+          ...state,
+          platinum: event.target.value
+
+        })
+
+      }
+
+    }
+  }
+
+
+  // console.log(models);
+
+
+  return (
+    <div className='Aircraft_form'>
+
+      <AlertMe shows={state.alert} />
+
+      <form onSubmit={addFlight}>
+
+        <Autocomplete
+          value={value}
+          onChange={(event, newValue) => {
+            if (typeof newValue === "string") {
+              setValue({
+                model: newValue
+              });
+            } else if (newValue && newValue.inputValue) {
+              // Create a new value from the user input
+              setValue({
+                model: newValue.inputValue
+              });
+            } else {
+              setValue(newValue);
+            }
+          }}
+          filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+
+            const { inputValue } = params;
+            // Suggest the creation of a new value
+            const isExisting = options.some(
+              (option) => inputValue === option.model
+            );
+            if (inputValue !== "" && !isExisting) {
+              filtered.push({
+                inputValue,
+                model: `Add "${inputValue}"`
+              });
+            }
+
+            return filtered;
+          }}
+          selectOnFocus
+          clearOnBlur
+          handleHomeEndKeys
+          id="free-solo-with-text-demo"
+          options={models}
+          getOptionLabel={(option) => {
+            // Value selected with enter, right from the input
+            if (typeof option === "string") {
+              return option;
+            }
+            // Add "xxx" option created dynamically
+            if (option.inputValue) {
+              return option.inputValue;
+            }
+            // Regular option
+            return option.model;
+          }}
+          renderOption={(props, option) => <li {...props}>{option.model}</li>}
+          sx={{ width: 300 }}
+          freeSolo
+          renderInput={(params) => (
+            <TextField {...params} label="Model" />
+          )}
+        />
+
+        <br />
+
+        <div className="form-floating mb-3">
+
+          <input type="text" className="form-control" id="floatingInput" value={state.tail}
+            onChange={AddTail} placeholder="Tail ID" required
+          />
+          <label htmlFor="floatingInput">Tail ID</label>
+
+        </div>
+
+        <div className="form-floating mb-3">
+
+          <input type="number" className="form-control" id="floatingInput" value={state.total_seats}
+            onChange={Addseats} placeholder="Total seats" required
+          />
+          <label htmlFor="floatingInput">Total seats</label>
+
+        </div>
+
+        <div className="form-floating mb-3">
+
+          <input type="number" className="form-control" id="floatingInput" value={state.economy}
+            onChange={Addeconomy} placeholder="Economy seats" required
+          />
+          <label htmlFor="floatingInput">Economy seats</label>
+
+        </div>
+
+
+        <div className="form-floating mb-3">
+
+          <input type="number" className="form-control" id="floatingInput" value={state.business}
+            onChange={Addbusiness} placeholder="Business seats" required
+          />
+          <label htmlFor="floatingInput">Business seats</label>
+
+        </div>
+
+
+
+        <div className="form-floating mb-3">
+
+          <input type="number" className="form-control" id="floatingInput" value={state.platinum}
+            onChange={Addplatinum} placeholder="Platinum seats" required
+          />
+          <label htmlFor="floatingInput">Platinum seats</label>
+
+        </div>
+
+        <button className="btn btn-primary" type='submit'>Submit</button>
+
+
+
+      </form>
+    </div>
+  )
+}
+
+
+export default AddAircraft;

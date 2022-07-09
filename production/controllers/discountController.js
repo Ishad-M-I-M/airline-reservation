@@ -2,7 +2,7 @@ const express = require('express');
 const db = require('../db');
 const router = express.Router();
 
-router.patch('/', (req, res) => {
+router.post('/', (req, res) => {
     console.log(req.body.gold);
     let gold;
     let discount;

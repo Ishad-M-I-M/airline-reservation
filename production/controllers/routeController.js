@@ -19,14 +19,30 @@ router.get('/', (req, res)=>{
 
 router.post('/', (req, res) =>{
     console.log(req.body);
-    db.raw(`INSERT INTO route(origin, destination) VALUES (?, ?)`, [req.body.origin, req.body.destination])
-        .then(()=>{
-            return res.json({success: true});
-        })
-        .catch((err)=>{
-            console.error(err);
-            return res.status(500).json({success: false});
-        })
+    db.raw(`select count(*) as num from route where origin = ${req.body.origin} and destination = ${req.body.destination}`).then((data) => {
+        // console.log(data);
+        console.log(data[0][0].num);
+        if (data[0][0].num == 0) {
+            db.raw(`INSERT INTO route(origin, destination) VALUES (?, ?)`, [req.body.origin, req.body.destination])
+                .then(() => {
+                    return res.json({ success: true ,message: false });
+                })
+                .catch((err) => {
+                    console.error(err);
+                    return res.status(500).json({ success: false });
+                })
+        }else{
+            return res.json({ message: true });
+        }
+    })
+    // db.raw(`INSERT INTO route(origin, destination) VALUES (?, ?)`, [req.body.origin, req.body.destination])
+    //     .then(()=>{
+    //         return res.json({success: true});
+    //     })
+    //     .catch((err)=>{
+    //         console.error(err);
+    //         return res.status(500).json({success: false});
+    //     })
 })
 
 router.delete('/:id', (req, res)=>{

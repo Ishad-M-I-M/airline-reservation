@@ -424,7 +424,7 @@ BEGIN
     declare disc_type varchar(20);
     declare var_discount dec(4,2);
 
-	select cost into payment from flight_cost where flight_id =in_f_id and class=in_class limit 1;
+	select cost into payment from flight_cost where flight_id =in_f_id and className=in_class limit 1;
     
 	if in_user_id !=0 then
         

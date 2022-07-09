@@ -93,7 +93,7 @@ app.post("/loadSeatnumber", (req, res) => {
 });
 
 app.post("/bookTicket", (req, res) => {
-    db.raw("SELECT cost FROM flight LEFT JOIN flight_cost USING(flight_id) WHERE flight_id=? AND class=?", [req.body.flight_id, req.body.class]).then((data) => {
+    db.raw("SELECT cost FROM flight LEFT JOIN flight_cost USING(flight_id) WHERE flight_id=? AND className=?", [req.body.flight_id, req.body.class]).then((data) => {
         if (data[0].length > 0) {
             db.raw("CALL book_ticket(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.passenger_id, req.body.passenger_name, req.body.date, req.body.passenger_address, req.session.userID, req.body.flight_id, req.body.seat_number, req.body.date, req.body.class, data[0][0]['cost']]).then(() => {
                 return res.json({
