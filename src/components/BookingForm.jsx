@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Form, Button, Dropdown } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import {errorToast, infoToast, warningToast, reload} from "./common/Toasts";
+import {errorToast, infoToast, warningToast, reload, redirect} from "./common/Toasts";
 
 const BookingForm = (props) => {
 
@@ -61,7 +61,7 @@ const BookingForm = (props) => {
 
                 } else {
                   warningToast("sorry your booking cannot be reserved!");
-                  window.location.href = "/";
+                  redirect("/");
                 }
               })
               .catch(function (error) {

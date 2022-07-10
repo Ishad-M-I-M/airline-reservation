@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../css/formstyle.css'
 import Example from './Toaster';
 
-import {successToast, infoToast, warningToast, errorToast} from './common/Toasts';
+import {successToast, infoToast, warningToast, errorToast, redirect} from './common/Toasts';
 class AddDiscount extends Component {
 
 
@@ -79,11 +79,7 @@ class AddDiscount extends Component {
             if(result.success) {
               successToast("Discount values updated");
               this.getDiscounts();
-              setTimeout(() => {
-                console.log("working"); // count is 0 here
-                window.location.href  = "/add";
-                }, 1500);
-              
+              redirect("/add");
             }else {
               console.log(result.msg);
             }

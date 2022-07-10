@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, {  useEffect, useState } from 'react'
 
-import {successToast, errorToast} from './common/Toasts';
+import {successToast, errorToast, redirect} from './common/Toasts';
 
 export default function AddAirport() {
     const [inputs, setInputs] = useState({});
@@ -76,10 +76,7 @@ export default function AddAirport() {
         axios.post('/airport',inputs).then((res)=>{
             if(res.data.success){
                 successToast("Airport Added Successfully");
-                  setTimeout(() => {
-                    console.log("working"); // count is 0 here
-                    window.location.href  = "/add";
-                    }, 1500);
+                redirect("/add");
             }else{
                 errorToast("Airport Not Added");
             }

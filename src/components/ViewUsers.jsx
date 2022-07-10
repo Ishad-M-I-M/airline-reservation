@@ -3,7 +3,7 @@ import axios from "axios";
 
 import Table from "./common/Table";
 import Overlay from './common/Overlay';
-import {errorToast, reload, successToast} from "./common/Toasts";
+import {errorToast, redirect, reload, successToast} from "./common/Toasts";
 
 const ViewUsers = () => {
     const [users, setUsers] = useState([]);
@@ -39,7 +39,8 @@ const ViewUsers = () => {
         user_[field] = value;
         setUser(user_);
     }
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
         console.log(user);
         axios.patch(`/user/${user.id}`, {
             'role' : user.role,
@@ -47,6 +48,7 @@ const ViewUsers = () => {
         })
             .then(() => {
                 successToast("User Updated Successfully");
+                redirect("/view-users")
             }).catch((err) => {
                 console.error(err);
                 errorToast("Error in updating user");

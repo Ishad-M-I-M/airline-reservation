@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import {errorToast, successToast, warningToast} from "./common/Toasts";
+import {errorToast, redirect, successToast, warningToast} from "./common/Toasts";
 
 export default function AddRoute (){
     const nav = useNavigate();
@@ -52,11 +52,7 @@ export default function AddRoute (){
                 
                 else if (res.data.success){
                   successToast("Route Added Successfully");
-                  setTimeout(() => {
-                    console.log("working"); // count is 0 here
-                    window.location.href  = "/add";
-                    }, 1500);
-                  
+                  redirect("/add");
                 }
                 
               }).catch((err) => {

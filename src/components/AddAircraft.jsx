@@ -6,7 +6,7 @@ import axios from 'axios';
 import TextField from "@mui/material/TextField";
 import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
 
-import {successToast, infoToast, warningToast, errorToast} from './common/Toasts';
+import {successToast, infoToast, warningToast, errorToast, redirect} from './common/Toasts';
 
 const filter = createFilterOptions();
 
@@ -42,14 +42,8 @@ function AddAircraft() {
     axios.post('/aircraft', {state,value}).then((res) => {
       if (res.data.success) {
         successToast("Aircraft added successfully");
-        setTimeout(() => {
-          console.log("working"); // count is 0 here
-          window.location.href = "/add";
-        }, 1500);
-        // handleClick({
-        //   vertical: 'top',
-        //   horizontal: 'center'
-        // })()
+        redirect("/add");
+
       }
 
       else if (!res.data.success) {

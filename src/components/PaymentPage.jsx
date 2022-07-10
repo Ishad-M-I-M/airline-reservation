@@ -2,7 +2,7 @@ import React from "react";
 import UserStore from "../stores/UserStore";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import {errorToast, infoToast, successToast, warningToast} from "./common/Toasts";
+import {errorToast, infoToast, redirect, successToast, warningToast} from "./common/Toasts";
 
 export default function PaymentPage() {
   const location = useLocation();
@@ -14,7 +14,7 @@ export default function PaymentPage() {
       .then(function (response) {
         if (response.data.success === true) {
           errorToast("requested time out!");
-          window.location.href = "/";
+          redirect("/");
 
         } else {
           errorToast("error!");
@@ -33,7 +33,7 @@ export default function PaymentPage() {
           if (response.data.success) {
             if (response.data.data.length === 0) {
               infoToast("cannot process payment! no reserved seats");
-              window.location.href = "/";
+              redirect("/");
             }
             else {
               axios
@@ -41,11 +41,11 @@ export default function PaymentPage() {
                 .then(function (response) {
                   if (response.data.success) {
                     successToast("booking confirmed!");
-                    window.location.href = "/";
+                    redirect("/");
                   } else {
                     errorToast("sorry your booking cannot be confirmed!");
                     console.log(response);
-                    window.location.href = "/";
+                    redirect("/");
                   }
                 })
                 .catch(function (error) {

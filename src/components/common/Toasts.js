@@ -1,8 +1,10 @@
 import {toast} from "react-toastify";
 
+const timeOut = 1500;
+
 const options = {
     toastId: "1",position: "top-right",
-    autoClose: 1500,
+    autoClose: timeOut,
     hideProgressBar: false,
     closeOnClick: false,
     pauseOnHover: false,
@@ -29,7 +31,13 @@ function warningToast(message) {
 function reload(){
     setTimeout(()=>{
         window.location.reload();
-    }, 1500);
+    }, timeOut);
 }
 
-export {successToast, infoToast, warningToast, errorToast, reload};
+function redirect(path){
+    setTimeout(()=>{
+        window.location.href = path;
+    }, timeOut);
+}
+
+export {successToast, infoToast, warningToast, errorToast, reload, redirect};
