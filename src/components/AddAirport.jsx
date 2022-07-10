@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, {  useEffect, useState } from 'react'
-import { toast } from "react-toastify";
+
+import {successToast, errorToast} from './common/Toasts';
+
 export default function AddAirport() {
     const [inputs, setInputs] = useState({});
     const [locationFields, setLocationFields] = useState([{location: "", htmlId: 1, exist: false, id : null, parent_id : null}]);
@@ -73,29 +75,13 @@ export default function AddAirport() {
         e.preventDefault();
         axios.post('/airport',inputs).then((res)=>{
             if(res.data.success){
-                toast.success("Airport Added", {
-                    toastId: "1",position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: false,
-                    draggable: true,
-                    progress: 0,
-                  });
+                successToast("Airport Added Successfully");
                   setTimeout(() => {
                     console.log("working"); // count is 0 here
                     window.location.href  = "/add";
                     }, 1500);
             }else{
-                toast.error("Aircraft Not Added", {
-                    toastId: "1",position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: false,
-                    draggable: true,
-                    progress: 0,
-                  });
+                errorToast("Airport Not Added");
             }
         }).catch((err)=>{
             console.log(err);

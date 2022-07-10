@@ -18,7 +18,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { toast } from "react-toastify";
+
+import {warningToast} from "./common/Toasts";
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -80,27 +81,11 @@ class LoginForm extends React.Component {
 
     async doLogin() {
         if (!this.state.email) {
-            toast.warn("Enter Email", {
-                toastId: "1",position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: false,
-                draggable: true,
-                progress: 0,
-              });
+            warningToast("Please enter email");
             return;
         }
         if (!this.state.password) {
-            toast.warn("Enter Password", {
-                toastId: "1",position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: false,
-                draggable: true,
-                progress: 0,
-              });
+            warningToast("Please enter password");
             return;
         }
 

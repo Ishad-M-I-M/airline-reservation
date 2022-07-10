@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/formstyle.css'
 import Example from './Toaster';
-import { toast } from "react-toastify";
+
+import {successToast, infoToast, warningToast, errorToast} from './common/Toasts';
 class AddDiscount extends Component {
 
 
@@ -49,27 +50,11 @@ class AddDiscount extends Component {
     async Add_Discount(e) {
       e.preventDefault();
       if(this.state.gold === '' && this.state.discount ===''){
-        toast.info("Enter Discount", {
-          toastId: "1",position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          progress: 0,
-        });
+        infoToast("Enter Discount");
       }else{
        
       if(parseInt(this.state.gold) < 0 || parseInt(this.state.discount) < 0|| parseInt(this.state.gold) > 100 || parseInt(this.state.discount) > 100){
-        toast.warn("Invalid Input", {
-          toastId: "1",position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          progress: 0,
-        });
+        warningToast("Invalid Input");
       }else{
 
       
@@ -92,15 +77,7 @@ class AddDiscount extends Component {
             console.log(result.msg);
             
             if(result.success) {
-              toast.success("Discount Updated", {
-                toastId: "1",position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: false,
-                draggable: true,
-                progress: 0,
-              });
+              successToast("Discount values updated");
               this.getDiscounts();
               setTimeout(() => {
                 console.log("working"); // count is 0 here

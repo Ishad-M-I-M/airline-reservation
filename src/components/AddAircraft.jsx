@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import '../css/formstyle.css'
 import 'bootstrap/dist/css/bootstrap.css';
 import AlertMe from './Alert';
-import { toast } from "react-toastify";
 import axios from 'axios';
 import TextField from "@mui/material/TextField";
-import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
+
+import {successToast, infoToast, warningToast, errorToast} from './common/Toasts';
 
 const filter = createFilterOptions();
 
@@ -13,9 +14,7 @@ function AddAircraft() {
   const [value, setValue] = useState("");
   const [models, setmodels] = useState([]);
   const [state, setState] = useState({
-    tail: "",
-    total_seats: '',
-    economy: '',
+    tail: "", total_seats: '', economy: '',
     business: '',
     platinum: '',
     alert: false,
@@ -38,31 +37,15 @@ function AddAircraft() {
   const addFlight = (e) => {
     e.preventDefault();
     if(value === ""){
-      toast.warn("Enter Model", {
-        toastId: "1",position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: 0,
-      });
+      warningToast("Please enter a model");
     }else{
     axios.post('/aircraft', {state,value}).then((res) => {
       if (res.data.success) {
-        toast.success("Aircraft Added", {
-          toastId: "1",position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          progress: 0,
-        });
+        successToast("Aircraft added successfully");
         setTimeout(() => {
           console.log("working"); // count is 0 here
-          window.location.href  = "/add";
-          }, 1500);
+          window.location.href = "/add";
+        }, 1500);
         // handleClick({
         //   vertical: 'top',
         //   horizontal: 'center'
@@ -71,30 +54,11 @@ function AddAircraft() {
 
       else if (!res.data.success) {
         if(res.data.duplicate){
-          toast.error("Tail ID Already Exits", {
-            toastId: "1",position: "top-right",
-            autoClose: 1500,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: false,
-            draggable: true,
-            progress: 0,
-          });
+          errorToast("Tail ID Already Exits");
         }else{
-          toast.warn("Aircraft Not Added", {
-            toastId: "1",position: "top-right",
-            autoClose: 1500,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: false,
-            draggable: true,
-            progress: 0,
-          });
+          warningToast("Aircraft Not Added");
 
         }
-        // console.log(res.data);
-        
-        // nav("/");
       }
 
     }).catch((err) => {
@@ -115,17 +79,7 @@ function AddAircraft() {
   }
   const Addseats = (event) => {
     if(event.target.value<0){
-      toast.warn("Invalid Input", {
-     
-        toastId: "1",
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: 0,
-      });
+      warningToast("Invalid Input");
       event.target.value = '';
     }else{
     setState({
@@ -138,32 +92,13 @@ function AddAircraft() {
   }
   const Addeconomy = (event) => {
     if (state.total_seats === '') {
-      toast.info("Fill the total seats", {
-     
-        toastId: "1",
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: 0,
-      });
+      infoToast("Please enter total seats");
       event.target.value = '';
     } else {
 
 
       if (event.target.value < 0  || event.target.value > state.total_seats - state.business - state.platinum) {
-        toast.warn("Invalid economy seat count", {
-    
-          toastId: "1",position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          progress: 0,
-        });
+        warningToast("Invalid economy seat count");
 
         event.target.value = '';
         setState({
@@ -187,33 +122,12 @@ function AddAircraft() {
   }
   const Addbusiness = (event) => {
     if (state.total_seats === '') {
-      toast.info("Fill the total seats", {
-        
-        toastId: "1",position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: 0,
-      });
+      infoToast("Please enter total seats");
       event.target.value = '';
     } else {
       if (event.target.value < 0  || event.target.value > state.total_seats - state.economy - state.platinum) {
 
-        toast.warn("Invalid business seat count", {
- 
-          toastId: "1",position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          progress: 0,
-        });
-
-
-
+        warningToast("Invalid business seat count");
         event.target.value = '';
         setState({
           ...state,
@@ -234,32 +148,12 @@ function AddAircraft() {
   const Addplatinum = (event) => {
     // console.log(state.total_seats);
     if (state.total_seats === '') {
-      toast.info("Fill the total seats", {
-   
-        toastId: "1",position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: 0,
-      });
+      infoToast("Please enter total seats");
       event.target.value = '';
     } else {
 
       if (event.target.value < 0  || event.target.value > state.total_seats - state.economy - state.business) {
-
-
-        toast.warn("Invalid platinum seat count", {
-
-          toastId: "1",position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          progress: 0,
-        });
+        warningToast("Invalid platinum seat count");
         event.target.value = '';
         setState({
           ...state,
@@ -277,9 +171,6 @@ function AddAircraft() {
 
     }
   }
-
-
-  // console.log(models);
 
 
   return (

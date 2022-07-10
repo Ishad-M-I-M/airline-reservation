@@ -20,11 +20,8 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import axios from 'axios';
-import { toast } from "react-toastify";
-// import { toast } from "react-toastify";
+
 import { useNavigate } from "react-router-dom";
-// import Password from './PasswordAlert';
-// import Button from '@mui/material/Button';
 import validator from 'validator';
 
 import { useState } from "react";
@@ -33,6 +30,7 @@ import { useState } from "react";
 // import Button from '@mui/material/Button';
 import MuiAlert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
+import {successToast, warningToast} from "./common/Toasts";
 
 function SignupForm() {
 
@@ -120,9 +118,7 @@ function SignupForm() {
         ...values,
         samepassword: true
       });
-      return (
-        false
-      );
+      return false;
     }
     return true;
   }
@@ -148,16 +144,7 @@ handleClick({
     axios.post('auth/adduser', values).then((res) => {
      
       if(res.data.message){
-        toast.warn("Email ID Already Exists", {
-       
-          toastId: "1",position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          progress: 0,
-        });
+        warningToast("Email already exists");
         // handleClick({
         //   vertical: 'top',
         //   horizontal: 'center'
@@ -165,16 +152,7 @@ handleClick({
       }
       
       else if (res.data.success){
-        toast.success("Account Created", {
-   
-          toastId: "1",position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          progress: 0,
-        });
+        successToast("Account successfully created");
         setTimeout(() => {
           console.log("working"); // count is 0 here
           nav("/");

@@ -2,8 +2,9 @@ import React, { useEffect, useState} from 'react'
 import '../css/formstyle.css'
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from "axios";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
+import {errorToast, successToast, warningToast} from "./common/Toasts";
 
 export default function AddRoute (){
     const nav = useNavigate();
@@ -35,30 +36,14 @@ export default function AddRoute (){
     //    console.log(origin);
     //    console.log(destination);
         if (origin === destination || origin === 0 || destination ===0){
-            toast.error("Invalid Input", {
-                toastId: "1",position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: false,
-                draggable: false,
-                progress: 0,
-              });
+            errorToast("Invalid Input");
         }
         else{
             axios.post('/route', {origin: origin, destination: destination})
             .then((res) => {
      
                 if(res.data.message){
-                  toast.warn("Route Exists", {
-                    toastId: "1",position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: false,
-                    draggable: true,
-                    progress: 0,
-                  });
+                  warningToast("Route Already Exists");
                   // handleClick({
                   //   vertical: 'top',
                   //   horizontal: 'center'
@@ -66,15 +51,7 @@ export default function AddRoute (){
                 }
                 
                 else if (res.data.success){
-                  toast.success("Route Added", {
-                    toastId: "1",position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: false,
-                    draggable: true,
-                    progress: 0,
-                  });
+                  successToast("Route Added Successfully");
                   setTimeout(() => {
                     console.log("working"); // count is 0 here
                     window.location.href  = "/add";
