@@ -1,5 +1,5 @@
 import React from 'react';
-import {successToast, warningToast} from "./common/Toasts";
+import {reload, successToast, warningToast} from "./common/Toasts";
 
 class AddFlights extends React.Component {
 
@@ -105,7 +105,8 @@ class AddFlights extends React.Component {
         let result = await res.json();
         console.log(result);
         if(result && result.success) {
-          successToast('Data Successfully entered to database')
+          successToast('Data Successfully entered to database');
+          reload();
         }else {
           console.log(result.msg);
         }
@@ -117,7 +118,7 @@ class AddFlights extends React.Component {
 
   setCost(property, value) {
     if(isNaN(value)){
-      warningToast("Enter only valid amount");
+      warningToast("Enter a valid amount");
     }else {
       this.setState({
         [property]: value,
