@@ -37,6 +37,7 @@ CREATE TABLE `route`
     `route_id`    int NOT NULL auto_increment,
     `origin`      int NOT NULL,
     `destination` int NOT NULL,
+    `is_active`   tinyint DEFAULT 1,
     primary key (route_id),
     constraint foreign key (origin) references airport (airport_id),
     constraint foreign key (destination) references airport (airport_id),
@@ -470,6 +471,19 @@ create trigger on_aircraft_delete
     for each row
     update flight set is_active = 0 where NEW.is_active = 0 and flight.aircraft_id = OLD.aircraft_id and flight.takeoff_time > CURTIME();
 
+-- update route if an airport is removed
+create trigger on_airport_delete
+    after update on airport
+    for each row
+    update route set is_active = 0 where NEW.is_active = 0 and route.origin = OLD.airport_id or route.destination = OLD.airport_id;
+
+-- update flight schedule on route removed
+create trigger on_route_delete
+    after update on route
+    for each row
+    update flight set is_active = 0 where NEW.is_active = 0 and flight.route_id = OLD.route_id;
+
+-- update the status of ticket if flight is cancelled
 create trigger on_flight_delete
     after update on flight
     for each row
