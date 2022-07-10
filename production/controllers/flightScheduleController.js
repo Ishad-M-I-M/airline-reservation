@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get('/', function (req, res){
     db.raw(
-        "SELECT flight.flight_id, tail_number, model, a.code AS origin, b.code AS destination, takeoff_time, departure_time FROM flight INNER JOIN aircraft USING(aircraft_id) INNER JOIN route USING(route_id) INNER JOIN airport AS a ON a.airport_id = route.origin INNER JOIN airport AS b ON b.airport_id = route.destination WHERE flight.is_active = 1 AND takeoff_time > now() ORDER BY flight_id"
+        "SELECT flight.flight_id as id, tail_number, model, a.code AS origin, b.code AS destination, DATE_FORMAT(takeoff_time, '%Y-%m-%d %l:%i %p') as takeoff_time , DATE_FORMAT(departure_time, '%Y-%m-%d %l:%i %p') as departure_time FROM flight INNER JOIN aircraft USING(aircraft_id) INNER JOIN route USING(route_id) INNER JOIN airport AS a ON a.airport_id = route.origin INNER JOIN airport AS b ON b.airport_id = route.destination WHERE flight.is_active = 1 AND takeoff_time > now() ORDER BY flight_id;"
     )
     .then((data) => {
         return res.send({

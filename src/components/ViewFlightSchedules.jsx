@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import {infoToast, reload} from "./common/Toasts";
+import {errorToast, infoToast, reload, successToast} from "./common/Toasts";
+import Table from "./common/Table";
 
 export default function ViewFlightSchedules() { 
 
@@ -50,13 +51,14 @@ export default function ViewFlightSchedules() {
       .then((res)=>{
         res.json()
         .then((result)=> {
-          infoToast("Specific Flight Schedule is successfully made unavailable.");
+          successToast("Flight Schedule is successfully made unavailable.");
           reload();
         } )
         .catch((e)=> console.error(e));
       })
       .catch((e)=>{
         console.error(e);
+        errorToast("Error in deleting flight schedule.");
       })
       
     }
@@ -92,35 +94,7 @@ export default function ViewFlightSchedules() {
         </div>
       </form>
 
-      <div>
-        <div className="row bg-white rounded p-1 mt-1"> 
-          <div className="col-md-1 text-center align-middle fw-bold fs-7"> Tail No. </div>
-          <div className="col-md-2 text-center align-middle fw-bold fs-7"> Aircraft Model </div>
-          <div className="col-md-1 text-center align-middle fw-bold fs-7"> Origin </div>
-          <div className="col-md-1 text-center align-middle fw-bold fs-7"> Destination </div>
-          <div className="col-md-3 text-center align-middle fw-bold fs-7"> Takeoff Time </div>
-          <div className="col-md-3 text-center align-middle fw-bold fs-7"> Departure Time </div>
-        </div>
-      </div>
-
-      <div>
-        {schedules.map(({id, flight_id, tail_number, model, origin, destination, takeoff_time, departure_time}) =>{
-            if ((endStations['tail_number'] === null || tail_number === endStations['tail_number']) && (endStations['model'] === null || model === endStations['model']) && (endStations['origin'] === null || origin === endStations['origin']) && (endStations['destination'] === null || destination === endStations['destination']) && (endStations['takeoff_time'] === null || takeoff_time === endStations['takeoff_time']) && (endStations['departure_time'] === null || departure_time === endStations['departure_time']) ){
-              return <div className="row bg-white rounded p-1 mt-1" key={id}> 
-                      <div className="col-md-1 text-center align-middle">{tail_number} </div>
-                      <div className="col-md-2 text-center align-middle">{model} </div>
-                      <div className="col-md-1 text-center align-middle">{origin} </div>
-                      <div className="col-md-1 text-center align-middle">{destination} </div>
-                      <div className="col-md-3 text-center align-middle">{(new Date(takeoff_time)).toLocaleString()} </div>
-                      <div className="col-md-3 text-center align-middle">{(new Date(departure_time)).toLocaleString()} </div>
-                      <div className="col-md-1 text-center align-middle"><button className="btn btn-primary" onClick={()=>handleDelete(flight_id)}>Delete</button></div>
-                      </div>
-            }
-            else return null;
-        }   
-        )}
-          
-      </div>
+        <Table tableHeadings={{'id': '#', 'tail_number': 'Tail #', 'model': 'Aircraft Model', 'origin': 'Origin','destination': 'Destination', 'takeoff_time': 'Takeoff Time', 'departure_time': 'Departure Time'}} tableData={schedules} id={'id'} deleteHandler={handleDelete}/>
     </div>
   );
 }
