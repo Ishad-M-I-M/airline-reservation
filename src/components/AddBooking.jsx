@@ -1,4 +1,5 @@
 import React from 'react';
+import {errorToast, successToast, warningToast} from "./common/Toasts";
 
 class AddBooking extends React.Component {
   constructor(props) {
@@ -49,7 +50,7 @@ class AddBooking extends React.Component {
               seat_numbers : seats,
             });
             if(this.state.seat_number !== 0) {
-              alert("Selected seat already booked. Change Seat!");
+              warningToast("Selected seat already booked. Change Seat!");
             }
           }else {
             console.log("Not Updating Seats");
@@ -98,7 +99,7 @@ class AddBooking extends React.Component {
     let date_ob = new Date();
       let date = date_ob.getFullYear()+'-'+date_ob.getMonth()+'-'+date_ob.getDate()+" "+date_ob.getHours()+":"+date_ob.getMinutes()+":"+date_ob.getSeconds();
     if(this.state.name === '' || this.state.address === '' || this.state.dob === ''|| this.state.id === '' || this.state.flight_id === 0 || this.state.class === '' || this.state.seat_number === 0) {
-      alert("Fill all the columns");
+      warningToast("Fill all the columns");
     }else {
       console.log(this.state);
       try{
@@ -126,14 +127,14 @@ class AddBooking extends React.Component {
           window.location.href = "/paymentportal";
         }else {
           if(result) {
-            alert(result.msg);
+            successToast(result.msg);
           }else{  
-            alert("Booking Failed!!! Try Again");
+            errorToast("Booking Failed!!! Try Again");
           }
         }
       }catch(err){
         console.log(err);
-        alert("Booking Failed by Unknown server error!!! Try Again");
+        errorToast("Booking Failed by Unknown server error!!! Try Again");
       }
     }
   }

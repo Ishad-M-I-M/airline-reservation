@@ -3,6 +3,7 @@ import axios from "axios";
 
 import Table from "./common/Table";
 import Overlay from './common/Overlay';
+import {errorToast, successToast} from "./common/Toasts";
 
 const ViewUsers = () => {
     const [users, setUsers] = useState([]);
@@ -13,6 +14,7 @@ const ViewUsers = () => {
         axios.get('/user').then((res) => {
             setUsers(res.data.data);
         }).catch((err) => {
+            errorToast("Error in fetching users");
             console.log(err);
         });
     }, []);
@@ -24,7 +26,7 @@ const ViewUsers = () => {
     const handleDelete = (id_) => {
         axios.delete(`/user/${id_}`)
             .then(() => {
-                alert(`User deleted successfully`);
+                successToast("User Deleted Successfully");
                 window.location.reload();
             })
             .catch((err) => {
@@ -44,10 +46,10 @@ const ViewUsers = () => {
             'discount_type': user.discount_type
         })
             .then(() => {
-                alert(`User updated successfully`);
+                successToast("User Updated Successfully");
             }).catch((err) => {
                 console.error(err);
-                alert("Unable to update");
+                errorToast("Error in updating user");
         })
     }
 

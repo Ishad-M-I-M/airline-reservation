@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import {infoToast} from "./common/Toasts";
 
 export default function ViewFlightSchedules() { 
 
@@ -49,7 +50,7 @@ export default function ViewFlightSchedules() {
       .then((res)=>{
         res.json()
         .then((result)=> {
-          alert("Specific Flight Schedule is successfully made unavailable.");
+          infoToast("Specific Flight Schedule is successfully made unavailable.");
           window.location.reload();
         } )
         .catch((e)=> console.error(e));

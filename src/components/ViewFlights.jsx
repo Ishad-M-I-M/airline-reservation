@@ -1,5 +1,6 @@
 import React from 'react';
 import FlightResultOverlay from './FlightResultOverlay';
+import {errorToast, warningToast} from "./common/Toasts";
 
 class ViewFlights extends React.Component {
 
@@ -46,7 +47,7 @@ class ViewFlights extends React.Component {
             aircrafts: temp_craft,
           });
         }else if(result) {
-          alert("Refresh Again");
+          warningToast("Refresh again");
         }
       } catch(error){}
     }
@@ -75,7 +76,7 @@ class ViewFlights extends React.Component {
             codes:temp_codes,
           });
         }else if(result) {
-          alert("Refresh again");
+          warningToast("Refresh again");
         }
       }catch(error){
         console.error(error);
@@ -110,7 +111,7 @@ class ViewFlights extends React.Component {
           resultVisibility: true,
         });
       }else if(result) {
-        alert("Request Failed... Fetch Again...");
+        errorToast("Request Incomplete");
       }
     }catch(error){
 

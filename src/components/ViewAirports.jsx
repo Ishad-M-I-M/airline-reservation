@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react'
+import {successToast} from "./common/Toasts";
 
 export default function ViewAirports() {
 
@@ -11,7 +12,7 @@ export default function ViewAirports() {
     // request to delete : DELETE /apirports/:id
     axios.delete(`/airport/${id_}`).then(()=>{
       setAirports( [...airports].filter(({id})=> id != id_));
-      alert(`Airport deleted sucessfully` );
+      successToast("Airport Deleted Successfully");
     })
     .catch((err)=>{
       console.log(err);

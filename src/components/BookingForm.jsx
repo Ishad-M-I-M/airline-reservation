@@ -5,6 +5,7 @@ import { Form, Button, Dropdown } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserStore from "../stores/UserStore";
 import PaymentPage from "./PaymentPage";
+import {errorToast, infoToast, warningToast} from "./common/Toasts";
 
 const BookingForm = (props) => {
 
@@ -36,10 +37,10 @@ const BookingForm = (props) => {
       .then(function (response) {
         if (response.data.success === true) {
           if (response.data.data === "seat_occupied") {
-            alert("seat occupied!!");
+            infoToast("seat occupied!!");
             window.location.reload();
           } else if (response.data.data === "passenger_occupied") {
-            alert("passenger already booked");
+            infoToast("passenger already booked");
             window.location.reload();
           } else {
             const ticket_details = {
@@ -59,12 +60,12 @@ const BookingForm = (props) => {
             
 
                 } else {
-                  alert("sorry your booking cannot be reserved!");
+                  warningToast("sorry your booking cannot be reserved!");
                   window.location.href = "/";
                 }
               })
               .catch(function (error) {
-                alert("oops an error occured!");
+                errorToast("oops an error occured!");
                 console.log(error)
                 // window.location.href = "/";
               });

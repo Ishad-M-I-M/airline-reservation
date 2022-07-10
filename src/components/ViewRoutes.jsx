@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 
 import Table from './common/Table';
+import {errorToast} from "./common/Toasts";
 
 export default function ViewRoutes() {
 
@@ -30,6 +31,7 @@ export default function ViewRoutes() {
         .catch((e)=> console.error(e));
       })
       .catch((e)=>{
+          errorToast("Failed to fetch routes. Try again !");
         console.error(e);
       })
     },[]);

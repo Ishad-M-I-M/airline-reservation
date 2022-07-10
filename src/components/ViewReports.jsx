@@ -6,6 +6,7 @@ import PassengerDetailsOverlay from './PassengerDetailsOverlay';
 import PassengerCountOverlay from './PassengerCountOverlay';
 import BookingReportOverlay from './BookingReportOverlay';
 import PastFlightDetailsOverlay from './PastFlightDetailsOverlay';
+import {errorToast} from "./common/Toasts";
 
 
 class ViewReports extends React.Component {
@@ -86,7 +87,7 @@ class ViewReports extends React.Component {
         });
 
       }else if(result) {
-        alert("Request Failed... Fetch Again...");
+        errorToast("Request Incomplete");
       }
     }catch(error){
       console.log('Error: ', error);
@@ -116,7 +117,7 @@ class ViewReports extends React.Component {
         });
 
       }else if(result) {
-        alert("Request Failed... Fetch Again...");
+        errorToast("Request Incomplete");
       }
     }catch(error){
       console.log('Error: ', error);
@@ -147,7 +148,7 @@ class ViewReports extends React.Component {
         });
 
       }else if(result) {
-        alert("Request Failed... Fetch Again...");
+        errorToast("Request Incomplete");
       }
     }catch(error){
       console.log('Error: ', error);
@@ -177,7 +178,7 @@ class ViewReports extends React.Component {
         });
 
       } else if(result) {
-        alert("Request Failed... Fetch Again...");    
+        errorToast("Request Incomplete");
       }
     }catch(error){
       console.log('Error: ', error);
@@ -207,7 +208,7 @@ class ViewReports extends React.Component {
         });
 
       }else if(result) {
-        alert("Request Failed... Fetch Again...");
+        errorToast("Request Incomplete");
       } 
     }catch(error){
       console.log('Error: ', error);

@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react'
 
 import Table from './common/Table';
+import {successToast} from "./common/Toasts";
 
 export default function ViewAircrafts() {
   const [aircrafts, setAircrafts] = useState([
@@ -23,7 +24,7 @@ export default function ViewAircrafts() {
 
   let handleDelete = (aircraft_id_) => {
     axios.delete(`/aircraft/${aircraft_id_}`).then(()=>{
-      alert(`Aircraft deleted sucessfully` );
+      successToast("Aircraft Deleted Successfully");
       window.location.reload();
     })
     .catch((err)=>{
