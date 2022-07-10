@@ -1,49 +1,39 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import Table from './common/Table';
-import {errorToast} from "./common/Toasts";
+import {errorToast, reload, successToast} from "./common/Toasts";
+import axios from "axios";
 
 export default function ViewRoutes() {
 
-  const routeReference = useRef([]);
-  //fetched from backend: GET /routes
-  const [routes, setRoutes] = useState(
-    [{'id': 1, 'origin' : 'CMB', 'destination': 'JFK'},
-      {'id': 2,'origin' : 'JFK', 'destination': 'CMB'},
-      {'id': 3,'origin' : 'CMB', 'destination': 'MCW'},
-      {'id': 4,'origin' : 'CMB', 'destination': 'JED'}]
+    const routeReference = useRef([]);
+    //fetched from backend: GET /routes
+    const [routes, setRoutes] = useState(
+        [{'id': 1, 'origin': 'CMB', 'destination': 'JFK'},
+            {'id': 2, 'origin': 'JFK', 'destination': 'CMB'},
+            {'id': 3, 'origin': 'CMB', 'destination': 'MCW'},
+            {'id': 4, 'origin': 'CMB', 'destination': 'JED'}]
   );
 
-    useEffect(()=>{
-      fetch('/route',{
-        method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
-      })
-      .then((res)=>{
-        res.json()
-        .then((result)=> {
-            routeReference.current = result.data;
-            setRoutes(result.data)
-        } )
-        .catch((e)=> console.error(e));
-      })
-      .catch((e)=>{
-          errorToast("Failed to fetch routes. Try again !");
-        console.error(e);
-      })
-    },[]);
+    useEffect(()=> {
+        axios.get('/route')
+            .then(result => {
+                routeReference.current = result.data.data;
+                setRoutes(result.data.data);
+            })
+            .catch(err => {
+                errorToast("error in fetching routes");
+                console.error(err);
+            });
+    }, []);
 
     const locations = [];
-    for(let route of routes){
-        if ( locations.indexOf(route['origin']) === -1) locations.push(route['origin']);
-        if ( locations.indexOf(route['destination']) === -1) locations.push(route['destination']);
+    for (let route of routes) {
+        if (locations.indexOf(route['origin']) === -1) locations.push(route['origin']);
+        if (locations.indexOf(route['destination']) === -1) locations.push(route['destination']);
     }
 
-
-    let handleChange = (endStation, value) =>{
+    let handleChange = (endStation, value) => {
         if (value === ""){
             setRoutes(routeReference.current);
         }
@@ -54,6 +44,19 @@ export default function ViewRoutes() {
             });
             setRoutes(routes_);
         }
+    }
+
+    let handleDelete = (id_) => {
+        // rest API request to delete.: DELETE /routes/:id
+        axios.delete(`/route/${id_}`)
+            .then(() => {
+                successToast("Route is successfully made unavailable.");
+                reload();
+            })
+            .catch(err => {
+                errorToast("error in deleting route");
+                console.error(err);
+            });
 
     }
 
@@ -80,7 +83,7 @@ export default function ViewRoutes() {
         </div>
       </form>
       <div>
-          <Table id = "id" tableHeadings={{'origin': 'Origin', 'destination': 'Destination'}} tableData={routes} />
+          <Table id = "id" tableHeadings={{'id': '#','origin': 'Origin', 'destination': 'Destination'}} tableData={routes} deleteHandler={handleDelete}/>
 
       </div>
     </div>

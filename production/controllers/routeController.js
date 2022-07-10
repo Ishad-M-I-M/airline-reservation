@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get('/', (req, res)=>{
     db.raw(
-        `select route_id as id, origin, destination from (select route_id,code as origin from route inner join airport on origin=airport_id where is_active = 1) as origin natural join (select route_id,code as destination from route inner join airport on destination=airport_id where is_active = 1) as destination; `,
+        `select route_id as id, origin, destination from (select route_id,code as origin from route inner join airport on origin=airport_id where route.is_active = 1) as origin natural join (select route_id,code as destination from route inner join airport on destination=airport_id where route.is_active = 1) as destination; `,
     ).then((data)=>{
         return res.json({
             success: true,
@@ -12,6 +12,7 @@ router.get('/', (req, res)=>{
           });
     })
     .catch((err)=>{
+        console.error(err);
         res.status(500).send({success: false});
     })
           
@@ -46,7 +47,7 @@ router.post('/', (req, res) =>{
 })
 
 router.delete('/:id', (req, res)=>{
-    db.raw(`DELETE FROM route WHERE route_id=? `, [req.params.id])
+    db.raw(`UPDATE route SET is_active = 0 WHERE route_id=? `, [req.params.id])
     .then(()=>{
         return res.send({success: true});
     })
