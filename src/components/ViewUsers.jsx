@@ -3,7 +3,7 @@ import axios from "axios";
 
 import Table from "./common/Table";
 import Overlay from './common/Overlay';
-import {errorToast, successToast} from "./common/Toasts";
+import {errorToast, reload, successToast} from "./common/Toasts";
 
 const ViewUsers = () => {
     const [users, setUsers] = useState([]);
@@ -27,7 +27,7 @@ const ViewUsers = () => {
         axios.delete(`/user/${id_}`)
             .then(() => {
                 successToast("User Deleted Successfully");
-                window.location.reload();
+                reload();
             })
             .catch((err) => {
                 console.log(err);

@@ -1,11 +1,9 @@
 import axios from "axios";
-import { set } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { Form, Button, Dropdown } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import UserStore from "../stores/UserStore";
-import PaymentPage from "./PaymentPage";
-import {errorToast, infoToast, warningToast} from "./common/Toasts";
+
+import {errorToast, infoToast, warningToast, reload} from "./common/Toasts";
 
 const BookingForm = (props) => {
 
@@ -38,10 +36,12 @@ const BookingForm = (props) => {
         if (response.data.success === true) {
           if (response.data.data === "seat_occupied") {
             infoToast("seat occupied!!");
-            window.location.reload();
+            reload();
+
           } else if (response.data.data === "passenger_occupied") {
             infoToast("passenger already booked");
-            window.location.reload();
+            reload();
+
           } else {
             const ticket_details = {
               f_id,

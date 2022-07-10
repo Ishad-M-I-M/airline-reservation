@@ -26,4 +26,10 @@ function warningToast(message) {
     toast.warn(message, options);
 }
 
-export {successToast, infoToast, warningToast, errorToast};
+function reload(){
+    setTimeout(()=>{
+        window.location.reload();
+    }, 1500);
+}
+
+export {successToast, infoToast, warningToast, errorToast, reload};
