@@ -5,7 +5,7 @@ const router = express.Router();
 router.post("/passenger-details", (req, res) => {
     if (req.body.below === true) {
         if (req.body.above === true) {
-            db.raw("SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM flight INNER JOIN ticket USING(flight_id) INNER JOIN passenger USING(passenger_id) WHERE takeoff_time = (SELECT MIN(takeoff_time) FROM aircraft LEFT JOIN flight USING(aircraft_id) WHERE takeoff_time > NOW() AND aircraft.tail_number = ?);", [req.body.flight])
+            db.raw("SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM passenger NATURAL JOIN ticket WHERE ticket.flight_id = ( SELECT flight.flight_id FROM flight NATURAL JOIN aircraft WHERE aircraft.tail_number = ? AND flight.takeoff_time > NOW() ORDER BY flight.takeoff_time ASC LIMIT 1);", [req.body.flight])
                 .then((result) => {
                     return res.json({success: true, data: result[0]});
                 })
@@ -14,7 +14,7 @@ router.post("/passenger-details", (req, res) => {
                     return res.status(500).json({success: false});
                 });
         } else {
-            db.raw("SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM flight INNER JOIN ticket USING(flight_id) INNER JOIN passenger USING(passenger_id) WHERE takeoff_time = (SELECT MIN(takeoff_time) FROM aircraft LEFT JOIN flight USING(aircraft_id) WHERE takeoff_time > NOW() AND aircraft.tail_number = ?)  AND TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) < 18;", [req.body.flight])
+            db.raw("SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM passenger NATURAL JOIN ticket WHERE ticket.flight_id = ( SELECT flight.flight_id FROM flight NATURAL JOIN aircraft WHERE aircraft.tail_number = ? AND flight.takeoff_time > NOW() ORDER BY flight.takeoff_time ASC LIMIT 1) AND TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) < 18;", [req.body.flight])
                 .then((result) => {
                     return res.json({success: true, data: result[0]})
                 }).catch((err) => {
@@ -24,7 +24,7 @@ router.post("/passenger-details", (req, res) => {
         }
     } else {
         if (req.body.above === true) {
-            db.raw("SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM flight INNER JOIN ticket USING(flight_id) INNER JOIN passenger USING(passenger_id) WHERE takeoff_time = (SELECT MIN(takeoff_time) FROM aircraft LEFT JOIN flight USING(aircraft_id) WHERE takeoff_time > NOW() AND aircraft.tail_number = ?)  AND TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) > 17;", [req.body.flight])
+            db.raw("SELECT passenger.passenger_id, passenger.name, TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) AS Age, passenger.address FROM passenger NATURAL JOIN ticket WHERE ticket.flight_id = ( SELECT flight.flight_id FROM flight NATURAL JOIN aircraft WHERE aircraft.tail_number = ? AND flight.takeoff_time > NOW() ORDER BY flight.takeoff_time ASC LIMIT 1) AND TIMESTAMPDIFF(YEAR, passenger.dob, CURDATE()) > 17;", [req.body.flight])
                 .then((result) => {
                     return res.json({success: true, data: result[0]});
                 })
