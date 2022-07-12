@@ -1,13 +1,33 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from "prop-types";
 
 const Table = (props) => {
+    /*
+    * sorted object to store the status of sorting
+    * order : false - corresponds to descending
+    *         true  - corresponds to ascending
+    * */
+    const [sorted, setSorted] = useState({sorted_by: props.id, order: false});
+    const [tableData, setTableData] = useState([]);
+
+    const sort = (sortBy) => {
+        setSorted({ sorted_by: sortBy, order: !sorted.order});
+        console.log(sorted);
+        let data = [...tableData];
+        data.sort((a,b)=>{
+            if (sorted.order) return a[sortBy] - b[sortBy];
+            else return b[sortBy] - a[sortBy]
+        });
+        setTableData(data);
+        console.log(data);
+    }
+
     return (
         <table className={"table table-hover"}>
             <thead>
                 <tr>
                     {Object.keys(props.tableHeadings).map((heading)=>{
-                        return <th className={"text-center"} scope={"row"} key={heading}>{props.tableHeadings[heading]}</th>
+                        return <th className={"text-center"} scope={"row"} onClick={()=>sort(heading)} key={heading}>{props.tableHeadings[heading]}</th>
                     })}
 
                     <th></th>
