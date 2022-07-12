@@ -17,7 +17,7 @@ export function LandingPage() {
                 <div className="text-center">
                     <h1>B Airways</h1>
                     <h5>Find your flights in one click!</h5>
-                    <p>B Airways is blah blah ...</p>
+                    <p>Service, Comfort, Safety, Reliability, and Punctuality ....</p>
                     <a href="/usr-booking" className="btn - btn-primary rounded-pill ps-5 pe-5">Get Started &rarr;</a>
                 </div>
 
