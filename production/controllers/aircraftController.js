@@ -71,19 +71,6 @@ router.post('/', function (req, res){
 
 });
 
-router.post('/model', function (req, res){
-    let {model, economy, business, platinum} = req.body;
-    db.raw('INSERT INTO model (model, Economy_seats, Business_seats, Platinum_seats) VALUES(?,?,?,?)', [model, economy, business, platinum])
-        .then((data) => {
-            console.log(data);
-            return res.json({success: true});
-        })
-        .catch((err) => {
-            console.error(err);
-            return res.status(500).json({success: false});
-        });
-});
-
 router.delete('/:id', function (req, res){
     db.raw(`UPDATE aircraft SET is_active=0 WHERE aircraft_id=? `,[req.params.id])
     .then((data) => {

@@ -7,7 +7,6 @@ import AddDiscount from './AddDiscount';
 import AddAirport from './AddAirport';
 import AddAircraft from './AddAircraft';
 import 'bootstrap/dist/css/bootstrap.css';
-import AddAircraftModel from "./AddAircraftModel";
 
 
 function ClerkPage() {
@@ -15,7 +14,6 @@ function ClerkPage() {
   const [buttonpopup2, setbuttonpopup2] = useState(false);
   const [buttonpopup3, setbuttonpopup3] = useState(false);
   const [buttonpopup4, setbuttonpopup4] = useState(false);
-  const [buttonpopup5, setbuttonpopup5] = useState(false);
 
 
   return (
@@ -63,24 +61,9 @@ function ClerkPage() {
 
       </Popup>
         
-      </div>
-    <br></br>
-    <div>
-        <Popup trigger={buttonpopup5} setTrigger = {setbuttonpopup5}>
-            <h1 style={{textAlign: 'center'}}>
-                Add Aircraft Model
-            </h1>
-            <AddAircraftModel/>
-
-        </Popup>
-
-    </div>
-
+      </div> 
+  
         <div className='option'>
-            <button className='butt btn btn-primary'  onClick={()=>setbuttonpopup5(true)}>Add Aircraft Model</button>
-            <br></br>
-            <br></br>
-            <br></br>
             <button className='butt btn btn-primary'  onClick={()=>setbuttonpopup(true)}>Add Aircraft</button>
             <br></br>
             <br></br>
