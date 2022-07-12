@@ -1,3 +1,4 @@
+const { logDOM } = require("@testing-library/react");
 const bcrypt = require("bcrypt");
 const express = require("express");
 const { data } = require("jquery");
@@ -17,7 +18,7 @@ router.post("/login", (req, res) => {
     }
 
     let cols = [email];
-    db.raw("SELECT * FROM user WHERE email = ? LIMIT 1", cols)
+    db.raw("SELECT * FROM user WHERE email = ?  and is_active = 1 LIMIT 1", cols)
         .then((data) => {
             //Found a user
             if (data[0] && data[0].length === 1) {
@@ -93,6 +94,7 @@ router.post('/adduser', (req, res) => {
 
     let date = req.body.date;
     let dob = date.split("T")[0];
+    console.log(date);
     let e = req.body.email;
     let pwd = req.body.password;
     let fn = req.body.fname;
@@ -102,10 +104,10 @@ router.post('/adduser', (req, res) => {
 
     let pswrd = bcrypt.hashSync(pwd, 10);
 
-    console.log(req.body);
-    console.log(pswrd);
-    console.log(dob);
-    console.log(ln1);
+    // console.log(req.body);
+    // console.log(pswrd);
+    // console.log(dob);
+    // console.log(ln1);
 
     db.raw(`SELECT count(*) as num from user where email='${e}';`).then((data) => {
         console.log(data[0][0].num);
