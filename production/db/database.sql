@@ -389,13 +389,13 @@ BEGIN
 
     SELECT count(*) into counter from passenger where passenger_id = passenger_id_in group by(passenger_id);
     if (counter = 1) then
-        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status, is_boarded)
-        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 1, 0);
+        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status)
+        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 1);
     else
         START TRANSACTION;
         INSERT INTO passenger(passenger_id, name, dob, address) values (passenger_id_in, name_in, dob_in, address_in);
-        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, is_boarded)
-        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 0);
+        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid)
+        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in);
         COMMIT;
     end if;
 END //
@@ -435,7 +435,7 @@ BEGIN
     end if;  
     start TRANSACTION;
     	insert IGNORE into passenger values(in_passenger_id,in_passenger_name,in_dob,in_passenger_add);
-    	insert into ticket(user_id,passenger_id,flight_id,seat_number,date,class,paid,status,is_boarded) values (in_user_id,in_passenger_id,in_f_id,in_seat_no,NOW(),in_class,payment,0,0);
+    	insert into ticket(user_id,passenger_id,flight_id,seat_number,date,class,paid,status) values (in_user_id,in_passenger_id,in_f_id,in_seat_no,NOW(),in_class,payment,0);
     commit;
 END$$
 DELIMITER ;
