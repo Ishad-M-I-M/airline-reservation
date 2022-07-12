@@ -1,25 +1,14 @@
 import React, {useState} from 'react';
 import PropTypes from "prop-types";
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const Table = (props) => {
-    /*
-    * sorted object to store the status of sorting
-    * order : false - corresponds to descending
-    *         true  - corresponds to ascending
-    * */
     const [sorted, setSorted] = useState({sorted_by: props.id, order: false});
-    const [tableData, setTableData] = useState([]);
 
     const sort = (sortBy) => {
         setSorted({ sorted_by: sortBy, order: !sorted.order});
         console.log(sorted);
-        let data = [...tableData];
-        data.sort((a,b)=>{
-            if (sorted.order) return a[sortBy] - b[sortBy];
-            else return b[sortBy] - a[sortBy]
-        });
-        setTableData(data);
-        console.log(data);
     }
 
     return (
@@ -27,7 +16,12 @@ const Table = (props) => {
             <thead>
                 <tr>
                     {Object.keys(props.tableHeadings).map((heading)=>{
-                        return <th className={"text-center"} scope={"row"} onClick={()=>sort(heading)} key={heading}>{props.tableHeadings[heading]}</th>
+                        if(heading === sorted.sorted_by)
+                            return <th className={"text-center"} scope={"row"} onClick={()=>sort(heading)} key={heading}>
+                                {props.tableHeadings[heading] }
+                                {sorted.order ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
+                            </th>;
+                        return <th className={"text-center"} scope={"row"} onClick={()=>sort(heading)} key={heading}>{props.tableHeadings[heading]}</th>;
                     })}
 
                     <th></th>
@@ -36,7 +30,18 @@ const Table = (props) => {
             </thead>
             <tbody>
 
-                {props.tableData.map((row)=>{
+                {props.tableData.sort((a,b)=>{
+                    if (sorted.order) {
+                        if (typeof(a[sorted.sorted_by]) === 'string'){
+                            return a[sorted.sorted_by] > b[sorted.sorted_by] ? 1 : -1;
+                        }
+                        return a[sorted.sorted_by] - b[sorted.sorted_by];
+                    }
+                    else {
+                        if (typeof(a[sorted.sorted_by]) === 'string') return b[sorted.sorted_by] > a[sorted.sorted_by] ? 1 : -1;
+                        return b[sorted.sorted_by] - a[sorted.sorted_by];
+                    }
+                }).map((row)=>{
                     return <tr key={row[props.id]}>
                     {Object.keys(props.tableHeadings).map((heading)=>{
                         return <td className={"text-center"}>{row[heading]}</td>
