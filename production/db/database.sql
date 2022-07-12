@@ -119,7 +119,6 @@ CREATE TABLE `ticket`
     `class`        varchar(10)    NOT NULL,
     `paid`         decimal(10, 2) NOT NULL,
     `status`       tinyint        NOT NULL DEFAULT 1,
-    `is_boarded`   tinyint        NOT NULL DEFAULT 0,
     primary key (ticket_id),
     constraint foreign key (user_id) references user (user_id) on update cascade,
     constraint foreign key (passenger_id) references passenger (passenger_id) on update cascade on delete cascade,
