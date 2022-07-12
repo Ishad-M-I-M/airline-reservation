@@ -406,7 +406,7 @@ delimiter ;
 
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `release_booking`(IN `f_id` INT(11), IN `seatNo` VARCHAR(11), IN `passengerId` VARCHAR(11))
+CREATE PROCEDURE `release_booking`(IN `f_id` INT, IN `seatNo` VARCHAR(11), IN `passengerId` VARCHAR(11))
 BEGIN
 	START TRANSACTION;
     	DELETE FROM ticket WHERE flight_id=f_id and seat_number=seatNo and status=0;
@@ -419,7 +419,7 @@ DELIMITER ;
 
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `book_ticket_proc`(IN `in_f_id` INT(11), IN `in_user_id` INT(11), IN `in_passenger_id` VARCHAR(25), IN `in_passenger_name` VARCHAR(150), IN `in_passenger_add` VARCHAR(255), IN `in_dob` DATE, IN `in_class` VARCHAR(10), IN `in_seat_no` VARCHAR(5))
+CREATE PROCEDURE `book_ticket_proc`(IN `in_f_id` INT, IN `in_user_id` INT, IN `in_passenger_id` VARCHAR(25), IN `in_passenger_name` VARCHAR(150), IN `in_passenger_add` VARCHAR(255), IN `in_dob` DATE, IN `in_class` VARCHAR(10), IN `in_seat_no` VARCHAR(5))
 BEGIN  
     declare payment  dec(10,2);
     declare disc_type varchar(20);
