@@ -33,7 +33,7 @@ router.post('/', (req, res) =>{
                     return res.status(500).json({ success: false });
                 })
         }else if(data[0][0].num == 1){
-            db.raw(`UPDATE route SET is_active=1`)
+            db.raw(`UPDATE route SET is_active=1 where origin = ${req.body.origin} and destination = ${req.body.destination} and is_active = 0`)
                 .then(() => {
                     return res.json({ success: true ,message: false });
                 })
