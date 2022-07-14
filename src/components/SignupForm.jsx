@@ -81,7 +81,7 @@ function SignupForm() {
     lname: "",
     email: "",
     samepassword: false,
-    date: ""
+    date: new Date('2014-08-18T21:11:54')
 
   });
   const [emailError, setEmailError] = useState('')
@@ -184,7 +184,7 @@ handleClick({
 
   const addUser = () => {
 
-
+// console.log(values.date);
     if (values.fname === "" || values.email === "" || values.password === "" || values.re_password === "" || values.date === "") {
       // console.log("Empty");
       setValue({
@@ -233,7 +233,7 @@ handleClick({
 
     
     <div className='optionsss'>
-    {/* {buttons} */}
+    {/* {values.date} */}
       <Snackbar autoHideDuration={4000}
       
         anchorOrigin={{ vertical, horizontal }}

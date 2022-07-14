@@ -20,7 +20,7 @@ router.get('/', (req, res)=>{
 
 router.post('/', (req, res) =>{
     console.log(req.body);
-    db.raw(`select count(*) as num from route where origin = ${req.body.origin} and destination = ${req.body.destination}`).then((data) => {
+    db.raw(`select count(*) as num from route where origin = ${req.body.origin} and destination = ${req.body.destination} and is_active = 0`).then((data) => {
         // console.log(data);
         console.log(data[0][0].num);
         if (data[0][0].num == 0) {
@@ -32,6 +32,16 @@ router.post('/', (req, res) =>{
                     console.error(err);
                     return res.status(500).json({ success: false });
                 })
+        }else if(data[0][0].num == 1){
+            db.raw(`UPDATE route SET is_active=1 where origin = ${req.body.origin} and destination = ${req.body.destination} and is_active = 0`)
+                .then(() => {
+                    return res.json({ success: true ,message: false });
+                })
+                .catch((err) => {
+                    console.error(err);
+                    return res.status(500).json({ success: false });
+                })
+            
         }else{
             return res.json({ message: true });
         }
