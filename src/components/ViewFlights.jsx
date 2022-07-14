@@ -85,7 +85,6 @@ class ViewFlights extends React.Component {
   }
 
   async fetchFlightDetails() {
-    console.log(this.state);
     try{
       let res = await fetch('/fetchFlight/clerk',{
         method: 'post',
@@ -104,7 +103,6 @@ class ViewFlights extends React.Component {
       });
 
       let result = await res.json();
-      console.log(result);
       if(result && result.success) {
         this.setState({
           FlightOutput: result.data,

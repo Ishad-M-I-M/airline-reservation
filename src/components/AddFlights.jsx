@@ -18,9 +18,6 @@ class AddFlights extends React.Component {
       economy_cost:0,
       platinum_cost:0,
     };
-    // setInterval(() => {
-    //   console.log(`Takeoff Time: ${this.state.takeoff_date} ` + `${this.state.takeoff_time}\nLanding Time: ${this.state.landing_date} ` + `${this.state.landing_time}`);
-    // }, 5000);
   }
 
   async loadAircrafts() {
@@ -105,7 +102,7 @@ class AddFlights extends React.Component {
         let result = await res.json();
         console.log(result);
         if(result && result.success) {
-          successToast('Data Successfully entered to database');
+          successToast('Flight Successfully added');
           reload();
         }else {
           console.log(result.msg);

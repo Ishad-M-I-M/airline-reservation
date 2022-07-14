@@ -10,12 +10,12 @@ app.post("/fetchFlight/clerk", (req, res) => {
         cols = [req.body.flight_id];
         if (req.body.past === true) {
             if (req.body.future === true) {
-                sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where flight_id=?";
+                sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where flight_id=? and flight.is_active=1";
             } else {
-                sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where takeoff_time < now() and flight_id=?";
+                sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where takeoff_time < now() and flight_id=? and flight.is_active=1";
             }
         } else if (req.body.future === true) {
-            sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where takeoff_time > now() and flight_id=?";
+            sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where takeoff_time > now() and flight_id=? and flight.is_active=1";
         } else {
             return res.status(400).json({ success: false })
         }
@@ -23,12 +23,12 @@ app.post("/fetchFlight/clerk", (req, res) => {
         cols = [req.body.tail_number.trim()];
         if (req.body.past === true) {
             if (req.body.future === true) {
-                sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where tail_number=?";
+                sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where tail_number=? and flight.is_active=1";
             } else {
-                sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where tail_number = ? and takeoff_time < now()";
+                sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where tail_number = ? and takeoff_time < now() and flight.is_active=1";
             }
         } else if (req.body.future === true) {
-            sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where tail_number =? and takeoff_time > now()";
+            sql = "select flight_id, takeoff_time, departure_time, model, airport1.code as origin, airport2.code as destination from flight left join aircraft using(aircraft_id) left join route using(route_id) left join airport as airport1 on airport1.airport_id = route.origin left join airport as airport2 on airport2.airport_id=route.destination where tail_number =? and takeoff_time > now() and flight.is_active=1";
         } else {
             return res.status(400).json({ success: false });
         }
@@ -36,12 +36,12 @@ app.post("/fetchFlight/clerk", (req, res) => {
         cols = [req.body.origin.trim(), req.body.destination.trim()];
         if (req.body.past === true) {
             if (req.body.future === true) {
-                sql = "select flight_id, model, airport1.code as origin, airport2.code as destination, takeoff_time, departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route using(route_id) left join airport as airport1 on airport1.airport_id=route.origin left join airport as airport2 on airport2.airport_id=route.destination where airport1.code=? and airport2.code=?";
+                sql = "select flight_id, model, airport1.code as origin, airport2.code as destination, takeoff_time, departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route using(route_id) left join airport as airport1 on airport1.airport_id=route.origin left join airport as airport2 on airport2.airport_id=route.destination where airport1.code=? and airport2.code=? and flight.is_active=1";
             } else {
-                sql = "select flight_id, model, airport1.code as origin, airport2.code as destination, takeoff_time, departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route using(route_id) left join airport as airport1 on airport1.airport_id=route.origin left join airport as airport2 on airport2.airport_id=route.destination where airport1.code=? and airport2.code=? and takeoff_time < now()";
+                sql = "select flight_id, model, airport1.code as origin, airport2.code as destination, takeoff_time, departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route using(route_id) left join airport as airport1 on airport1.airport_id=route.origin left join airport as airport2 on airport2.airport_id=route.destination where airport1.code=? and airport2.code=? and takeoff_time < now() and flight.is_active=1";
             }
         } else if (req.body.future === true) {
-            sql = "select flight_id, model, airport1.code as origin, airport2.code as destination, takeoff_time, departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route using(route_id) left join airport as airport1 on airport1.airport_id=route.origin left join airport as airport2 on airport2.airport_id=route.destination where airport1.code=? and airport2.code=? and takeoff_time > now()";
+            sql = "select flight_id, model, airport1.code as origin, airport2.code as destination, takeoff_time, departure_time from flight left join aircraft on flight.aircraft_id=aircraft.aircraft_id left join route using(route_id) left join airport as airport1 on airport1.airport_id=route.origin left join airport as airport2 on airport2.airport_id=route.destination where airport1.code=? and airport2.code=? and takeoff_time > now() and flight.is_active=1";
         } else {
             return res.status(400).json({ success: false });
         }

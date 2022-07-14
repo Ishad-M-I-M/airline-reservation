@@ -3,7 +3,7 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/', function (req, res){
-    db.raw("SELECT * from aircraft natural join model WHERE is_active = 1")
+    db.raw("SELECT * from aircraft WHERE is_active = 1")
     .then((data) => {
         return res.send({
             success: true,

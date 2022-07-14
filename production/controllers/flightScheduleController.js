@@ -31,12 +31,12 @@ router.post('/', function (req, res){
 
 });
 
-router.delete('/:id', function (req, res){
-    db.raw(`UPDATE flight SET flight.is_active = 0 WHERE flight.flight_id =? `,[req.params.id])
+router.delete('/', function (req, res){
+    db.raw(`UPDATE flight SET flight.is_active = 0 WHERE flight.flight_id =? `,[req.query.id])
     .then(()=>{
         return res.send({success: true});
     })
-    .catch(()=>{
+    .catch((err)=>{
         return res.status(500).send({success: false})
     })
 
