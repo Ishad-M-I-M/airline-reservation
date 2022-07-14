@@ -19,7 +19,7 @@ router.get('/', function (req, res){
 
 
 router.get('/model', function (req, res){
-    db.raw("SELECT model from model")
+    db.raw("SELECT distinct model from aircraft WHERE is_active = 1")
     .then((data) => {
         // console.log(data);
         // console.log(data[0]);
@@ -35,18 +35,24 @@ router.get('/model', function (req, res){
 });
 
 
+
 router.post('/', function (req, res){
-    let {tail} = req.body.state;
+    let {economy, business, platinum, tail} = req.body.state;
     let {model} = req.body.value;
     // console.log(req.body.value);
     // console.log(req.body);
     console.log(model);
+    console.log(economy);
+    console.log(business);
+    console.log(platinum);
     console.log(tail);
 
-    db.raw(`SELECT count(*) as num from aircraft where tail_number='${tail}'and is_active=0 ;`).then((data) => {
+
+
+    db.raw(`SELECT count(*) as num from aircraft where model ='${model}' and tail_number='${tail}'and is_active=0 ;`).then((data) => {
         console.log(data[0][0].num);
         if (data[0][0].num == 1) {
-            db.raw(`UPDATE aircraft SET is_active=1 where tail_number='${tail}'`)
+            db.raw(`UPDATE aircraft SET is_active=1 , Economy_seats = ? , Business_seats = ? , Platinum_seats = ? where model ='${model}' and tail_number='${tail}' `, [parseInt(economy), parseInt(business), parseInt(platinum)])
                 .then(() => {
                     return res.json({ success: true  });
                 })
@@ -55,7 +61,7 @@ router.post('/', function (req, res){
                     return res.json({ success: false });
                 })
         }else{
-            db.raw('INSERT INTO aircraft (tail_number,model) VALUES(?,?)', [tail,model]
+            db.raw('INSERT INTO aircraft (tail_number,model,Economy_seats,Business_seats,Platinum_seats) VALUES(?,?,?,?,?)', [tail,model,economy, business, platinum]
             ).then(() => {
                 return res.json({success: true});
             }).catch((err) => {
@@ -69,19 +75,6 @@ router.post('/', function (req, res){
     // console.log(req.body.value.model);
     // console.log(request.body.state);
 
-});
-
-router.post('/model', function (req, res){
-    let {model, economy, business, platinum} = req.body;
-    db.raw('INSERT INTO model (model, Economy_seats, Business_seats, Platinum_seats) VALUES(?,?,?,?)', [model, economy, business, platinum])
-        .then((data) => {
-            console.log(data);
-            return res.json({success: true});
-        })
-        .catch((err) => {
-            console.error(err);
-            return res.status(500).json({success: false});
-        });
 });
 
 router.delete('/:id', function (req, res){

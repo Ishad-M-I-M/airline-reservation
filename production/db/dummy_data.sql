@@ -19,20 +19,15 @@ VALUES  (-1, '', '', '', NULL, 'Guest', 'Normal', 1, '0000-00-00'),
         (5, 'poogitha@gmail.com', '$2b$10$atnGRCCzI2FrZmTVOUc4fuABPuvmZViaYndc0PeJDGW9L/49D4Xba', 'Poogitha', 'Jegakumaran',
          'user', 'Normal', 1, '1999-03-31');
 
-INSERT INTO `model` ( `model`, `Economy_seats`, `Business_seats`, `Platinum_seats` )
-VALUES ('Boeing 737', 50, 50, 26),
-       ('Boeing 757', 70, 60, 32),
-       ('Airbus A380', 200, 200, 125);
-
-INSERT INTO `aircraft` (`aircraft_id`, `tail_number`, `model`)
-VALUES (1, 'PK-MGI', 'Boeing 737'),
-       (2, 'PK-MGZ', 'Boeing 737'),
-       (3, 'PK-YGH', 'Boeing 737'),
-       (4, 'PK-YGV', 'Boeing 757'),
-       (5, 'PK-YGW', 'Boeing 757'),
-       (6, 'PK-LBW', 'Boeing 757'),
-       (7, 'PK-LBZ', 'Boeing 757'),
-       (8, 'PK-LUV', 'Airbus A380');
+INSERT INTO `aircraft` (`aircraft_id`, `tail_number`, `model`, `Economy_seats`, `Business_seats`, `Platinum_seats`)
+VALUES (1, 'PK-MGI', 'Boeing 737', 50, 50, 26),
+       (2, 'PK-MGZ', 'Boeing 737', 50, 50, 26),
+       (3, 'PK-YGH', 'Boeing 737', 50, 50, 26),
+       (4, 'PK-YGV', 'Boeing 757', 70, 60, 32),
+       (5, 'PK-YGW', 'Boeing 757', 70, 60, 32),
+       (6, 'PK-LBW', 'Boeing 757', 70, 60, 32),
+       (7, 'PK-LBZ', 'Boeing 757', 70, 60, 32),
+       (8, 'PK-LUV', 'Airbus A380', 200, 200, 125);
 
 INSERT INTO `airport` (`airport_id`, `code`, `name`, `location`)
 VALUES (1, 'CGK', 'Soekarno-Hatta International Airport', 1),

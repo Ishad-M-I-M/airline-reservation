@@ -6,7 +6,7 @@ import axios from 'axios';
 import TextField from "@mui/material/TextField";
 import Autocomplete, {createFilterOptions} from "@mui/material/Autocomplete";
 
-import {successToast, warningToast, errorToast, redirect} from './common/Toasts';
+import {successToast, infoToast, warningToast, errorToast, redirect} from './common/Toasts';
 
 const filter = createFilterOptions();
 
@@ -14,8 +14,11 @@ function AddAircraft() {
   const [value, setValue] = useState("");
   const [models, setmodels] = useState([]);
   const [state, setState] = useState({
-    tail: "", total_seats: '',
+    tail: "", total_seats: '', economy: '',
+    business: '',
+    platinum: '',
     alert: false,
+
   });
 
 
@@ -55,8 +58,10 @@ function AddAircraft() {
     }).catch((err) => {
       console.log(err);
     });
-    }
   }
+}
+
+
 
   const AddTail = (event) => {
     setState({
@@ -65,6 +70,100 @@ function AddAircraft() {
 
     })
 
+  }
+  const Addseats = (event) => {
+    if(event.target.value<0){
+      warningToast("Invalid Input");
+      event.target.value = '';
+    }else{
+    setState({
+      ...state,
+      total_seats: event.target.value
+
+    });
+    }
+
+  }
+  const Addeconomy = (event) => {
+    if (state.total_seats === '') {
+      infoToast("Please enter total seats");
+      event.target.value = '';
+    } else {
+
+
+      if (event.target.value < 0  || event.target.value > state.total_seats - state.business - state.platinum) {
+        warningToast("Invalid economy seat count");
+
+        event.target.value = '';
+        setState({
+          ...state,
+          economy: '',
+          alert: true
+
+
+
+        });
+      } else {
+        setState({
+          ...state,
+          economy: event.target.value
+
+        })
+
+      }
+    }
+
+  }
+  const Addbusiness = (event) => {
+    if (state.total_seats === '') {
+      infoToast("Please enter total seats");
+      event.target.value = '';
+    } else {
+      if (event.target.value < 0  || event.target.value > state.total_seats - state.economy - state.platinum) {
+
+        warningToast("Invalid business seat count");
+        event.target.value = '';
+        setState({
+          ...state,
+          business: ''
+
+        })
+      } else {
+        setState({
+          ...state,
+          business: event.target.value
+
+        })
+
+      }
+
+    }
+  }
+  const Addplatinum = (event) => {
+    // console.log(state.total_seats);
+    if (state.total_seats === '') {
+      infoToast("Please enter total seats");
+      event.target.value = '';
+    } else {
+
+      if (event.target.value < 0  || event.target.value > state.total_seats - state.economy - state.business) {
+        warningToast("Invalid platinum seat count");
+        event.target.value = '';
+        setState({
+          ...state,
+          platinum: ''
+
+        })
+      } else {
+        setState({
+          ...state,
+          platinum: event.target.value
+
+        })
+
+      }
+
+    }
   }
 
 
@@ -132,14 +231,61 @@ function AddAircraft() {
             <TextField {...params} label="Model" />
           )}
         />
+
         <br />
+
         <div className="form-floating mb-3">
+
           <input type="text" className="form-control" id="floatingInput" value={state.tail}
             onChange={AddTail} placeholder="Tail ID" required
           />
           <label htmlFor="floatingInput">Tail ID</label>
+
         </div>
+
+        <div className="form-floating mb-3">
+
+          <input type="number" className="form-control" id="floatingInput" value={state.total_seats}
+            onChange={Addseats} placeholder="Total seats" required
+          />
+          <label htmlFor="floatingInput">Total seats</label>
+
+        </div>
+
+        <div className="form-floating mb-3">
+
+          <input type="number" className="form-control" id="floatingInput" value={state.economy}
+            onChange={Addeconomy} placeholder="Economy seats" required
+          />
+          <label htmlFor="floatingInput">Economy seats</label>
+
+        </div>
+
+
+        <div className="form-floating mb-3">
+
+          <input type="number" className="form-control" id="floatingInput" value={state.business}
+            onChange={Addbusiness} placeholder="Business seats" required
+          />
+          <label htmlFor="floatingInput">Business seats</label>
+
+        </div>
+
+
+
+        <div className="form-floating mb-3">
+
+          <input type="number" className="form-control" id="floatingInput" value={state.platinum}
+            onChange={Addplatinum} placeholder="Platinum seats" required
+          />
+          <label htmlFor="floatingInput">Platinum seats</label>
+
+        </div>
+
         <button className="btn btn-primary" type='submit'>Submit</button>
+
+
+
       </form>
     </div>
   )

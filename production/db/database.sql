@@ -4,22 +4,16 @@ create database bairways;
 use bairways;
 SET foreign_key_checks = 'ON';
 
-create table model
-(
-	model          varchar(50)        NOT NULL,
-    Economy_seats  int DEFAULT 0 check (Economy_seats > 0),
-    Business_seats int DEFAULT 0 check (Business_seats > 0),
-    Platinum_seats int DEFAULT 0 check (Platinum_seats > 0),
-    primary key (model)
-);
 CREATE TABLE aircraft
 (
     aircraft_id    int auto_increment,
     tail_number    varchar(10) unique NOT NULL,
     model          varchar(50)        NOT NULL,
+    Economy_seats  int DEFAULT 0 check (Economy_seats > 0),
+    Business_seats int DEFAULT 0 check (Business_seats > 0),
+    Platinum_seats int DEFAULT 0 check (Platinum_seats > 0),
     is_active tinyint DEFAULT 1,
-    primary key (aircraft_id),
-    constraint foreign key(model) references model(model)
+    primary key (aircraft_id)
 );
 CREATE TABLE airport
 (
@@ -283,7 +277,7 @@ begin
 
     set counter = 0;
     select aircraft_id into craft_id from flight where flight_id = fli_id limit 1;
-    select Economy_seats into seat_num from aircraft natural join model where aircraft_id = craft_id limit 1;
+    select Economy_seats into seat_num from aircraft where aircraft_id = craft_id limit 1;
     repeat
         set counter = counter + 1;
         if not exists(select ticket_id
@@ -317,8 +311,8 @@ begin
     declare craft_id int;
 
     select aircraft_id into craft_id from flight where flight_id = fli_id limit 1;
-    select Business_seats into seat_num from aircraft natural join model where aircraft_id = craft_id limit 1;
-    select Economy_seats into economy from aircraft natural join model where aircraft_id = craft_id limit 1;
+    select Business_seats into seat_num from aircraft where aircraft_id = craft_id limit 1;
+    select Economy_seats into economy from aircraft where aircraft_id = craft_id limit 1;
     set counter = economy;
     repeat
         set counter = counter + 1;
@@ -353,9 +347,9 @@ begin
     declare craft_id int;
 
     select aircraft_id into craft_id from flight where flight_id = fli_id;
-    select Platinum_seats into seat_num from aircraft natural join model where aircraft_id = craft_id limit 1;
-    select Economy_seats into economy from aircraft natural join model where aircraft_id = craft_id limit 1;
-    select Business_seats into business from aircraft natural join model where aircraft_id = craft_id limit 1;
+    select Platinum_seats into seat_num from aircraft where aircraft_id = craft_id limit 1;
+    select Economy_seats into economy from aircraft where aircraft_id = craft_id limit 1;
+    select Business_seats into business from aircraft where aircraft_id = craft_id limit 1;
     set counter = economy + business;
     repeat
         set counter = counter + 1;
@@ -395,13 +389,13 @@ BEGIN
 
     SELECT count(*) into counter from passenger where passenger_id = passenger_id_in group by(passenger_id);
     if (counter = 1) then
-        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status, is_boarded)
-        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 1, 0);
+        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status)
+        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 1);
     else
         START TRANSACTION;
         INSERT INTO passenger(passenger_id, name, dob, address) values (passenger_id_in, name_in, dob_in, address_in);
-        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, is_boarded)
-        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 0);
+        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid)
+        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in);
         COMMIT;
     end if;
 END //
@@ -441,7 +435,7 @@ BEGIN
     end if;  
     start TRANSACTION;
     	insert IGNORE into passenger values(in_passenger_id,in_passenger_name,in_dob,in_passenger_add);
-    	insert into ticket(user_id,passenger_id,flight_id,seat_number,date,class,paid,status,is_boarded) values (in_user_id,in_passenger_id,in_f_id,in_seat_no,NOW(),in_class,payment,0,0);
+    	insert into ticket(user_id,passenger_id,flight_id,seat_number,date,class,paid,status) values (in_user_id,in_passenger_id,in_f_id,in_seat_no,NOW(),in_class,payment,0);
     commit;
 END$$
 DELIMITER ;
