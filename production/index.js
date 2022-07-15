@@ -19,6 +19,9 @@ const authController = require('./controllers/authController');
 const userController = require('./controllers/userController');
 const controller = require('./controllers/controller');
 
+// middlewares
+const authenticate = require('./middlewares/authenticate');
+
 
 const db = require('./db');
 // app.use(express.static(path.join(__dirname, 'build')));
@@ -42,14 +45,14 @@ app.use(session({
     }
 }));
 
-app.use('/airport', airportController );
-app.use('/route', routeController );
-app.use('/aircraft', aircraftController);
+app.use('/airport',authenticate.isAuthorized, airportController );
+app.use('/route',authenticate.isAuthorized, routeController );
+app.use('/aircraft',authenticate.isAuthorized, aircraftController);
 app.use('/flightSchedule', flightScheduleController);
-app.use('/report', reportController);
-app.use('/discount', discountController);
+app.use('/report',authenticate.isAuthorized, reportController);
+app.use('/discount',authenticate.isAuthorized, discountController);
 app.use('/auth', authController);
-app.use('/user', userController);
+app.use('/user',authenticate.isAuthorized, userController);
 app.use('/', controller);
 
 // app.get('/', function(req, res) {
