@@ -78,7 +78,7 @@ export default function AddAirport() {
                 successToast("Airport Added Successfully");
                 redirect("/add");
             }else{
-                errorToast("Airport Not Added");
+                errorToast("Airport Exits");
             }
         }).catch((err)=>{
             console.log(err);
