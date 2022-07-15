@@ -18,12 +18,12 @@ import axios from "axios";
 
 function SearchFlight() {
   const [count, setCount] = useState(1);
-  const [depDate, setDepDate] = useState(new Date("2022-07-09T21:11:54"));
-  const [retDate, setRetDate] = useState(new Date("2022-07-09T21:11:54"));
+  const [depDate, setDepDate] = useState(new Date("2022-07-16T21:11:54"));
+  const [retDate, setRetDate] = useState(new Date("2022-07-16T21:11:54"));
   const [airports, setAirports] = useState([]);
-  const [depAirCode,setDepAirCode]=useState("");
-  const [desAirCode,setDesAirCode]=useState("");
-  const [checkBox,setCheckBox]=useState(0);
+  const [depAirCode, setDepAirCode] = useState("");
+  const [desAirCode, setDesAirCode] = useState("");
+  const [checkBox, setCheckBox] = useState(0);
 
 
   const navigate = useNavigate();
@@ -59,35 +59,35 @@ function SearchFlight() {
     // });
 
     // const flights_result = await response.json();
-    
-    axios.post("/search-result",searchFields).then(
-    
-      function(response){
-        if(response.data.success){
-          const flights_result=response.data.data;
-          const return_flights_result=response.data.return_data;
-          const data={
+
+    axios.post("/search-result", searchFields).then(
+
+      function (response) {
+        if (response.data.success) {
+          const flights_result = response.data.data;
+          const return_flights_result = response.data.return_data;
+          const data = {
             checkBox,
             return_flights_result,
             flights_result,
             depAirCode,
             desAirCode
           }
-          
+
           navigate("/searchResult", { state: data });
-          
+
         }
       }
     )
-        .catch(function(error){
-            console.log(error);
-        })
+      .catch(function (error) {
+        console.log(error);
+      })
 
-    
+
   };
 
   useEffect(() => {
-    document.querySelector(".noReturnCheckBox").setAttribute("checked",true);
+    document.querySelector(".noReturnCheckBox").setAttribute("checked", true);
 
     axios
       .get("/airport")
@@ -107,11 +107,11 @@ function SearchFlight() {
             type="radio"
             className="btn returnCheckBox"
             name="check"
-            
+
             onClick={() => {
               setCheckBox(1)
-              
-              
+
+
             }}
           />
           <span>Return</span>
@@ -119,7 +119,7 @@ function SearchFlight() {
             type="radio"
             className="btn noReturnCheckBox"
             name="check"
-            
+
             onClick={() => {
               setCheckBox(0)
             }}
@@ -194,7 +194,7 @@ function SearchFlight() {
               </div>
             </div>
 
-            <div className="col returnDatePick" style={{display:`${checkBox===0?'none':'block'}`}}>
+            <div className="col returnDatePick" style={{ display: `${checkBox === 0 ? 'none' : 'block'}` }}>
               <div className="loc ">
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <Stack spacing={3}>

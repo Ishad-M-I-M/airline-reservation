@@ -5,7 +5,7 @@ const session = require('express-session');
 
 const KnexSessionStore = require('connect-session-knex')(session);
 require('dotenv').config({
-    path:'../.env'
+    path: '../.env'
 });
 
 // controllers
@@ -29,7 +29,7 @@ app.use(express.json());
 
 const sessionStore = new KnexSessionStore({
     knex: db,
-    clearInterval : (365 * 86400 * 1000),
+    clearInterval: (365 * 86400 * 1000),
     disableDbCleanup: true
 });
 
@@ -39,15 +39,15 @@ app.use(session({
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
-    cookie : {
+    cookie: {
         maxAge: (365 * 86400 * 1000),
         httpOnly: false,
     }
 }));
 
-app.use('/airport',authenticate.isAuthorized, airportController );
-app.use('/route',authenticate.isAuthorized, routeController );
-app.use('/aircraft',authenticate.isAuthorized, aircraftController);
+app.use('/airport', airportController);
+app.use('/route', routeController);
+app.use('/aircraft', aircraftController);
 app.use('/flightSchedule', flightScheduleController);
 app.use('/report',authenticate.isAuthorized, reportController);
 app.use('/discount',authenticate.isAuthorized, discountController);
