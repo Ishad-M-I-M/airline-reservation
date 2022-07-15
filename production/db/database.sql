@@ -4,15 +4,17 @@ create database bairways;
 use bairways;
 SET foreign_key_checks = 'ON';
 
+-- ******************  Tables ******************
+
 CREATE TABLE aircraft
 (
     aircraft_id    int auto_increment,
     tail_number    varchar(10) unique NOT NULL,
     model          varchar(50)        NOT NULL,
-    Economy_seats  int DEFAULT 0 check (Economy_seats > 0),
-    Business_seats int DEFAULT 0 check (Business_seats > 0),
-    Platinum_seats int DEFAULT 0 check (Platinum_seats > 0),
-    is_active tinyint DEFAULT 1,
+    Economy_seats  int     DEFAULT 0 check (Economy_seats > 0),
+    Business_seats int     DEFAULT 0 check (Business_seats > 0),
+    Platinum_seats int     DEFAULT 0 check (Platinum_seats > 0),
+    is_active      tinyint DEFAULT 1,
     primary key (aircraft_id)
 );
 CREATE TABLE airport
@@ -126,6 +128,16 @@ CREATE TABLE `ticket`
     constraint unique (passenger_id, flight_id),
     constraint unique (flight_id, seat_number)
 );
+
+create table `sessions`
+(
+    `sid`     varchar(255),
+    `sess`    json     not null,
+    `expired` datetime not null,
+    primary key (`sid`)
+);
+
+-- ******************  Functions , Stored Procedures and Views ******************
 
 create view port_location_with_parent as
 select *
@@ -464,6 +476,8 @@ END $$
 
 delimiter ;
 
+-- ****************** Triggers *****************************************
+
 -- set a trigger when aircraft is deleted to set is_active of scheduled flights to 0
 create trigger on_aircraft_delete
     after update on aircraft
@@ -486,4 +500,4 @@ create trigger on_route_delete
 create trigger on_flight_delete
     after update on flight
     for each row
-    update ticket set status = 0 where NEW.is_active = 0 and ticket.flight_id = OLD.flight_id;
+    update ticket set status = 0 where NEW.is_active = 0 and ticket.flight_id = OLD.flight_id and OLD.takeoff_time > CURTIME();
