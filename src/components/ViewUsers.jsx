@@ -3,6 +3,7 @@ import axios from "axios";
 
 import Table from "./common/Table";
 import Overlay from './common/Overlay';
+import {errorToast, redirect, reload, successToast} from "./common/Toasts";
 
 const ViewUsers = () => {
     const [users, setUsers] = useState([]);
@@ -13,6 +14,7 @@ const ViewUsers = () => {
         axios.get('/user').then((res) => {
             setUsers(res.data.data);
         }).catch((err) => {
+            errorToast("Error in fetching users");
             console.log(err);
         });
     }, []);
@@ -24,8 +26,8 @@ const ViewUsers = () => {
     const handleDelete = (id_) => {
         axios.delete(`/user/${id_}`)
             .then(() => {
-                alert(`User deleted successfully`);
-                window.location.reload();
+                successToast("User Deleted Successfully");
+                reload();
             })
             .catch((err) => {
                 console.log(err);
@@ -37,17 +39,19 @@ const ViewUsers = () => {
         user_[field] = value;
         setUser(user_);
     }
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
         console.log(user);
         axios.patch(`/user/${user.id}`, {
             'role' : user.role,
             'discount_type': user.discount_type
         })
             .then(() => {
-                alert(`User updated successfully`);
+                successToast("User Updated Successfully");
+                redirect("/view-users")
             }).catch((err) => {
                 console.error(err);
-                alert("Unable to update");
+                errorToast("Error in updating user");
         })
     }
 

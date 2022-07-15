@@ -1,51 +1,36 @@
 // import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import '../css/clerk.css';
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
-import FilledInput from '@mui/material/FilledInput';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import background from '../images/background.jpg'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-import { faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import TextField from '@mui/material/TextField';
+import * as React from 'react';
+import '../css/clerk.css';
+import background from '../images/background.jpg';
 // import TextField from '@mui/material/TextField';<FontAwesomeIcon icon="fa-solid fa-circle-check" />
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
-import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Stack from '@mui/material/Stack';
-import { Divider } from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import axios from 'axios';
+
 import { useNavigate } from "react-router-dom";
-// import Password from './PasswordAlert';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
-// import Button from '@mui/material/Button';
-import validator from 'validator'
+import validator from 'validator';
 
 import { useState } from "react";
-import { height, width } from '@mui/system';
-import { Attachment } from '@mui/icons-material';
 
 
 // import Button from '@mui/material/Button';
-import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import {successToast, warningToast} from "./common/Toasts";
 
 function SignupForm() {
 
@@ -96,7 +81,7 @@ function SignupForm() {
     lname: "",
     email: "",
     samepassword: false,
-    date: ""
+    date: new Date('2014-08-18T21:11:54')
 
   });
   const [emailError, setEmailError] = useState('')
@@ -133,9 +118,7 @@ function SignupForm() {
         ...values,
         samepassword: true
       });
-      return (
-        false
-      );
+      return false;
     }
     return true;
   }
@@ -161,16 +144,20 @@ handleClick({
     axios.post('auth/adduser', values).then((res) => {
      
       if(res.data.message){
-        
-        handleClick({
-          vertical: 'top',
-          horizontal: 'center'
-        })()
+        warningToast("Email already exists");
+        // handleClick({
+        //   vertical: 'top',
+        //   horizontal: 'center'
+        // })()
       }
       
       else if (res.data.success){
-      alert(`Account Created`);
-        nav("/");
+        successToast("Account successfully created");
+        setTimeout(() => {
+          console.log("working"); // count is 0 here
+          nav("/");
+          }, 1550);
+        
       }
       
     }).catch((err) => {
@@ -197,7 +184,7 @@ handleClick({
 
   const addUser = () => {
 
-
+// console.log(values.date);
     if (values.fname === "" || values.email === "" || values.password === "" || values.re_password === "" || values.date === "") {
       // console.log("Empty");
       setValue({
@@ -215,13 +202,13 @@ handleClick({
       if (values.password !== values.re_password && !values.samepassword) {
         samePwd();
       }
-      if (values.password == values.re_password && !values.samepassword && validatePassword(values.password)) {
+      if (values.password === values.re_password && !values.samepassword && validatePassword(values.password)) {
 
         // alert("hi");
         handleSubmit();
         // const bcrypt = require('bcrypt');
         // let pswrd = bcrypt.hashSync(values.password, 10);
-      } else if (values.password == values.re_password && values.samepassword && validatePassword(values.password)) {
+      } else if (values.password === values.re_password && values.samepassword && validatePassword(values.password)) {
         console.log(validatePassword(values.password));
         samePwd();
         handleSubmit();
@@ -246,7 +233,7 @@ handleClick({
 
     
     <div className='optionsss'>
-    {/* {buttons} */}
+    {/* {values.date} */}
       <Snackbar autoHideDuration={4000}
       
         anchorOrigin={{ vertical, horizontal }}
@@ -280,7 +267,7 @@ handleClick({
                   value={values.date}
                   onChange={(newValue) => {
 
-                    setValues({ ...values, ['date']: newValue });
+                    setValues({ ...values, date: newValue });
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />

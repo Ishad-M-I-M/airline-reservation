@@ -1,10 +1,9 @@
 import axios from "axios";
-import { set } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { Form, Button, Dropdown } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import UserStore from "../stores/UserStore";
-import PaymentPage from "./PaymentPage";
+
+import {errorToast, infoToast, warningToast, reload, redirect} from "./common/Toasts";
 
 const BookingForm = (props) => {
 
@@ -36,11 +35,13 @@ const BookingForm = (props) => {
       .then(function (response) {
         if (response.data.success === true) {
           if (response.data.data === "seat_occupied") {
-            alert("seat occupied!!");
-            window.location.reload();
+            infoToast("seat occupied!!");
+            reload();
+
           } else if (response.data.data === "passenger_occupied") {
-            alert("passenger already booked");
-            window.location.reload();
+            infoToast("passenger already booked");
+            reload();
+
           } else {
             const ticket_details = {
               f_id,
@@ -59,12 +60,12 @@ const BookingForm = (props) => {
             
 
                 } else {
-                  alert("sorry your booking cannot be reserved!");
-                  window.location.href = "/";
+                  warningToast("sorry your booking cannot be reserved!");
+                  redirect("/");
                 }
               })
               .catch(function (error) {
-                alert("oops an error occured!");
+                errorToast("oops an error occured!");
                 console.log(error)
                 // window.location.href = "/";
               });
@@ -219,7 +220,7 @@ const BookingForm = (props) => {
         </Form.Group>
 
         <select
-          class="form-select"
+          className="form-select"
           aria-label="Default select example"
           style={{ marginBottom: "20px", width: "200px" }}
           onChange={handleChangeFClass}

@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get('/', (req, res)=>{
     db.raw(
-        `select route_id as id, origin, destination from (select route_id,code as origin from route inner join airport on origin=airport_id where is_active = 1) as origin natural join (select route_id,code as destination from route inner join airport on destination=airport_id where is_active = 1) as destination; `,
+        `select route_id as id, origin, destination from (select route_id,code as origin from route inner join airport on origin=airport_id where route.is_active = 1) as origin natural join (select route_id,code as destination from route inner join airport on destination=airport_id where route.is_active = 1) as destination; `,
     ).then((data)=>{
         return res.json({
             success: true,
@@ -12,6 +12,7 @@ router.get('/', (req, res)=>{
           });
     })
     .catch((err)=>{
+        console.error(err);
         res.status(500).send({success: false});
     })
           
@@ -19,18 +20,44 @@ router.get('/', (req, res)=>{
 
 router.post('/', (req, res) =>{
     console.log(req.body);
-    db.raw(`INSERT INTO route(origin, destination) VALUES (?, ?)`, [req.body.origin, req.body.destination])
-        .then(()=>{
-            return res.json({success: true});
-        })
-        .catch((err)=>{
-            console.error(err);
-            return res.status(500).json({success: false});
-        })
+    db.raw(`select count(*) as num from route where origin = ${req.body.origin} and destination = ${req.body.destination} and is_active = 0`).then((data) => {
+        // console.log(data);
+        console.log(data[0][0].num);
+        if (data[0][0].num == 0) {
+            db.raw(`INSERT INTO route(origin, destination) VALUES (?, ?)`, [req.body.origin, req.body.destination])
+                .then(() => {
+                    return res.json({ success: true ,message: false });
+                })
+                .catch((err) => {
+                    console.error(err);
+                    return res.json({ success: false ,message: true  });
+                })
+        }else if(data[0][0].num == 1){
+            db.raw(`UPDATE route SET is_active=1 where origin = ${req.body.origin} and destination = ${req.body.destination} and is_active = 0`)
+                .then(() => {
+                    return res.json({ success: true ,message: false });
+                })
+                .catch((err) => {
+                    console.error(err);
+                    return res.json({ success: false ,message: true });
+                })
+            
+        }else{
+            return res.json({ message: true });
+        }
+    })
+    // db.raw(`INSERT INTO route(origin, destination) VALUES (?, ?)`, [req.body.origin, req.body.destination])
+    //     .then(()=>{
+    //         return res.json({success: true});
+    //     })
+    //     .catch((err)=>{
+    //         console.error(err);
+    //         return res.status(500).json({success: false});
+    //     })
 })
 
 router.delete('/:id', (req, res)=>{
-    db.raw(`DELETE FROM route WHERE route_id=? `, [req.params.id])
+    db.raw(`UPDATE route SET is_active = 0 WHERE route_id=? `, [req.params.id])
     .then(()=>{
         return res.send({success: true});
     })

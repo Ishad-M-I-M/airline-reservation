@@ -19,9 +19,9 @@ export default function FlightCard() {
     <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
       <div style={{ marginRight: "10vw" }}>
         <div className="forward-heading row">
-          <div class="forward-from col">{location.state.depAirCode}</div>
-          <i class="bi bi-arrow-right-circle col"></i>
-          <div class="forward-to col">{location.state.desAirCode}</div>
+          <div className="forward-from col">{location.state.depAirCode}</div>
+          <i className="bi bi-arrow-right-circle col"></i>
+          <div className="forward-to col">{location.state.desAirCode}</div>
         </div>
         {flights.map(
           ({ flight_id, takeoff_time, departure_time, aircraft_id }) => (
@@ -102,9 +102,9 @@ export default function FlightCard() {
       {location.state.checkBox === 1 &&
         <div>
           <div className="forward-heading row">
-            <div class="forward-from col">{location.state.desAirCode}</div>
-            <i class="bi bi-arrow-right-circle col"></i>
-            <div class="forward-to col">{location.state.depAirCode}</div>
+            <div className="forward-from col">{location.state.desAirCode}</div>
+            <i className="bi bi-arrow-right-circle col"></i>
+            <div className="forward-to col">{location.state.depAirCode}</div>
           </div>
 
 

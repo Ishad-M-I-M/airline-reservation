@@ -1,4 +1,5 @@
 import React from 'react';
+import {reload, successToast, warningToast} from "./common/Toasts";
 
 class AddFlights extends React.Component {
 
@@ -17,9 +18,6 @@ class AddFlights extends React.Component {
       economy_cost:0,
       platinum_cost:0,
     };
-    // setInterval(() => {
-    //   console.log(`Takeoff Time: ${this.state.takeoff_date} ` + `${this.state.takeoff_time}\nLanding Time: ${this.state.landing_date} ` + `${this.state.landing_time}`);
-    // }, 5000);
   }
 
   async loadAircrafts() {
@@ -80,7 +78,7 @@ class AddFlights extends React.Component {
   async addFlight() {
 
     if(this.state.aircraft_id<=0 || this.state.route_id<=0 || this.state.takeoff_date === '' || this.state.takeoff_time === '' || this.state.landing_date === '' || this.state.landing_time==='' || this.state.business_cost === 0 || this.state.business_cost === '' || this.state.platinum_cost === 0 || this.state.platinum_cost === '' || this.state.economy_cost ===0 || this.state.economy_cost === '') {
-      alert("Fill all Columns appropriately");
+      warningToast("Fill all Columns appropriately");
     }else {
       try {
         let res = await fetch('/flightSchedule',{
@@ -104,7 +102,8 @@ class AddFlights extends React.Component {
         let result = await res.json();
         console.log(result);
         if(result && result.success) {
-          alert('Data Successfully entered to database')
+          successToast('Flight Successfully added');
+          reload();
         }else {
           console.log(result.msg);
         }
@@ -116,11 +115,11 @@ class AddFlights extends React.Component {
 
   setCost(property, value) {
     if(isNaN(value)){
-      alert("Enter only valid amount")
+      warningToast("Enter a valid amount");
     }else {
       this.setState({
         [property]: value,
-      })
+      });
     }
   }
 

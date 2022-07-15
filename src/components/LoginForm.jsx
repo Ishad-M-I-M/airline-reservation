@@ -19,6 +19,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
+import {warningToast} from "./common/Toasts";
 
 class LoginForm extends React.Component {
     constructor(props) {
@@ -80,11 +81,11 @@ class LoginForm extends React.Component {
 
     async doLogin() {
         if (!this.state.email) {
-            alert("Enter email");
+            warningToast("Please enter email");
             return;
         }
         if (!this.state.password) {
-            alert("Enter password");
+            warningToast("Please enter password");
             return;
         }
 

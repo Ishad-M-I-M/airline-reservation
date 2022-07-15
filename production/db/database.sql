@@ -4,15 +4,17 @@ create database bairways;
 use bairways;
 SET foreign_key_checks = 'ON';
 
+-- ******************  Tables ******************
+
 CREATE TABLE aircraft
 (
     aircraft_id    int auto_increment,
     tail_number    varchar(10) unique NOT NULL,
     model          varchar(50)        NOT NULL,
-    Economy_seats  int DEFAULT 0 check (Economy_seats > 0),
-    Business_seats int DEFAULT 0 check (Business_seats > 0),
-    Platinum_seats int DEFAULT 0 check (Platinum_seats > 0),
-    is_active tinyint DEFAULT 1,
+    Economy_seats  int     DEFAULT 0 check (Economy_seats > 0),
+    Business_seats int     DEFAULT 0 check (Business_seats > 0),
+    Platinum_seats int     DEFAULT 0 check (Platinum_seats > 0),
+    is_active      tinyint DEFAULT 1,
     primary key (aircraft_id)
 );
 CREATE TABLE airport
@@ -37,6 +39,7 @@ CREATE TABLE `route`
     `route_id`    int NOT NULL auto_increment,
     `origin`      int NOT NULL,
     `destination` int NOT NULL,
+    `is_active`   tinyint DEFAULT 1,
     primary key (route_id),
     constraint foreign key (origin) references airport (airport_id),
     constraint foreign key (destination) references airport (airport_id),
@@ -118,7 +121,6 @@ CREATE TABLE `ticket`
     `class`        varchar(10)    NOT NULL,
     `paid`         decimal(10, 2) NOT NULL,
     `status`       tinyint        NOT NULL DEFAULT 1,
-    `is_boarded`   tinyint        NOT NULL DEFAULT 0,
     primary key (ticket_id),
     constraint foreign key (user_id) references user (user_id) on update cascade,
     constraint foreign key (passenger_id) references passenger (passenger_id) on update cascade on delete cascade,
@@ -126,6 +128,16 @@ CREATE TABLE `ticket`
     constraint unique (passenger_id, flight_id),
     constraint unique (flight_id, seat_number)
 );
+
+create table `sessions`
+(
+    `sid`     varchar(255),
+    `sess`    json     not null,
+    `expired` datetime not null,
+    primary key (`sid`)
+);
+
+-- ******************  Functions , Stored Procedures and Views ******************
 
 create view port_location_with_parent as
 select *
@@ -389,13 +401,13 @@ BEGIN
 
     SELECT count(*) into counter from passenger where passenger_id = passenger_id_in group by(passenger_id);
     if (counter = 1) then
-        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status, is_boarded)
-        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 1, 0);
+        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, status)
+        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 1);
     else
         START TRANSACTION;
         INSERT INTO passenger(passenger_id, name, dob, address) values (passenger_id_in, name_in, dob_in, address_in);
-        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid, is_boarded)
-        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in, 0);
+        INSERT INTO ticket(user_id, passenger_id, flight_id, seat_number, date, class, paid)
+        VALUES (user_id_in, passenger_id_in, flight_id_in, seat_number_in, date_in, class_in, paid_in);
         COMMIT;
     end if;
 END //
@@ -405,7 +417,7 @@ delimiter ;
 
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `release_booking`(IN `f_id` INT(11), IN `seatNo` VARCHAR(11), IN `passengerId` VARCHAR(11))
+CREATE PROCEDURE `release_booking`(IN `f_id` INT, IN `seatNo` VARCHAR(11), IN `passengerId` VARCHAR(11))
 BEGIN
 	START TRANSACTION;
     	DELETE FROM ticket WHERE flight_id=f_id and seat_number=seatNo and status=0;
@@ -418,7 +430,7 @@ DELIMITER ;
 
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `book_ticket_proc`(IN `in_f_id` INT(11), IN `in_user_id` INT(11), IN `in_passenger_id` VARCHAR(25), IN `in_passenger_name` VARCHAR(150), IN `in_passenger_add` VARCHAR(255), IN `in_dob` DATE, IN `in_class` VARCHAR(10), IN `in_seat_no` VARCHAR(5))
+CREATE PROCEDURE `book_ticket_proc`(IN `in_f_id` INT, IN `in_user_id` INT, IN `in_passenger_id` VARCHAR(25), IN `in_passenger_name` VARCHAR(150), IN `in_passenger_add` VARCHAR(255), IN `in_dob` DATE, IN `in_class` VARCHAR(10), IN `in_seat_no` VARCHAR(5))
 BEGIN  
     declare payment  dec(10,2);
     declare disc_type varchar(20);
@@ -435,7 +447,7 @@ BEGIN
     end if;  
     start TRANSACTION;
     	insert IGNORE into passenger values(in_passenger_id,in_passenger_name,in_dob,in_passenger_add);
-    	insert into ticket(user_id,passenger_id,flight_id,seat_number,date,class,paid,status,is_boarded) values (in_user_id,in_passenger_id,in_f_id,in_seat_no,NOW(),in_class,payment,0,0);
+    	insert into ticket(user_id,passenger_id,flight_id,seat_number,date,class,paid,status) values (in_user_id,in_passenger_id,in_f_id,in_seat_no,NOW(),in_class,payment,0);
     commit;
 END$$
 DELIMITER ;
@@ -464,13 +476,45 @@ END $$
 
 delimiter ;
 
+-- ****************** Triggers *****************************************
+
 -- set a trigger when aircraft is deleted to set is_active of scheduled flights to 0
 create trigger on_aircraft_delete
     after update on aircraft
     for each row
     update flight set is_active = 0 where NEW.is_active = 0 and flight.aircraft_id = OLD.aircraft_id and flight.takeoff_time > CURTIME();
 
-create trigger on_flight_delete
-    after update on flight
+-- update route if an airport is removed
+create trigger on_airport_delete
+    after update on airport
     for each row
-    update ticket set status = 0 where NEW.is_active = 0 and ticket.flight_id = OLD.flight_id;
+    update route set is_active = 0 where NEW.is_active = 0 and route.origin = OLD.airport_id or route.destination = OLD.airport_id;
+
+-- update flight schedule on route removed
+create trigger on_route_delete
+    after update
+    on route
+    for each row
+    update flight
+    set is_active = 0
+    where NEW.is_active = 0
+      and flight.route_id = OLD.route_id;
+
+-- update the status of ticket if flight is cancelled
+create trigger on_flight_delete
+    after update
+    on flight
+    for each row
+    update ticket
+    set status = 0
+    where NEW.is_active = 0
+      and ticket.flight_id = OLD.flight_id
+      and OLD.takeoff_time > CURTIME();
+
+-- *************** events ***********************************
+
+create event cleanup_flight_schedules
+    on schedule every 1 day
+    do delete
+       from flight
+       where is_active > 0;

@@ -8,7 +8,7 @@ import AddBooking from './AddBooking';
 import PaymentPortal from './PaymentPortal';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import NotFound from "./NotFound";
-
+import Tickets from "./Tickets";
 export default function Container() {
     return (
         <div className='container bg-white bg-opacity-50 row p-2 mt-5'>
@@ -26,6 +26,7 @@ export default function Container() {
                         <Route path='/view-flight' element={<ViewFlights/>}/>
                         <Route path='/add-booking' element={<AddBooking/>}/>
                         <Route path='/paymentportal' element={<PaymentPortal/>}/>
+                        <Route path= '/tickets' element={<Tickets/>}/>
                         <Route path='/*' element={<NotFound/>}/>
                     </Routes>
                 </BrowserRouter>

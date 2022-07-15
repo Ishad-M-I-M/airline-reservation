@@ -1,5 +1,6 @@
 import React from 'react';
 import FlightResultOverlay from './FlightResultOverlay';
+import {errorToast, warningToast} from "./common/Toasts";
 
 class ViewFlights extends React.Component {
 
@@ -46,7 +47,7 @@ class ViewFlights extends React.Component {
             aircrafts: temp_craft,
           });
         }else if(result) {
-          alert("Refresh Again");
+          warningToast("Refresh again");
         }
       } catch(error){}
     }
@@ -75,7 +76,7 @@ class ViewFlights extends React.Component {
             codes:temp_codes,
           });
         }else if(result) {
-          alert("Refresh again");
+          warningToast("Refresh again");
         }
       }catch(error){
         console.error(error);
@@ -84,7 +85,6 @@ class ViewFlights extends React.Component {
   }
 
   async fetchFlightDetails() {
-    console.log(this.state);
     try{
       let res = await fetch('/fetchFlight/clerk',{
         method: 'post',
@@ -103,18 +103,26 @@ class ViewFlights extends React.Component {
       });
 
       let result = await res.json();
-      console.log(result);
       if(result && result.success) {
         this.setState({
           FlightOutput: result.data,
           resultVisibility: true,
         });
       }else if(result) {
-        alert("Request Failed... Fetch Again...");
+        errorToast("Request Incomplete");
       }
     }catch(error){
 
     }
+  }
+
+  reset() {
+    this.setState({
+      flight_id: '',
+      origin: '',
+      destination: '',
+      tail_number: '',
+    });
   }
 
 
@@ -125,6 +133,7 @@ class ViewFlights extends React.Component {
         <h2 className='text-center mt-1'>View Flight Details</h2>
         <div>
           {this.state.resultVisibility && <FlightResultOverlay visibility={this.state.resultVisibility} information={this.state.FlightOutput} onClick={()=>this.setState({resultVisibility:false})}/>}
+          <form>
           <div className='mb-3'>
             <div className='row'>
               <div className='col-md-6'>
@@ -224,10 +233,10 @@ class ViewFlights extends React.Component {
             </div>
           </div>
           
-          <div className='mt-5 text-center'>
-
+          <div className='mt-5 text-center position-fixed'>
+            <button type='reset'className='btn btn-danger' onClick={()=>{this.reset()}}>Reset</button>
           </div>
-
+          </form>
         </div>
 
         <div className="form-check">
@@ -251,7 +260,7 @@ class ViewFlights extends React.Component {
           </ul>
           
           </div>
-        <div className='mt-5 text-center'>
+        <div className='mt-5 text-center d-flex justify-content-around'>
           <button className='btn btn-primary' onClick={()=>{this.fetchFlightDetails()}}>Fetch Flight Details</button>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, {  useEffect, useState } from 'react'
 
+import {successToast, errorToast, redirect} from './common/Toasts';
+
 export default function AddAirport() {
     const [inputs, setInputs] = useState({});
     const [locationFields, setLocationFields] = useState([{location: "", htmlId: 1, exist: false, id : null, parent_id : null}]);
@@ -36,7 +38,7 @@ export default function AddAirport() {
                         if(data[i].location === e.target.value) {
                             newField['id'] = data[i].id;
                             newField['parent_id'] = data[i].parent_id;
-                        };
+                        }
                     }
                 }
                 return newField;
@@ -70,9 +72,14 @@ export default function AddAirport() {
 
     let handleSubmit = (e) => {
         console.log(inputs);
-
-        axios.post('/airport',inputs).then(()=>{
-            alert('Saved airport sucessfully');
+        e.preventDefault();
+        axios.post('/airport',inputs).then((res)=>{
+            if(res.data.success){
+                successToast("Airport Added Successfully");
+                redirect("/add");
+            }else{
+                errorToast("Airport Exits");
+            }
         }).catch((err)=>{
             console.log(err);
         });
@@ -94,14 +101,12 @@ export default function AddAirport() {
  
                 <div className='form-floating mb-3'>
                     <input name='code' placeholder='Airport code' className='form-control'  id="floatingInput" maxLength={3} type="text" value={inputs.code || ""} onChange={(e) => handleChange(e)}></input>
-                    <label for="floatingInput">Airport code</label>
+                    <label htmlFor="floatingInput">Airport code</label>
                 </div>
-                
-        
-                {/* <div class="form-floating mb-3"> */}
+
                 <div className='form-floating mb-3'>
                     <input name='name' placeholder='Airport name' className='form-control' type="text" id="floatingInput" value={inputs.name || ""} onChange={(e) => handleChange(e)}></input>
-                    <label for="floatingInput">Airport name</label>
+                    <label htmlFor="floatingInput">Airport name</label>
                 </div>
                 
 

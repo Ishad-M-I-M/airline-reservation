@@ -2,6 +2,7 @@ import React from "react";
 import UserStore from "../stores/UserStore";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import {errorToast, infoToast, redirect, successToast, warningToast} from "./common/Toasts";
 
 export default function PaymentPage() {
   const location = useLocation();
@@ -12,17 +13,17 @@ export default function PaymentPage() {
       .delete("/releaseBooking", { data: location.state })
       .then(function (response) {
         if (response.data.success === true) {
-          alert("requested time out!");
-          window.location.href = "/";
+          errorToast("requested time out!");
+          redirect("/");
 
         } else {
-          alert("error!");
+          errorToast("error!");
         }
       });
   }, 10000);
 
   const confirmBooking = () => {
-    if (!location.state) { alert("not allowed") } {
+    if (!location.state) { warningToast("not allowed") } {
       axios
         .get("/isReserved", {
           params: location.state,
@@ -31,29 +32,29 @@ export default function PaymentPage() {
           console.log(response)
           if (response.data.success) {
             if (response.data.data.length === 0) {
-              alert("cannot process payment! no reserved seats");
-              window.location.href = "/";
+              infoToast("cannot process payment! no reserved seats");
+              redirect("/");
             }
             else {
               axios
                 .post("/confirmBooking", location.state)
                 .then(function (response) {
                   if (response.data.success) {
-                    alert("booking confirmed!");
-                    window.location.href = "/";
+                    successToast("booking confirmed!");
+                    redirect("/");
                   } else {
-                    alert("sorry your booking cannot be confirmed!");
+                    errorToast("sorry your booking cannot be confirmed!");
                     console.log(response);
-                    window.location.href = "/";
+                    redirect("/");
                   }
                 })
                 .catch(function (error) {
-                  alert("oops an error occured!");
+                  errorToast("oops an error occured!");
                   // window.location.href = "/";
                 });
             }
           } else {
-            alert("oops an error occured!");
+            errorToast("oops an error occured!");
             // window.location.href = "/";
           }
         });
@@ -72,7 +73,6 @@ export default function PaymentPage() {
         left: "0",
         textAlign: "center",
         marginTop: "300px",
-        backgroundColor: "white",
         padding: "20px",
         borderRadius: "10px",
         zIndex: 3,

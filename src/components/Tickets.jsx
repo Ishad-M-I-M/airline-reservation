@@ -5,9 +5,6 @@ import React, { useEffect, useState } from "react";
 export default function Tickets() {
   const [arr, setArr] = useState([]);
 
-
-
-
   useEffect(() => {
     axios.get("/getTickets").then((response) => {
 
