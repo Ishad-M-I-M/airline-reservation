@@ -20,7 +20,7 @@ router.post('/', function (req, res){
     .then((results) => { return res.send({success: true})})
     .catch((err) => { 
         console.log(err);
-        return res.status(404).send({success: false});
+        return res.send({success: false});
     })
 });
 

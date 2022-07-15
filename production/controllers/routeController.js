@@ -30,7 +30,7 @@ router.post('/', (req, res) =>{
                 })
                 .catch((err) => {
                     console.error(err);
-                    return res.status(500).json({ success: false });
+                    return res.json({ success: false ,message: true  });
                 })
         }else if(data[0][0].num == 1){
             db.raw(`UPDATE route SET is_active=1 where origin = ${req.body.origin} and destination = ${req.body.destination} and is_active = 0`)
@@ -39,7 +39,7 @@ router.post('/', (req, res) =>{
                 })
                 .catch((err) => {
                     console.error(err);
-                    return res.status(500).json({ success: false });
+                    return res.json({ success: false ,message: true });
                 })
             
         }else{
