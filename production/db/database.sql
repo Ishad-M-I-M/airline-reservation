@@ -492,12 +492,29 @@ create trigger on_airport_delete
 
 -- update flight schedule on route removed
 create trigger on_route_delete
-    after update on route
+    after update
+    on route
     for each row
-    update flight set is_active = 0 where NEW.is_active = 0 and flight.route_id = OLD.route_id;
+    update flight
+    set is_active = 0
+    where NEW.is_active = 0
+      and flight.route_id = OLD.route_id;
 
 -- update the status of ticket if flight is cancelled
 create trigger on_flight_delete
-    after update on flight
+    after update
+    on flight
     for each row
-    update ticket set status = 0 where NEW.is_active = 0 and ticket.flight_id = OLD.flight_id and OLD.takeoff_time > CURTIME();
+    update ticket
+    set status = 0
+    where NEW.is_active = 0
+      and ticket.flight_id = OLD.flight_id
+      and OLD.takeoff_time > CURTIME();
+
+-- *************** events ***********************************
+
+create event cleanup_flight_schedules
+    on schedule every 1 day
+    do delete
+       from flight
+       where is_active > 0;
