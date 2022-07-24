@@ -5,7 +5,7 @@ const session = require('express-session');
 
 const KnexSessionStore = require('connect-session-knex')(session);
 require('dotenv').config({
-    path: '../.env'
+    path: '.env'
 });
 
 // controllers
@@ -24,7 +24,6 @@ const authenticate = require('./middlewares/authenticate');
 
 
 const db = require('./db');
-// app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
 const sessionStore = new KnexSessionStore({
@@ -55,10 +54,17 @@ app.use('/auth', authController);
 app.use('/user',authenticate.isAuthorized, userController);
 app.use('/', controller);
 
-// app.get('/', function(req, res) {
-//     res.sendFile(path.join(__dirname, 'build', 'index.html'))
-// });
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+}
 
-app.listen(3001);
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
 
-console.log("Testing server");
+const PORT = process.env.PORT || 3001
+
+console.log(`Server Mode : ${process.env.NODE_ENV}`);
+app.listen(PORT, ()=>{
+    console.log(`serving on ${PORT}`);
+});

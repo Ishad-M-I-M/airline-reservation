@@ -7,6 +7,7 @@
     "install": "cd server && npm i --legacy-peer-deps && cd ../client && npm i --legacy-peer-deps",
     "start": "node server/index.js",
     "start:dev": "concurrently \"cd client && npm start\" \"cd server && nodemon .\"",
+    "heroku-postbuild": "cd client && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
