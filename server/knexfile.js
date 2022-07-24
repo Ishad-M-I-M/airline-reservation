@@ -10,10 +10,10 @@ module.exports = {
   development: {
     client: 'mysql',
     connection: {
-      host: 'localhost',
-      database: 'bairways',
-      user:     'root',
-      password: '1234',
+      host: process.env.DATABASE_HOST,
+      database: process.env.DATABASE_NAME,
+      user:     process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASS,
       multipleStatements: true
     },
     migrations: {
