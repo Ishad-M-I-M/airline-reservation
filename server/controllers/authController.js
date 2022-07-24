@@ -1,7 +1,5 @@
-const { logDOM } = require("@testing-library/react");
 const bcrypt = require("bcrypt");
 const express = require("express");
-const { data } = require("jquery");
 const db = require("../db");
 const router = express.Router();
 router.post("/login", (req, res) => {
